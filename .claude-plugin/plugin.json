@@ -1,0 +1,28 @@
+{
+  "name": "terraphim-engineering-skills",
+  "version": "1.0.0",
+  "description": "Best practice engineering skills for open source Rust/WebAssembly development. Includes 15 specialized skills covering architecture, code review, security, testing, documentation, DevOps, and disciplined development workflows.",
+  "author": {
+    "name": "Terraphim AI",
+    "url": "https://github.com/terraphim"
+  },
+  "homepage": "https://github.com/terraphim/terraphim-claude-skills",
+  "repository": "https://github.com/terraphim/terraphim-claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "rust",
+    "webassembly",
+    "wasm",
+    "open-source",
+    "engineering",
+    "code-review",
+    "security",
+    "testing",
+    "documentation",
+    "devops",
+    "knowledge-graph",
+    "fluvio",
+    "tauri",
+    "cloudflare"
+  ]
+}
