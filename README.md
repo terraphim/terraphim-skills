@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-claude-skills
 claude plugin install terraphim-engineering-skills@terraphim-ai
 ```
 
-## Skills Overview (16 Skills)
+## Skills Overview (17 Skills)
 
 ### Core Development
 
@@ -45,6 +45,7 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | Skill | Description |
 |-------|-------------|
 | `terraphim-hooks` | Knowledge graph-based text replacement with Claude Code and Git hooks. |
+| `session-search` | Search AI coding session history with concept enrichment. |
 
 ### Rust Expertise
 
@@ -335,6 +336,17 @@ Output:
 - Git hook scripts/hooks/prepare-commit-msg
 - Hook installation instructions
 - Test commands to verify replacement
+```
+
+```
+You: "Find my previous work on database migrations"
+Claude: [session-search skill]
+
+Output:
+- Session search results across Claude Code history
+- Timeline of related sessions
+- Concept-enriched matches
+- Exportable session details
 ```
 
 ### Disciplined Development (Complex Features)
