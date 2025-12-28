@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-claude-skills
 claude plugin install terraphim-engineering-skills@terraphim-ai
 ```
 
-## Skills Overview (17 Skills)
+## Skills Overview (18 Skills)
 
 ### Core Development
 
@@ -46,6 +46,7 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 |-------|-------------|
 | `terraphim-hooks` | Knowledge graph-based text replacement with Claude Code and Git hooks. |
 | `session-search` | Search AI coding session history with concept enrichment. |
+| `local-knowledge` | Search personal notes via role-based haystacks (Rust, Frontend, Architecture). |
 
 ### Rust Expertise
 
@@ -347,6 +348,17 @@ Output:
 - Timeline of related sessions
 - Concept-enriched matches
 - Exportable session details
+```
+
+```
+You: "Check my notes for async iterator patterns in Rust"
+Claude: [local-knowledge skill]
+
+Output:
+- Search results from personal notes
+- Role-based filtering (Rust Engineer)
+- Knowledge graph term expansion
+- File paths and content excerpts
 ```
 
 ### Disciplined Development (Complex Features)
