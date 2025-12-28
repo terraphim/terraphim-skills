@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-claude-skills
 claude plugin install terraphim-engineering-skills@terraphim-ai
 ```
 
-## Skills Overview (15 Skills)
+## Skills Overview (16 Skills)
 
 ### Core Development
 
@@ -39,6 +39,12 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `implementation` | Production-ready code with tests. Zero linting violations. |
 | `testing` | Comprehensive tests: unit, integration, property-based, benchmarks. |
 | `debugging` | Systematic root cause analysis. All debug code removed before report. |
+
+### Terraphim Integration
+
+| Skill | Description |
+|-------|-------------|
+| `terraphim-hooks` | Knowledge graph-based text replacement with Claude Code and Git hooks. |
 
 ### Rust Expertise
 
@@ -305,6 +311,30 @@ Output:
 - Migration guide
 - Contributor credits
 - Breaking change documentation
+```
+
+### Terraphim Hooks Integration
+
+```
+You: "Set up Terraphim hooks to replace npm with bun"
+Claude: [terraphim-hooks skill]
+
+Output:
+- Knowledge graph markdown files in docs/src/kg/
+- PreToolUse hook configuration
+- Git prepare-commit-msg hook
+- Installation and testing commands
+```
+
+```
+You: "I want all Claude Code attributions in commits replaced with Terraphim AI"
+Claude: [terraphim-hooks skill]
+
+Output:
+- Knowledge graph file docs/src/kg/terraphim_ai.md
+- Git hook scripts/hooks/prepare-commit-msg
+- Hook installation instructions
+- Test commands to verify replacement
 ```
 
 ### Disciplined Development (Complex Features)
