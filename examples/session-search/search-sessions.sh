@@ -31,12 +31,32 @@ find_agent() {
         echo "./target/release/terraphim-agent"
     elif [ -x "$HOME/.cargo/bin/terraphim-agent" ]; then
         echo "$HOME/.cargo/bin/terraphim-agent"
+    # Check common terraphim-ai locations
+    elif [ -x "$HOME/projects/terraphim/terraphim-ai/target/release/terraphim-agent" ]; then
+        echo "$HOME/projects/terraphim/terraphim-ai/target/release/terraphim-agent"
+    elif [ -x "../../../terraphim-ai/target/release/terraphim-agent" ]; then
+        echo "../../../terraphim-ai/target/release/terraphim-agent"
     else
         echo ""
     fi
 }
 
 AGENT=$(find_agent)
+
+# Find terraphim-ai directory (needed for knowledge graph)
+find_terraphim_ai() {
+    if [ -d "./docs/src/kg" ]; then
+        echo "."
+    elif [ -d "$HOME/projects/terraphim/terraphim-ai/docs/src/kg" ]; then
+        echo "$HOME/projects/terraphim/terraphim-ai"
+    elif [ -d "../../../terraphim-ai/docs/src/kg" ]; then
+        echo "../../../terraphim-ai"
+    else
+        echo ""
+    fi
+}
+
+TERRAPHIM_AI_DIR=$(find_terraphim_ai)
 
 if [ -z "$AGENT" ]; then
     echo -e "${RED}Error: terraphim-agent not found${NC}"
@@ -46,6 +66,29 @@ if [ -z "$AGENT" ]; then
     echo "  cargo build -p terraphim_agent --features repl-full --release"
     exit 1
 fi
+
+if [ -z "$TERRAPHIM_AI_DIR" ]; then
+    echo -e "${YELLOW}Warning: terraphim-ai directory not found${NC}"
+    echo "Knowledge graph features may not work."
+    echo "Set TERRAPHIM_AI_DIR environment variable or run from terraphim-ai directory."
+    TERRAPHIM_AI_DIR="."
+fi
+
+# Helper to run agent REPL with commands
+run_repl() {
+    local commands="$1"
+    (cd "$TERRAPHIM_AI_DIR" && echo -e "$commands\n/quit" | "$AGENT" repl 2>&1 | \
+        grep -v "^\\[" | \
+        grep -v "opendal" | \
+        grep -v "^====" | \
+        grep -v "Terraphim TUI REPL" | \
+        grep -v "Type /help" | \
+        grep -v "Mode: Offline" | \
+        grep -v "Available commands:" | \
+        grep -v "^  /" | \
+        grep -v "^$" | \
+        grep -v "Goodbye")
+}
 
 show_help() {
     cat << 'EOF'
@@ -145,10 +188,7 @@ case $MODE in
         echo ""
 
         # Import first if no sessions cached
-        "$AGENT" << EOF
-/sessions import --limit 100
-/sessions search $QUERY
-EOF
+        run_repl "/sessions import --limit 100\n/sessions search $QUERY"
         ;;
 
     concepts)
@@ -159,10 +199,7 @@ EOF
         echo -e "${BLUE}Searching by concept: ${GREEN}$QUERY${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions import --limit 100
-/sessions concepts $QUERY
-EOF
+        run_repl "/sessions import --limit 100\n/sessions concepts $QUERY"
         ;;
 
     related)
@@ -173,9 +210,7 @@ EOF
         echo -e "${BLUE}Finding sessions related to: ${GREEN}$SESSION_ID${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions related $SESSION_ID
-EOF
+        run_repl "/sessions related $SESSION_ID"
         ;;
 
     export)
@@ -186,11 +221,7 @@ EOF
         fi
         echo -e "${BLUE}Exporting sessions matching '$QUERY' to: ${GREEN}$OUTPUT_FILE${NC}"
 
-        "$AGENT" << EOF
-/sessions import --limit 100
-/sessions search $QUERY
-/sessions export --format markdown --output $OUTPUT_FILE
-EOF
+        run_repl "/sessions import --limit 100\n/sessions search $QUERY\n/sessions export --format markdown --output $OUTPUT_FILE"
         echo -e "${GREEN}Exported to $OUTPUT_FILE${NC}"
         ;;
 
@@ -198,10 +229,7 @@ EOF
         echo -e "${BLUE}Session Statistics${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions import --limit 500
-/sessions stats
-EOF
+        run_repl "/sessions import --limit 500\n/sessions stats"
         ;;
 
     timeline)
@@ -213,28 +241,20 @@ EOF
         echo -e "${BLUE}Session Timeline${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions import --limit 500
-/sessions timeline --group week $LIMIT_ARG
-EOF
+        run_repl "/sessions import --limit 500\n/sessions timeline --group week $LIMIT_ARG"
         ;;
 
     sources)
         echo -e "${BLUE}Available Session Sources${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions sources
-EOF
+        run_repl "/sessions sources"
         ;;
 
     import)
         echo -e "${BLUE}Importing Sessions${NC}"
         echo ""
 
-        "$AGENT" << EOF
-/sessions import
-/sessions stats
-EOF
+        run_repl "/sessions import\n/sessions stats"
         ;;
 esac
