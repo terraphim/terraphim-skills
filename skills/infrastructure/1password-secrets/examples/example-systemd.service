@@ -1,0 +1,110 @@
+# Example systemd service file with 1Password integration
+# This demonstrates Pattern B (recommended): op run wrapper
+
+[Unit]
+Description=My Application with 1Password Secrets
+Documentation=https://github.com/myorg/myapp
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=simple
+User=myapp
+Group=myapp
+WorkingDirectory=/opt/myapp
+
+# Environment variables that are NOT secrets (safe to include)
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+Environment="LOG_LEVEL=info"
+
+# Pattern B (Recommended): Use op run wrapper
+# Secrets are injected from .env.template in WorkingDirectory
+ExecStart=/usr/bin/op run --no-masking -- /usr/bin/node /opt/myapp/server.js
+
+# Alternative: Specify env file explicitly
+# ExecStart=/usr/bin/op run --no-masking --env-file=/opt/myapp/.env.template -- /usr/bin/node /opt/myapp/server.js
+
+# Security hardening
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+ReadOnlyPaths=/
+ReadWritePaths=/opt/myapp/logs /opt/myapp/tmp
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Restart policy
+Restart=on-failure
+RestartSec=10s
+StartLimitInterval=5min
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=myapp
+
+[Install]
+WantedBy=multi-user.target
+
+
+# ==================================================================
+# ALTERNATIVE PATTERN A (Not Recommended): EnvironmentFile with injection
+# ==================================================================
+#
+# [Service]
+# Type=simple
+# User=myapp
+# Group=myapp
+# WorkingDirectory=/opt/myapp
+#
+# # Inject secrets to temp file before start
+# ExecStartPre=/bin/sh -c '/usr/bin/op inject -i /opt/myapp/.env.template -o /tmp/myapp-secrets.env'
+#
+# # Load secrets from temp file
+# EnvironmentFile=/tmp/myapp-secrets.env
+#
+# # Start the application
+# ExecStart=/usr/bin/node /opt/myapp/server.js
+#
+# # Clean up temp file after stop
+# ExecStopPost=/bin/rm -f /tmp/myapp-secrets.env
+#
+# This pattern is more complex and less secure (temp file with secrets on disk)
+
+
+# ==================================================================
+# INSTALLATION INSTRUCTIONS
+# ==================================================================
+#
+# 1. Copy this file to systemd directory:
+#    sudo cp example-systemd.service /etc/systemd/system/myapp.service
+#
+# 2. Create .env.template in application directory:
+#    cp example.env.template /opt/myapp/.env.template
+#
+# 3. Create 1Password items for all secrets (see migration-guide.md)
+#
+# 4. Set up 1Password service account for systemd:
+#    op signin --raw > /etc/1password/service-token
+#    sudo chmod 600 /etc/1password/service-token
+#
+#    Add to service file:
+#    Environment="OP_SERVICE_ACCOUNT_TOKEN=/etc/1password/service-token"
+#
+# 5. Reload systemd and start service:
+#    sudo systemctl daemon-reload
+#    sudo systemctl enable myapp
+#    sudo systemctl start myapp
+#
+# 6. Verify service is running:
+#    sudo systemctl status myapp
+#    sudo journalctl -u myapp -f
+#
+# 7. Test secret injection:
+#    sudo systemctl restart myapp
+#    sudo journalctl -u myapp -n 50

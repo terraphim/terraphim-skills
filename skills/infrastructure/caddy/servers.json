@@ -1,0 +1,100 @@
+{
+  "servers": {
+    "local": {
+      "name": "local",
+      "description": "Local development machine (macOS)",
+      "ssh": null,
+      "caddy_binary": null,
+      "search_paths": [
+        "/Users/alex/projects/zestic-ai",
+        "/Users/alex/projects/klarian",
+        "/Users/alex/rust_code"
+      ],
+      "search_command": "mdfind",
+      "systemd": false,
+      "systemd_service": null,
+      "config_path": null,
+      "log_path": null,
+      "notes": "Development environment, no active Caddy service"
+    },
+    "bigbox": {
+      "name": "bigbox",
+      "description": "Production server (Linux, currently tmux-based)",
+      "ssh": "bigbox",
+      "caddy_binary": "/home/alex/caddy_terraphim/caddy",
+      "caddy_binary_alt": "/usr/bin/caddy",
+      "caddy_version": "v2.6.4",
+      "caddy_version_alt": "v2.6.2",
+      "config_path": "/home/alex/caddy_terraphim/conf/Caddyfile_auth",
+      "env_file": "/home/alex/caddy_terraphim/caddy_complete.env",
+      "systemd_service": "caddy-terraphim",
+      "systemd_config": "/etc/systemd/system/caddy-terraphim.service",
+      "log_path": "/home/alex/caddy_terraphim/log",
+      "working_directory": "/home/alex/caddy_terraphim",
+      "search_paths": [
+        "/home/alex/caddy_terraphim",
+        "/home/alex/infrastructure/atomic-server-turso",
+        "/home/alex/infrastructure/terraphim-private-cloud",
+        "/home/alex/projects"
+      ],
+      "search_command": "find",
+      "systemd": true,
+      "migration_needed": true,
+      "migration_status": "Currently running in tmux, systemd service configured but not active",
+      "custom_build": true,
+      "build_plugins": [
+        "github.com/greenpau/caddy-security",
+        "github.com/gamalan/caddy-tlsredis",
+        "github.com/caddy-dns/cloudflare",
+        "github.com/aksdb/caddy-cgi/v2"
+      ],
+      "notes": "Requires migration from tmux to systemd. Has custom-built Caddy with security plugins. Environment file contains plaintext secrets (needs 1Password migration)."
+    },
+    "registry": {
+      "name": "registry",
+      "description": "Production server (Linux, properly managed via systemd)",
+      "ssh": "registry",
+      "caddy_binary": "/usr/bin/caddy",
+      "caddy_version": "v2.10.2",
+      "config_path": "/etc/caddy/Caddyfile",
+      "systemd_service": "caddy",
+      "systemd_config": "/lib/systemd/system/caddy.service",
+      "log_path": "/var/log/caddy",
+      "working_directory": "/etc/caddy",
+      "search_paths": [
+        "/etc/caddy",
+        "/home/alex/infrastructure",
+        "/home/alex/deploy",
+        "/home/alex/projects"
+      ],
+      "search_command": "find",
+      "systemd": true,
+      "migration_needed": false,
+      "migration_status": "Properly managed via systemd",
+      "custom_build": false,
+      "notes": "Best practice example: clean 41-line config with snippets, proper systemd management."
+    }
+  },
+  "defaults": {
+    "validation_flags": "--config",
+    "format_flags": "--overwrite",
+    "reload_timeout_seconds": 30,
+    "backup_format": ".backup.%Y%m%d_%H%M%S",
+    "exclude_patterns": [
+      "*.backup.*",
+      "*.bak",
+      "*~",
+      ".#*"
+    ],
+    "health_check_timeout": 10
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-12-29",
+    "last_updated": "2025-12-29",
+    "source": "Phase 1 research findings",
+    "related_skills": [
+      "1password-secrets"
+    ]
+  }
+}

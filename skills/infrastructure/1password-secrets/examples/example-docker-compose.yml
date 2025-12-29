@@ -1,0 +1,193 @@
+# Example docker-compose.yml with 1Password secrets integration
+
+version: '3.8'
+
+services:
+  # Web application service
+  web:
+    image: myapp:latest
+    container_name: myapp-web
+    restart: unless-stopped
+
+    # Reference the template file
+    # op run will inject secrets before starting docker-compose
+    env_file:
+      - .env.template
+
+    # Non-secret environment variables
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - LOG_LEVEL=info
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - database
+      - redis
+
+    networks:
+      - app-network
+
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL database
+  database:
+    image: postgres:15-alpine
+    container_name: myapp-db
+    restart: unless-stopped
+
+    # Database secrets from 1Password
+    environment:
+      - POSTGRES_DB=myapp_production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=op://MyApp/Database/password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - app-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: myapp-redis
+    restart: unless-stopped
+
+    # Redis password from 1Password
+    command: redis-server --requirepass op://MyApp/Redis/password
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis-data:/data
+
+    networks:
+      - app-network
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Background worker
+  worker:
+    image: myapp:latest
+    container_name: myapp-worker
+    restart: unless-stopped
+    command: npm run worker
+
+    env_file:
+      - .env.template
+
+    environment:
+      - NODE_ENV=production
+      - WORKER_CONCURRENCY=4
+
+    depends_on:
+      - database
+      - redis
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+
+
+# ==================================================================
+# USAGE INSTRUCTIONS
+# ==================================================================
+#
+# Method 1: Using op run (Recommended)
+# ======================================
+#
+# 1. Ensure .env.template exists with op:// references
+# 2. Start services with op run:
+#    op run --no-masking -- docker-compose up -d
+#
+# 3. View logs:
+#    docker-compose logs -f
+#
+# 4. Stop services:
+#    docker-compose down
+#
+#
+# Method 2: Using op inject
+# ==========================
+#
+# 1. Inject secrets to temporary file:
+#    op inject -i .env.template -o /tmp/app.env
+#
+# 2. Start services with injected file:
+#    docker-compose --env-file /tmp/app.env up -d
+#
+# 3. Clean up temporary file:
+#    rm /tmp/app.env
+#
+#
+# Method 3: Environment Variables
+# ================================
+#
+# 1. Export secrets as environment variables:
+#    eval $(op inject -i .env.template -o - | sed 's/^/export /')
+#
+# 2. Start services (they will inherit env vars):
+#    docker-compose up -d
+#
+#
+# ==================================================================
+# SECURITY NOTES
+# ==================================================================
+#
+# 1. NEVER commit .env files with secrets to version control
+# 2. Always use .env.template with op:// references
+# 3. Add .env files to .gitignore
+# 4. Use op run for production deployments
+# 5. Rotate secrets regularly through 1Password
+# 6. Use separate 1Password vaults for different environments
+#
+#
+# ==================================================================
+# TROUBLESHOOTING
+# ==================================================================
+#
+# Issue: op command not found in container
+# Solution: op run is executed on host, not in container
+#
+# Issue: Secrets not injected
+# Solution: Verify op session active with `op whoami`
+#
+# Issue: Docker can't resolve op:// references
+# Solution: Use op run on host before docker-compose
+#
+# Issue: Permission denied on volumes
+# Solution: Check volume mount permissions and user IDs
