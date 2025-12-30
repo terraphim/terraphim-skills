@@ -10,23 +10,23 @@ Best practice engineering skills for open source Rust/WebAssembly development. A
 
 ```bash
 # Add the Terraphim marketplace
-claude plugin marketplace add terraphim/terraphim-claude-skills
+claude plugin marketplace add terraphim/claude-skills
 
 # Install the engineering skills plugin
-claude plugin install terraphim-engineering-skills@terraphim-ai
+claude plugin install terraphim-engineering-skills@terraphim-claude-skills
 ```
 
 ### From Local Clone
 
 ```bash
 # Clone the repository
-git clone https://github.com/terraphim/terraphim-claude-skills.git
+git clone https://github.com/terraphim/claude-skills.git
 
 # Add as local marketplace
-claude plugin marketplace add ./terraphim-claude-skills
+claude plugin marketplace add ./claude-skills
 
 # Install the plugin
-claude plugin install terraphim-engineering-skills@terraphim-ai
+claude plugin install terraphim-engineering-skills@terraphim-claude-skills
 ```
 
 ## Skills Overview (27 Skills)
@@ -531,5 +531,5 @@ Apache-2.0 - See [LICENSE](LICENSE) for details.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/terraphim/terraphim-claude-skills/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/terraphim/terraphim-claude-skills/discussions)
+- **Issues**: [GitHub Issues](https://github.com/terraphim/claude-skills/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/terraphim/claude-skills/discussions)
