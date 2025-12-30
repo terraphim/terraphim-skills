@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-claude-skills
 claude plugin install terraphim-engineering-skills@terraphim-ai
 ```
 
-## Skills Overview (18 Skills)
+## Skills Overview (19 Skills)
 
 ### Core Development
 
@@ -76,33 +76,34 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `open-source-contribution` | Quality PRs, good issues, project conventions. |
 | `community-engagement` | Welcoming contributors, release notes, community health. |
 
-### Disciplined Development (3-Phase Workflow)
+### Disciplined Development (4-Phase Workflow)
 
 | Skill | Description |
 |-------|-------------|
 | `disciplined-research` | Phase 1: Deep problem understanding. Produces research document. |
 | `disciplined-design` | Phase 2: Implementation planning. Specifies files, APIs, tests. |
+| `disciplined-specification` | Phase 2.5: Deep interview. Refines spec with edge cases, tradeoffs. |
 | `disciplined-implementation` | Phase 3: Execute plan step by step with tests. |
 
 ## Disciplined Development Workflow
 
-For complex features, use the three-phase approach:
+For complex features, use the four-phase approach:
 
 ```
-Phase 1: Research          Phase 2: Design           Phase 3: Implementation
-┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
-│disciplined-     │  →    │disciplined-     │   →   │disciplined-     │
-│research         │       │design           │       │implementation   │
-│                 │       │                 │       │                 │
-│ • Problem scope │       │ • File changes  │       │ • Test first    │
-│ • System mapping│       │ • API signatures│       │ • Small commits │
-│ • Constraints   │       │ • Test strategy │       │ • Quality checks│
-│ • Risks/unknowns│       │ • Step sequence │       │ • PR ready      │
-└────────┬────────┘       └────────┬────────┘       └────────┬────────┘
-         │                         │                         │
-         ▼                         ▼                         ▼
-   Research Document         Implementation Plan       Working Code
-   (Human approval)          (Human approval)        (Human approval)
+Phase 1: Research      Phase 2: Design       Phase 2.5: Interview   Phase 3: Implementation
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐      ┌───────────────┐
+│disciplined-   │  →  │disciplined-   │  →  │disciplined-   │  →   │disciplined-   │
+│research       │     │design         │     │specification  │      │implementation │
+│               │     │               │     │               │      │               │
+│ • Problem     │     │ • File changes│     │ • Edge cases  │      │ • Test first  │
+│ • System map  │     │ • API sigs    │     │ • Failure mode│      │ • Small commit│
+│ • Constraints │     │ • Test plan   │     │ • Scale/perf  │      │ • Quality     │
+│ • Risks       │     │ • Steps       │     │ • Security    │      │ • PR ready    │
+└───────┬───────┘     └───────┬───────┘     └───────┬───────┘      └───────┬───────┘
+        │                     │                     │                      │
+        ▼                     ▼                     ▼                      ▼
+  Research Doc          Impl Plan            Refined Spec            Working Code
+  (approval)            (approval)           (appended)              (approval)
 ```
 
 **When to use:**
@@ -363,7 +364,7 @@ Output:
 
 ### Disciplined Development (Complex Features)
 
-For complex features, use the three-phase workflow:
+For complex features, use the four-phase workflow:
 
 **Phase 1: Research**
 ```
@@ -375,7 +376,7 @@ Output: Research Document
 - Current system analysis
 - Constraints and dependencies
 - Risks and open questions
-→ Wait for human approval
+-> Wait for human approval
 ```
 
 **Phase 2: Design**
@@ -388,7 +389,24 @@ Output: Implementation Plan
 - API signatures (types, functions)
 - Test strategy
 - Step-by-step sequence
-→ Wait for human approval
+-> Wait for human approval
+```
+
+**Phase 2.5: Specification Interview**
+```
+You: "Run the specification interview"
+Claude: [disciplined-specification skill]
+
+Process: Deep Interview
+- Asks non-obvious questions about edge cases
+- Probes failure modes and recovery
+- Explores scale, security, accessibility
+- Continues until answers converge
+
+Output: Appended to Implementation Plan
+- Decisions by dimension
+- Deferred items documented
+-> Proceed when complete
 ```
 
 **Phase 3: Implementation**

@@ -323,3 +323,12 @@ Before proceeding to Phase 3 (Implementation):
 - Tests are defined before code
 - No architectural surprises in Phase 3
 - Steps are independently reviewable
+
+## Next Steps
+
+After Phase 2 approval:
+1. Conduct specification interview (Phase 2.5) using `disciplined-specification` skill
+   - Deep dive into edge cases, failure modes, and tradeoffs
+   - Surface hidden requirements before implementation
+   - Findings are appended to this design document
+2. Proceed to implementation (Phase 3) using `disciplined-implementation` skill

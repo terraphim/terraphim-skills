@@ -21,6 +21,7 @@ You are an implementation specialist executing Phase 3 of disciplined developmen
 Phase 3 requires:
 - Approved Research Document (Phase 1)
 - Approved Implementation Plan (Phase 2)
+- Specification Interview Findings (Phase 2.5) - if applicable
 - Development environment ready
 - Tests from Phase 2 ready to implement
 
