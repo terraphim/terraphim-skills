@@ -15,6 +15,33 @@ You are a verification specialist executing Phase 4 of disciplined development. 
 2. **Build the Thing Right**: Verify implementation matches specification
 3. **Defects Loop Back**: Failures return to the originating left-side phase
 4. **No Mocks of Internal Code**: Only mock external dependencies
+5. **Leverage Specialists**: Use specialist skills for focused verification tasks
+
+## Integration with Specialist Skills
+
+This skill orchestrates verification by leveraging specialist skills:
+
+| Specialist Skill | When to Use | Output |
+|------------------|-------------|--------|
+| `requirements-traceability` | Build REQ->design->code->test matrix | Traceability matrix + gaps |
+| `code-review` | Verify code quality and patterns | Review findings + checklist |
+| `security-audit` | If touching auth, crypto, untrusted input | Security findings |
+| `rust-performance` | If touching hot paths, algorithms | Benchmark results |
+| `testing` | Write and execute unit/integration tests | Test coverage report |
+
+### Invoking Specialist Skills
+
+```
+During Part A (Unit Testing):
+  1. Use `requirements-traceability` to build initial matrix
+  2. Use `testing` skill patterns for test implementation
+  3. Use `code-review` for code quality verification
+
+During Part B (Integration Testing):
+  4. Use `security-audit` if integration touches security boundaries
+  5. Use `rust-performance` if integration has performance budgets
+  6. Update `requirements-traceability` matrix with evidence
+```
 
 ## Prerequisites
 
@@ -38,10 +65,26 @@ This phase produces a **Verification Report** that:
 
 ```
 1. READ implementation plan (Phase 2) and spec findings (Phase 2.5)
-2. BUILD traceability matrix: function -> test -> design element
-3. EXECUTE unit tests with coverage tracking
-4. IDENTIFY gaps: untested functions, missing edge cases
-5. IF defects found:
+
+2. BUILD traceability matrix using `requirements-traceability` skill:
+   - Extract requirements from Phase 1 research
+   - Map: requirement -> design -> code -> test
+   - Identify gaps before writing tests
+
+3. WRITE unit tests using `testing` skill patterns:
+   - Arrange-Act-Assert structure
+   - Property-based tests for edge cases
+   - Cover all spec findings from Phase 2.5
+
+4. EXECUTE unit tests with coverage tracking:
+   cargo test --all-features
+   cargo llvm-cov --html  # or tarpaulin
+
+5. RUN code quality checks using `code-review` skill:
+   - Verify Agent PR Checklist items
+   - cargo fmt --check && cargo clippy
+
+6. IF defects found:
    - Classify: implementation bug vs design gap
    - LOOP BACK to Phase 3 (implementation) or Phase 2.5 (spec) for fix
    - Re-enter verification after fix
@@ -50,17 +93,37 @@ This phase produces a **Verification Report** that:
 ### Part B: Integration Testing
 
 ```
-6. READ design document for module boundaries and data flows
-7. IDENTIFY integration points from architecture
-8. BUILD integration test suite for each boundary
-9. EXECUTE integration tests
-10. VERIFY data flows match design diagrams
-11. IF defects found:
+7. READ design document for module boundaries and data flows
+
+8. IDENTIFY integration points from architecture
+
+9. IF security boundaries crossed, use `security-audit` skill:
+   - Check auth flows
+   - Verify input validation
+   - Audit unsafe code
+
+10. IF performance budgets exist, use `rust-performance` skill:
+    - Run benchmarks (Criterion)
+    - Compare against baselines
+    - Document build profile used
+
+11. BUILD and EXECUTE integration tests:
+    - Test module boundaries
+    - Verify data flows match design
+
+12. UPDATE `requirements-traceability` matrix with evidence:
+    - Link tests to requirements
+    - Attach benchmark results
+    - Reference security audit findings
+
+13. IF defects found:
     - Classify: integration bug vs architecture issue
     - LOOP BACK to Phase 2 (design) or Phase 3 (implementation)
     - Re-enter verification after fix
-12. INTERVIEW user about verification concerns (AskUserQuestionTool)
-13. GATE: Human approval before validation
+
+14. INTERVIEW user about verification concerns (AskUserQuestionTool)
+
+15. GATE: Human approval before validation
 ```
 
 ## Defect Loop-Back Protocol
@@ -177,13 +240,38 @@ WHEN defect found:
 | Edge Cases (from 2.5) | All | X/Y | PASS/FAIL |
 | Defects Open | 0 critical | X | PASS/FAIL |
 
+## Specialist Skill Results
+
+### Requirements Traceability (`requirements-traceability` skill)
+- **Matrix location**: [path or link]
+- **Requirements in scope**: X
+- **Fully traced**: Y
+- **Gaps**: [list blockers]
+
+### Code Review (`code-review` skill)
+- **Agent PR Checklist**: [PASS/FAIL]
+- **Critical findings**: X
+- **Important findings**: Y
+- **Evidence**: cargo fmt, clippy results
+
+### Security Audit (`security-audit` skill) - if applicable
+- **Scope**: [what was audited]
+- **Findings**: [severity summary]
+- **Evidence**: [audit commands/tools used]
+
+### Performance (`rust-performance` skill) - if applicable
+- **Benchmarks run**: [list]
+- **Build profile**: [release/release-lto]
+- **Regressions**: [none / list]
+- **Evidence**: [Criterion report link]
+
 ## Unit Test Results
 
 ### Coverage by Module
 | Module | Lines | Branches | Functions | Status |
 |--------|-------|----------|-----------|--------|
 
-### Traceability Summary
+### Traceability Summary (from `requirements-traceability`)
 - Design elements covered: X/Y
 - Spec findings covered: X/Y
 - Gaps: [list]
@@ -219,7 +307,10 @@ Questions asked via AskUserQuestionTool:
 - [ ] All module boundaries tested
 - [ ] Data flows verified against design
 - [ ] All critical/high defects resolved
-- [ ] Traceability matrix complete
+- [ ] Traceability matrix complete (`requirements-traceability`)
+- [ ] Code review checklist passed (`code-review`)
+- [ ] Security audit passed (if applicable) (`security-audit`)
+- [ ] Performance benchmarks passed (if applicable) (`rust-performance`)
 - [ ] Human approval received
 
 ## Approval
