@@ -317,3 +317,14 @@ Before marking Phase 3 complete:
 - No deviations without approval
 - Clean commit history
 - Ready for code review
+
+## Next Steps
+
+After Phase 3 completion:
+1. Proceed to verification (Phase 4) using `disciplined-verification` skill
+   - Unit testing with traceability to design
+   - Integration testing for module boundaries
+   - Defects loop back to implementation if found
+2. After verification approval, proceed to validation (Phase 5) using `disciplined-validation` skill
+   - System testing against NFRs
+   - User acceptance testing with stakeholder interviews
