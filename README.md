@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-claude-skills
 claude plugin install terraphim-engineering-skills@terraphim-ai
 ```
 
-## Skills Overview (19 Skills)
+## Skills Overview (27 Skills)
 
 ### Core Development
 
@@ -55,6 +55,12 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `rust-development` | Idiomatic Rust: ownership, async, traits, error handling. |
 | `rust-performance` | Profiling, benchmarking, SIMD, memory optimization. |
 
+### Desktop UI
+
+| Skill | Description |
+|-------|-------------|
+| `gpui-components` | GPUI desktop UI components following Zed editor patterns. |
+
 ### Code Quality
 
 | Skill | Description |
@@ -62,11 +68,21 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `code-review` | Thorough review for bugs, security, performance. Actionable feedback. |
 | `security-audit` | Vulnerability assessment, unsafe code review, OWASP compliance. |
 
+### Verification & Validation (Right Side of V)
+
+| Skill | Description |
+|-------|-------------|
+| `quality-gate` | Orchestrates verification/validation for a PR. Produces a go/no-go report with evidence. |
+| `requirements-traceability` | Requirements → design → code → tests → evidence traceability matrix and gap analysis. |
+| `acceptance-testing` | User acceptance testing (UAT) plans and end-to-end acceptance scenarios. |
+| `visual-testing` | Visual regression testing strategy and implementation guidance for UI changes. |
+
 ### Documentation & DevOps
 
 | Skill | Description |
 |-------|-------------|
 | `documentation` | API docs, README, CONTRIBUTING. Strict quality standards. |
+| `md-book` | Build and manage md-book documentation sites. |
 | `devops` | CI/CD pipelines, Docker, Cloudflare deployment, GitHub Actions. |
 
 ### Open Source
@@ -76,7 +92,7 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `open-source-contribution` | Quality PRs, good issues, project conventions. |
 | `community-engagement` | Welcoming contributors, release notes, community health. |
 
-### Disciplined Development (4-Phase Workflow)
+### Disciplined Development (V-Model Workflow)
 
 | Skill | Description |
 |-------|-------------|
@@ -84,33 +100,58 @@ claude plugin install terraphim-engineering-skills@terraphim-ai
 | `disciplined-design` | Phase 2: Implementation planning. Specifies files, APIs, tests. |
 | `disciplined-specification` | Phase 2.5: Deep interview. Refines spec with edge cases, tradeoffs. |
 | `disciplined-implementation` | Phase 3: Execute plan step by step with tests. |
+| `disciplined-verification` | Phase 4: Unit + integration testing with traceability. Defects loop back. |
+| `disciplined-validation` | Phase 5: System test + UAT. Stakeholder interviews and sign-off. |
 
-## Disciplined Development Workflow
+## Disciplined Development Workflow (V-Model)
 
-For complex features, use the four-phase approach:
+For complex features, use the full V-model approach with defect loop-back:
 
 ```
-Phase 1: Research      Phase 2: Design       Phase 2.5: Interview   Phase 3: Implementation
-┌───────────────┐     ┌───────────────┐     ┌───────────────┐      ┌───────────────┐
-│disciplined-   │  →  │disciplined-   │  →  │disciplined-   │  →   │disciplined-   │
-│research       │     │design         │     │specification  │      │implementation │
-│               │     │               │     │               │      │               │
-│ • Problem     │     │ • File changes│     │ • Edge cases  │      │ • Test first  │
-│ • System map  │     │ • API sigs    │     │ • Failure mode│      │ • Small commit│
-│ • Constraints │     │ • Test plan   │     │ • Scale/perf  │      │ • Quality     │
-│ • Risks       │     │ • Steps       │     │ • Security    │      │ • PR ready    │
-└───────┬───────┘     └───────┬───────┘     └───────┬───────┘      └───────┬───────┘
-        │                     │                     │                      │
-        ▼                     ▼                     ▼                      ▼
-  Research Doc          Impl Plan            Refined Spec            Working Code
-  (approval)            (approval)           (appended)              (approval)
+LEFT SIDE (Development)                      RIGHT SIDE (Verification)
+-----------------------                      -------------------------
+
+Phase 1: Research         <===============>  Phase 5: Validation
+  • Problem understanding                      • System testing (NFRs)
+  • Constraints & risks                        • UAT with stakeholders
+  • Success criteria                           • Formal sign-off
+         |                                            ^
+         v                                            |
+Phase 2: Design           <===============>          |
+  • File changes                                      |
+  • API signatures                                    |
+  • Test strategy                                     |
+         |                                            |
+         v                                            |
+Phase 2.5: Specification  <===============>  Phase 4: Verification
+  • Deep interview                             • Unit testing
+  • Edge cases                                 • Integration testing
+  • Tradeoffs                                  • Traceability matrix
+         |                                            ^
+         v                                            |
+Phase 3: Implementation   ==================>        |
+  • Test first                                       |
+  • Small commits                                    |
+  • Quality checks          ----------------------->-+
+
+                    DEFECT LOOP-BACK
+              <========================
+              Defects trace back to the
+              originating left-side phase
 ```
+
+**Flow:**
+1. Development proceeds DOWN the left side (Phases 1-3)
+2. Testing proceeds UP the right side (Phases 4-5)
+3. Defects loop BACK to the originating left-side phase
+4. After fix, re-enter right side at appropriate level
 
 **When to use:**
 - Complex features touching multiple systems
 - Unclear requirements needing investigation
 - High-risk changes requiring careful planning
 - Refactoring with many dependencies
+- Features requiring formal acceptance and sign-off
 
 ## Technology Stack
 
@@ -435,6 +476,7 @@ Claude workflow:
 4. [code-review] → Self-review before PR
 5. [documentation] → Document the new endpoints
 6. [devops] → Update CI for auth tests
+7. [quality-gate] → Verify readiness (traceability, UAT/visual if needed) and produce evidence
 ```
 
 ## Best Practices
@@ -442,7 +484,7 @@ Claude workflow:
 1. **Let skills work together** - Complex tasks benefit from multiple skills
 2. **Be specific** - Clear requests get better results
 3. **Use disciplined workflow for complexity** - Research → Design → Implement
-4. **Request reviews** - Use code-review and security-audit before merging
+4. **Request reviews** - Use quality-gate, code-review and security-audit before merging
 5. **Document as you go** - Use documentation skill for public APIs
 
 ## Contributing
