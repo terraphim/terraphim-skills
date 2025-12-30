@@ -167,6 +167,68 @@ fn increment() {
 }
 ```
 
+## Agent PR Checklist
+
+Use this checklist verbatim for every PR review:
+
+```
+[ ] cargo fmt --check clean
+[ ] cargo clippy --all-targets --all-features clean
+[ ] All #[allow(...)] annotations have justification comments
+[ ] Tests added/updated; includes edge cases and regressions
+[ ] If perf-related: benchmark script + before/after results + build profile noted
+[ ] If unsafe: invariants documented + tests proving them
+[ ] Public-facing changes: docs/README/help text updated
+```
+
+### Checklist Verification Commands
+
+```bash
+# Format check
+cargo fmt --check
+
+# Clippy check (treat warnings as errors)
+RUSTFLAGS="-D warnings" cargo clippy --all-targets --all-features
+
+# Run tests
+cargo test --all-features
+
+# Run benchmarks (if perf-related)
+cargo bench
+```
+
+## CLI and UX Review (for User-Facing Tools)
+
+For CLI applications and user-facing libraries, verify:
+
+### Error Messages
+```
+[ ] Errors explain WHAT failed
+[ ] Errors explain HOW to fix it
+[ ] No cryptic error codes without explanation
+[ ] File paths included in I/O errors
+[ ] Suggestions for common mistakes
+```
+
+**Bad error**: `Error: parse failed`
+**Good error**: `Error: config parse failed at ~/.config/app.toml:15: expected string, found integer. Check the 'timeout' field format.`
+
+### Help Text and Documentation
+```
+[ ] --help is comprehensive and accurate
+[ ] Examples included for complex commands
+[ ] Man page or README updated for new features
+[ ] Breaking changes documented in CHANGELOG
+```
+
+### I/O Behavior
+```
+[ ] UTF-8 errors handled explicitly (not silently ignored)
+[ ] File not found errors are actionable
+[ ] Permission errors suggest fix (e.g., "check permissions with ls -la")
+[ ] Behavior documented for edge cases (empty files, binary input)
+```
+
 ## Review Workflow
 
 1. **Understand Context**
@@ -174,17 +236,21 @@ fn increment() {
    - Understand the problem being solved
    - Check related issues
 
-2. **High-Level Review**
+2. **Run the Checklist**
+   - Verify each item in the Agent PR Checklist
+   - Note any failures
+
+3. **High-Level Review**
    - Does the approach make sense?
    - Are there architectural concerns?
    - Is the scope appropriate?
 
-3. **Detailed Review**
+4. **Detailed Review**
    - Go through each file
    - Check for issues by priority
    - Note questions and suggestions
 
-4. **Synthesize Feedback**
+5. **Synthesize Feedback**
    - Group related comments
    - Prioritize feedback
    - Be clear about blockers vs suggestions
@@ -196,6 +262,9 @@ fn increment() {
 - Be specific about locations
 - Provide solutions, not just problems
 - Respect the author's approach when valid
+- Always run the Agent PR Checklist
+- Block on missing tests for changed code
+- Block on undocumented unsafe code
 
 ## Success Metrics
 
@@ -203,3 +272,6 @@ fn increment() {
 - Clear, actionable feedback
 - Reasonable review turnaround
 - Improved code quality over time
+- All checklist items verified before approval
+- Error messages are actionable for users
+- No silent I/O or UTF-8 failures in user-facing code
