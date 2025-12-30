@@ -16,6 +16,39 @@ You are a validation specialist executing Phase 5 of disciplined development. Yo
 2. **End-to-End Proof**: Complete user workflows work as intended
 3. **Stakeholder Sign-off**: Business owners formally approve for production
 4. **Defects Loop Back**: Failures return to research or design phase
+5. **Leverage Specialists**: Use specialist skills for focused validation tasks
+
+## Integration with Specialist Skills
+
+This skill orchestrates validation by leveraging specialist skills:
+
+| Specialist Skill | When to Use | Output |
+|------------------|-------------|--------|
+| `acceptance-testing` | Build UAT scenarios from requirements | UAT plan + scenarios + sign-off |
+| `visual-testing` | If UI changes in scope | Visual regression plan + baselines |
+| `requirements-traceability` | Trace requirements to acceptance evidence | Updated matrix with evidence |
+| `security-audit` | System-level security validation | Security findings + remediation |
+| `rust-performance` | Validate NFR performance targets | Benchmark results vs targets |
+| `quality-gate` | Final go/no-go decision | Quality Gate Report |
+
+### Invoking Specialist Skills
+
+```
+During Part A (System Testing):
+  1. Use `rust-performance` for performance NFR validation
+  2. Use `security-audit` for security NFR validation
+  3. Use `visual-testing` if UI changes are in scope
+  4. Update `requirements-traceability` matrix with NFR evidence
+
+During Part B (Acceptance Testing):
+  5. Use `acceptance-testing` to build UAT plan and scenarios
+  6. Execute scenarios per `acceptance-testing` methodology
+  7. Update `requirements-traceability` with acceptance evidence
+
+Final Gate:
+  8. Use `quality-gate` for final go/no-go report
+  9. Ensure all specialist outputs are linked in Quality Gate Report
+```
 
 ## Prerequisites
 
@@ -39,14 +72,38 @@ This phase produces a **Validation Report** that:
 
 ```
 1. READ research document for constraints and NFRs
+
 2. BUILD end-to-end test scenarios from user workflows
-3. EXECUTE system tests in production-like environment
-4. VERIFY non-functional requirements:
-   - Performance (latency, throughput, memory)
-   - Security (OWASP checks, penetration testing)
-   - Accessibility (WCAG compliance)
-   - Scalability (load testing)
-5. IF defects found:
+
+3. VERIFY performance NFRs using `rust-performance` skill:
+   - Run benchmarks against targets from research
+   - Document build profile (release-lto recommended)
+   - Compare latency, throughput, memory vs budgets
+   - Evidence: Criterion reports, hyperfine results
+
+4. VERIFY security NFRs using `security-audit` skill:
+   - OWASP checks on exposed endpoints
+   - Penetration testing on auth flows
+   - Input validation audit
+   - Evidence: Audit report, tool outputs
+
+5. IF UI changes, use `visual-testing` skill:
+   - Define visual surfaces to cover
+   - Establish baselines
+   - Run visual regression tests
+   - Evidence: Screenshot diffs, baseline updates
+
+6. VERIFY accessibility requirements:
+   - WCAG 2.1 AA compliance (axe, pa11y)
+   - Keyboard navigation
+   - Screen reader testing
+   - Evidence: Accessibility audit report
+
+7. EXECUTE end-to-end system tests in production-like environment
+
+8. UPDATE `requirements-traceability` matrix with NFR evidence
+
+9. IF defects found:
    - Classify: design flaw vs implementation issue
    - LOOP BACK to Phase 2 (design) or Phase 4 (verification)
    - Re-enter validation after fix
@@ -55,18 +112,40 @@ This phase produces a **Validation Report** that:
 ### Part B: Acceptance Testing (UAT)
 
 ```
-6. BUILD acceptance checklist from research requirements
-7. CONDUCT acceptance sessions (demo + interview)
-8. USE AskUserQuestionTool for structured interview:
-   - Problem validation questions
-   - Success criteria verification
-   - Risk assessment
-   - Sign-off conditions
-9. IF requirements not met:
-   - LOOP BACK to Phase 1 (research) if requirement was wrong
-   - LOOP BACK to Phase 2 (design) if solution doesn't fit
-10. COLLECT stakeholder sign-off
-11. PRODUCE final validation report
+10. BUILD UAT plan using `acceptance-testing` skill:
+    - Derive acceptance criteria from research requirements
+    - Write scenarios (Gherkin or checklist)
+    - Define test data and environments
+    - Create sign-off checklist
+
+11. EXECUTE acceptance scenarios:
+    - Follow `acceptance-testing` methodology
+    - Record evidence (screenshots, logs, recordings)
+    - Document any failures with bug report template
+
+12. USE AskUserQuestionTool for structured stakeholder interview:
+    - Problem validation questions
+    - Success criteria verification
+    - Risk assessment
+    - Sign-off conditions
+
+13. UPDATE `requirements-traceability` with acceptance evidence:
+    - Link each requirement to acceptance scenario
+    - Attach evidence artifacts
+    - Mark verification status
+
+14. IF requirements not met:
+    - LOOP BACK to Phase 1 (research) if requirement was wrong
+    - LOOP BACK to Phase 2 (design) if solution doesn't fit
+
+15. COLLECT stakeholder sign-off per `acceptance-testing` checklist
+
+16. RUN `quality-gate` for final go/no-go report:
+    - Consolidate all specialist skill outputs
+    - Produce Quality Gate Report
+    - Document any follow-ups or conditions
+
+17. PRODUCE final validation report with all evidence
 ```
 
 ## Defect Loop-Back Protocol
@@ -232,6 +311,41 @@ Has this been achieved?"
 
 [2-3 sentences on validation outcome]
 
+## Specialist Skill Results
+
+### Performance (`rust-performance` skill)
+- **Benchmarks run**: [list]
+- **Build profile**: release-lto
+- **Targets met**: [Y/N with details]
+- **Evidence**: [Criterion report, hyperfine results]
+
+### Security (`security-audit` skill)
+- **Scope**: [endpoints, auth flows audited]
+- **OWASP findings**: [summary]
+- **Critical issues**: [count]
+- **Evidence**: [audit report link]
+
+### Visual Regression (`visual-testing` skill) - if applicable
+- **Surfaces covered**: [pages/components]
+- **Baseline status**: [established/updated]
+- **Regressions found**: [count]
+- **Evidence**: [screenshot diffs]
+
+### Acceptance Testing (`acceptance-testing` skill)
+- **UAT Plan**: [link]
+- **Scenarios executed**: [X/Y]
+- **Pass rate**: [%]
+- **Evidence**: [test results, recordings]
+
+### Requirements Traceability (`requirements-traceability` skill)
+- **Matrix location**: [path/link]
+- **Requirements traced**: [X/Y]
+- **Gaps**: [blockers/follow-ups]
+
+### Quality Gate (`quality-gate` skill)
+- **Decision**: Pass / Pass with Follow-ups / Fail
+- **Report**: [link to Quality Gate Report]
+
 ## System Test Results
 
 ### End-to-End Scenarios
@@ -241,22 +355,23 @@ Has this been achieved?"
 | E2E-001 | User Registration | 4 steps | All passed | PASS |
 | E2E-002 | Data Export | 3 steps | All passed | PASS |
 
-### Non-Functional Requirements
+### Non-Functional Requirements (from specialist skills)
 
-| Category | Target | Actual | Status |
-|----------|--------|--------|--------|
-| Latency (p95) | < 100ms | 45ms | PASS |
-| Memory | < 512MB | 380MB | PASS |
-| Security Scan | No critical | 0 findings | PASS |
-| Accessibility | WCAG 2.1 AA | Compliant | PASS |
+| Category | Target | Actual | Skill Used | Status |
+|----------|--------|--------|------------|--------|
+| Latency (p95) | < 100ms | 45ms | `rust-performance` | PASS |
+| Memory | < 512MB | 380MB | `rust-performance` | PASS |
+| Security Scan | No critical | 0 findings | `security-audit` | PASS |
+| Accessibility | WCAG 2.1 AA | Compliant | Manual + axe | PASS |
+| Visual Regression | No unintended | 0 diffs | `visual-testing` | PASS |
 
 ### NFR Details
 
-[Detailed tables for each NFR category]
+[Detailed tables from specialist skill outputs]
 
-## Acceptance Results
+## Acceptance Results (from `acceptance-testing` skill)
 
-### Requirements Traceability
+### Requirements Traceability (from `requirements-traceability` skill)
 
 | Requirement ID | Description | Evidence | Stakeholder | Status |
 |----------------|-------------|----------|-------------|--------|
@@ -306,10 +421,17 @@ Has this been achieved?"
 
 ## Gate Checklist
 
+### Specialist Skill Outputs
+- [ ] `rust-performance`: All benchmarks pass targets from research
+- [ ] `security-audit`: No critical/high findings, or remediated
+- [ ] `visual-testing`: No unintended regressions (if UI in scope)
+- [ ] `acceptance-testing`: All UAT scenarios pass
+- [ ] `requirements-traceability`: Matrix complete, no blocker gaps
+- [ ] `quality-gate`: Final report shows Pass or Pass with Follow-ups
+
+### Validation Gates
 - [ ] All end-to-end workflows tested
-- [ ] Performance targets met (from Research)
-- [ ] Security scan passed
-- [ ] Accessibility requirements met
+- [ ] NFRs from research validated
 - [ ] All requirements traced to acceptance evidence
 - [ ] Stakeholder interviews completed
 - [ ] All critical defects resolved (looped back and re-verified)
@@ -332,10 +454,18 @@ Has this been achieved?"
 ## Gate Criteria
 
 Before production deployment:
+
+### Specialist Skill Requirements
+- [ ] `rust-performance`: Benchmarks pass all NFR targets from research
+- [ ] `security-audit`: No critical/high findings (or remediated and re-audited)
+- [ ] `visual-testing`: No unintended visual regressions (if UI in scope)
+- [ ] `acceptance-testing`: All UAT scenarios executed and passing
+- [ ] `requirements-traceability`: Complete matrix with all requirements traced
+- [ ] `quality-gate`: Final go/no-go report produced with Pass status
+
+### Core Validation Requirements
 - [ ] All user workflows tested end-to-end
 - [ ] NFRs from research validated (performance, security, accessibility)
-- [ ] Security scan passed with no critical findings
-- [ ] Accessibility requirements met (WCAG 2.1 AA or as specified)
 - [ ] All requirements traced to acceptance evidence
 - [ ] Stakeholder interviews completed using structured framework
 - [ ] All critical and high defects resolved through loop-back
