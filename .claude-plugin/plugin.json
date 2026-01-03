@@ -6,8 +6,8 @@
     "name": "Terraphim AI",
     "url": "https://github.com/terraphim"
   },
-  "homepage": "https://github.com/terraphim/claude-skills",
-  "repository": "https://github.com/terraphim/claude-skills",
+  "homepage": "https://github.com/terraphim/terraphim-skills",
+  "repository": "https://github.com/terraphim/terraphim-skills",
   "license": "Apache-2.0",
   "keywords": [
     "rust",
