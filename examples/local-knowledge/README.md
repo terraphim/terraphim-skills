@@ -39,7 +39,7 @@ This example demonstrates how to search your personal notes using Terraphim's ro
 ### Using the Search Script
 
 ```bash
-cd terraphim-claude-skills/examples/local-knowledge
+cd terraphim-skills/examples/local-knowledge
 ./search-notes.sh "rust async"
 ./search-notes.sh --role frontend-engineer "useState"
 ./search-notes.sh --stats

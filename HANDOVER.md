@@ -1,4 +1,4 @@
-# Handover Document - terraphim-claude-skills
+# Handover Document - terraphim-skills
 
 **Date:** 2025-12-30
 **Branch:** main
@@ -22,11 +22,8 @@
 - Marketplace exists and contains correct structure
 
 ### What's Blocked
-- Fresh marketplace installation via `claude plugin marketplace add terraphim/terraphim-claude-skills` fails with:
-  ```
-  Error: Marketplace file not found at ~/.claude/plugins/marketplaces/terraphim-terraphim-claude-skills/.claude-plugin/marketplace.json
-  ```
-- The error shows Claude Code derives marketplace directory name from repo path (`terraphim-terraphim-claude-skills`) but the marketplace.json `name` field is `terraphim-ai`
+- Fresh marketplace installation via `claude plugin marketplace add terraphim/terraphim-skills` - NOW WORKING
+- Directory naming resolved: `terraphim-terraphim-skills` with matching marketplace name
 
 ## Technical Context
 
@@ -50,7 +47,7 @@ Status: clean (no uncommitted changes)
 ## Next Steps
 
 ### Priority 1: Fix Marketplace Name Mismatch
-The marketplace.json `name` field is `terraphim-ai` but when installing from GitHub repo `terraphim/terraphim-claude-skills`, Claude Code creates a directory named `terraphim-terraphim-claude-skills` and looks for marketplace.json there.
+RESOLVED: Repository renamed to `terraphim-skills` with marketplace.json `name` field set to `terraphim-skills`.
 
 **Options:**
 1. Rename marketplace.json `name` to match expected directory name
@@ -60,7 +57,7 @@ The marketplace.json `name` field is `terraphim-ai` but when installing from Git
 ### Priority 2: Test Installation
 Once naming is resolved:
 ```bash
-claude plugin marketplace add terraphim/terraphim-claude-skills
+claude plugin marketplace add terraphim/terraphim-skills
 claude plugin install terraphim-engineering-skills@<marketplace-name>
 ```
 

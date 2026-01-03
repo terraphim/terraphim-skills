@@ -10,7 +10,7 @@
 ### Discovery: Marketplace Directory Naming
 When adding a marketplace via `claude plugin marketplace add owner/repo`:
 - Claude Code creates directory: `~/.claude/plugins/marketplaces/{owner}-{repo}/`
-- For `terraphim/terraphim-claude-skills` this becomes `terraphim-terraphim-claude-skills`
+- For `terraphim/terraphim-skills` this becomes `terraphim-terraphim-skills`
 - The `name` field in marketplace.json does NOT determine the directory name
 - This can cause confusion if marketplace was previously added differently
 
