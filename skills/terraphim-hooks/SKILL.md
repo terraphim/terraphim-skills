@@ -26,7 +26,7 @@ Terraphim hooks intercept text at key points (CLI commands, commit messages) and
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Knowledge Graph (docs/src/kg/)              │
 │  ┌──────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
-│  │ bun.md       │  │ bun_install.md   │  │ terraphim_ai.md  │  │
+│  │ bun.md       │  │ bun install.md   │  │ terraphim ai.md  │  │
 │  │ synonyms::   │  │ synonyms::       │  │ synonyms::       │  │
 │  │ npm, yarn,   │  │ npm install,     │  │ Claude Code,     │  │
 │  │ pnpm, npx    │  │ yarn install...  │  │ Claude Opus...   │  │
@@ -53,7 +53,60 @@ Terraphim hooks intercept text at key points (CLI commands, commit messages) and
 
 ## For Humans
 
-### Quick Start
+### Quick Start (Using Released Binary)
+
+```bash
+# Download and install terraphim-agent from GitHub releases
+gh release download v1.3.0 --repo terraphim/terraphim-ai \
+  --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
+chmod +x /tmp/terraphim-agent-aarch64-apple-darwin
+mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+
+# Create knowledge graph directory
+mkdir -p ~/.config/terraphim/docs/src/kg
+
+# Create replacement rules (example: npm -> bun)
+cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+# bun install
+
+Install dependencies using Bun package manager.
+
+synonyms:: npm install, yarn install, pnpm install, npm i
+EOF
+
+# Create hooks directory and script
+mkdir -p ~/.claude/hooks
+cat > ~/.claude/hooks/pre_tool_use.sh << 'EOF'
+#!/bin/bash
+INPUT=$(cat)
+cd ~/.config/terraphim 2>/dev/null || exit 0
+terraphim-agent hook --hook-type pre-tool-use --json <<< "$INPUT" 2>/dev/null
+EOF
+chmod +x ~/.claude/hooks/pre_tool_use.sh
+
+# Test replacement
+echo "npm install react" | ~/.claude/hooks/pre_tool_use.sh
+# Output: {"tool_input":{"command":"bun install react"},"tool_name":"Bash"}
+```
+
+### Configure Claude Code Hook
+
+Add to `~/.claude/settings.local.json`:
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/hooks/pre_tool_use.sh"
+      }]
+    }]
+  }
+}
+```
+
+### Alternative: Build from Source
 
 ```bash
 # Clone terraphim-ai repository
@@ -63,37 +116,8 @@ cd terraphim-ai
 # Build the agent
 cargo build -p terraphim_agent --release
 
-# Install all hooks (recommended)
-./scripts/install-terraphim-hooks.sh --easy-mode
-
-# Test replacement
-echo "npm install react" | ./target/release/terraphim-agent replace
-# Output: bun install react
-```
-
-### Manual Installation
-
-**Git Hook (prepare-commit-msg):**
-```bash
-cp scripts/hooks/prepare-commit-msg .git/hooks/
-chmod +x .git/hooks/prepare-commit-msg
-```
-
-**Claude Code Hook (PreToolUse):**
-
-Add to `.claude/settings.local.json`:
-```json
-{
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "Bash",
-      "hooks": [{
-        "type": "command",
-        "command": ".claude/hooks/npm_to_bun_guard.sh"
-      }]
-    }]
-  }
-}
+# Install to cargo bin
+cp target/release/terraphim-agent ~/.cargo/bin/
 ```
 
 ### CLI Usage
@@ -113,19 +137,21 @@ echo "npm install" | terraphim-agent replace --fail-open
 
 ### Adding Custom Replacements
 
-Create markdown files in `docs/src/kg/`:
+Create markdown files in `~/.config/terraphim/docs/src/kg/`:
 
 ```markdown
-# my_term
+# replacement term
 
 Description of the replacement term.
 
 synonyms:: term_to_replace, another_term, third_term
 ```
 
+**Important:** The heading (after `#`) becomes the replacement text. Use spaces, not underscores.
+
 **Example - Replace pytest with cargo test:**
 
-Create `docs/src/kg/cargo_test.md`:
+Create `~/.config/terraphim/docs/src/kg/cargo test.md`:
 ```markdown
 # cargo test
 
