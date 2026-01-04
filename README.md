@@ -29,7 +29,7 @@ claude plugin marketplace add ./terraphim-skills
 claude plugin install terraphim-engineering-skills@terraphim-skills
 ```
 
-## Skills Overview (27 Skills)
+## Skills Overview (28 Skills)
 
 ### Core Development
 
@@ -60,6 +60,12 @@ claude plugin install terraphim-engineering-skills@terraphim-skills
 | Skill | Description |
 |-------|-------------|
 | `gpui-components` | GPUI desktop UI components following Zed editor patterns. |
+
+### AI & Creative Tools
+
+| Skill | Description |
+|-------|-------------|
+| `image-generation` | Generate images using Nano Banana Pro (Gemini 3 Pro Image) API. Text-to-image, editing, 4K support. |
 
 ### Code Quality
 
