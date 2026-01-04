@@ -526,6 +526,13 @@ Apache-2.0 - See [LICENSE](LICENSE) for details.
 
 ## Related Projects
 
+| Repository | Platform | Installation |
+|------------|----------|--------------|
+| [terraphim/codex-skills](https://github.com/terraphim/codex-skills) | OpenAI Codex CLI | `~/.codex/skills/` |
+| [terraphim/opencode-skills](https://github.com/terraphim/opencode-skills) | OpenCode | `~/.config/opencode/skill/` |
+| [terraphim/terraphim-skills](https://github.com/terraphim/terraphim-skills) | Claude Code | Plugin marketplace |
+
+See also:
 - [Terraphim AI](https://github.com/terraphim/terraphim-ai) - Knowledge graph system
 - [Claude Code](https://claude.ai/code) - AI-powered development
 
