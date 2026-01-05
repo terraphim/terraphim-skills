@@ -66,7 +66,7 @@ mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
 mkdir -p ~/.config/terraphim/docs/src/kg
 
 # Create replacement rules (example: npm -> bun)
-cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+cat > ~/.config/terraphim/docs/src/kg/"bun install.md" << 'EOF'
 # bun install
 
 Install dependencies using Bun package manager.

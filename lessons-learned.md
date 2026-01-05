@@ -3,9 +3,9 @@
 ## 2026-01-03: Terraphim Hooks Setup
 
 ### Discovery: Knowledge Graph Term Format
-- **Issue:** Using underscores in markdown headings (e.g., `# bun_install`) produces underscored output
-- **Solution:** Use spaces in headings (e.g., `# bun install`) for proper output
-- **File naming:** Can use underscores in filenames, but heading determines replacement text
+- **Issue:** Using underscores in filenames (e.g., `bun_install.md`) produces underscored output
+- **Solution:** Use spaces in filenames (e.g., `"bun install.md"`) for proper output
+- **File naming:** The filename (without .md extension) becomes the replacement text, NOT the heading
 
 ### Discovery: terraphim-agent Requires Working Directory
 - **Issue:** `terraphim-agent` looks for `docs/src/kg/` relative to current working directory
