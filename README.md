@@ -57,6 +57,179 @@ mv /tmp/terraphim-agent-x86_64-unknown-linux-gnu ~/.cargo/bin/terraphim-agent
 
 **Note:** The crates.io version (`cargo install terraphim_agent`) is outdated (v1.0.0) and missing `hook` and `guard` commands. Use GitHub releases for the latest features.
 
+## User-Level Activation (Complete Setup)
+
+Follow these steps to activate all terraphim skills and hooks at the user level (applies to all projects):
+
+### Step 1: Install the Plugin
+
+```bash
+# Add the Terraphim marketplace
+claude plugin marketplace add terraphim/terraphim-skills
+
+# Install the engineering skills plugin
+claude plugin install terraphim-engineering-skills@terraphim-skills
+```
+
+### Step 2: Install terraphim-agent
+
+```bash
+# macOS ARM64 (Apple Silicon)
+gh release download --repo terraphim/terraphim-ai \
+  --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
+chmod +x /tmp/terraphim-agent-aarch64-apple-darwin
+mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+```
+
+### Step 3: Configure User-Level Hooks
+
+Create/update `~/.claude/settings.local.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Skill(terraphim-engineering-skills:disciplined-research)",
+      "Skill(terraphim-engineering-skills:disciplined-design)",
+      "Skill(terraphim-engineering-skills:disciplined-implementation)",
+      "Skill(terraphim-engineering-skills:disciplined-specification)",
+      "Skill(terraphim-engineering-skills:disciplined-verification)",
+      "Skill(terraphim-engineering-skills:disciplined-validation)",
+      "Skill(terraphim-engineering-skills:architecture)",
+      "Skill(terraphim-engineering-skills:implementation)",
+      "Skill(terraphim-engineering-skills:testing)",
+      "Skill(terraphim-engineering-skills:debugging)",
+      "Skill(terraphim-engineering-skills:code-review)",
+      "Skill(terraphim-engineering-skills:security-audit)",
+      "Skill(terraphim-engineering-skills:documentation)",
+      "Skill(terraphim-engineering-skills:devops)",
+      "Skill(terraphim-engineering-skills:terraphim-hooks)",
+      "Skill(terraphim-engineering-skills:git-safety-guard)",
+      "Skill(terraphim-engineering-skills:session-search)",
+      "Skill(terraphim-engineering-skills:local-knowledge)",
+      "Skill(terraphim-engineering-skills:quality-gate)",
+      "Skill(terraphim-engineering-skills:rust-development)",
+      "Skill(terraphim-engineering-skills:rust-performance)",
+      "Bash(terraphim-agent:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/hooks/pre_tool_use.sh"
+      }]
+    }],
+    "PostToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/hooks/post_tool_use.sh"
+      }]
+    }]
+  }
+}
+```
+
+### Step 4: Create Hook Scripts
+
+Create `~/.claude/hooks/pre_tool_use.sh`:
+
+```bash
+#!/bin/bash
+# Terraphim PreToolUse hook - git-safety-guard + knowledge graph replacement
+set -euo pipefail
+
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+[ "$TOOL_NAME" != "Bash" ] && exit 0
+[ -z "$COMMAND" ] && exit 0
+
+AGENT=""
+command -v terraphim-agent >/dev/null 2>&1 && AGENT="terraphim-agent"
+[ -z "$AGENT" ] && [ -x "$HOME/.cargo/bin/terraphim-agent" ] && AGENT="$HOME/.cargo/bin/terraphim-agent"
+[ -z "$AGENT" ] && exit 0
+
+# Step 1: Block destructive commands (git reset --hard, rm -rf, etc.)
+GUARD_RESULT=$($AGENT guard --json <<< "$COMMAND" 2>/dev/null || echo '{"decision":"allow"}')
+if echo "$GUARD_RESULT" | jq -e '.decision == "block"' >/dev/null 2>&1; then
+    REASON=$(echo "$GUARD_RESULT" | jq -r '.reason // "Blocked by git-safety-guard"')
+    cat <<EOF
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: $REASON"}}
+EOF
+    exit 0
+fi
+
+# Step 2: Knowledge graph replacement (npm -> bun, etc.)
+cd ~/.config/terraphim 2>/dev/null || exit 0
+$AGENT hook --hook-type pre-tool-use --json <<< "$INPUT" 2>/dev/null
+```
+
+Make it executable:
+```bash
+mkdir -p ~/.claude/hooks
+chmod +x ~/.claude/hooks/pre_tool_use.sh
+```
+
+Create `~/.claude/hooks/post_tool_use.sh`:
+
+```bash
+#!/bin/bash
+# Terraphim PostToolUse hook - processes tool results
+INPUT=$(cat)
+terraphim-agent hook --hook-type post-tool-use --json <<< "$INPUT" 2>/dev/null || exit 0
+```
+
+Make it executable:
+```bash
+chmod +x ~/.claude/hooks/post_tool_use.sh
+```
+
+### Step 5: Set Up Knowledge Graph
+
+Create replacement rules:
+
+```bash
+mkdir -p ~/.config/terraphim/docs/src/kg
+
+# npm -> bun replacement
+cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+# bun install
+
+Install dependencies using Bun package manager.
+
+synonyms:: npm install, yarn install, pnpm install, npm i
+EOF
+
+# npx -> bunx replacement
+cat > ~/.config/terraphim/docs/src/kg/bunx.md << 'EOF'
+# bunx
+
+Execute packages using Bun.
+
+synonyms:: npx, pnpx, yarn dlx
+EOF
+```
+
+### Step 6: Verify Installation
+
+```bash
+# Test guard command
+echo "git reset --hard" | terraphim-agent guard --json
+# Expected: {"decision":"block","reason":"git reset --hard destroys uncommitted changes..."}
+
+# Test replacement (from config directory)
+cd ~/.config/terraphim && echo "npm install react" | terraphim-agent replace
+# Expected: bun install react
+
+# Test hook script
+echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' | ~/.claude/hooks/pre_tool_use.sh
+# Expected: BLOCKED message
+```
+
 ## Skills Overview (27 Skills)
 
 ### Core Development
