@@ -29,6 +29,34 @@ claude plugin marketplace add ./terraphim-skills
 claude plugin install terraphim-engineering-skills@terraphim-skills
 ```
 
+### Terraphim Agent (for Hooks)
+
+The `terraphim-agent` binary enables Claude Code hooks for command replacement and git safety guards.
+
+**Install from GitHub Releases (Recommended):**
+
+```bash
+# macOS ARM64 (Apple Silicon)
+gh release download --repo terraphim/terraphim-ai \
+  --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
+chmod +x /tmp/terraphim-agent-aarch64-apple-darwin
+mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+
+# macOS x86_64 (Intel)
+gh release download --repo terraphim/terraphim-ai \
+  --pattern "terraphim-agent-x86_64-apple-darwin" --dir /tmp
+chmod +x /tmp/terraphim-agent-x86_64-apple-darwin
+mv /tmp/terraphim-agent-x86_64-apple-darwin ~/.cargo/bin/terraphim-agent
+
+# Linux x86_64
+gh release download --repo terraphim/terraphim-ai \
+  --pattern "terraphim-agent-x86_64-unknown-linux-gnu" --dir /tmp
+chmod +x /tmp/terraphim-agent-x86_64-unknown-linux-gnu
+mv /tmp/terraphim-agent-x86_64-unknown-linux-gnu ~/.cargo/bin/terraphim-agent
+```
+
+**Note:** The crates.io version (`cargo install terraphim_agent`) is outdated (v1.0.0) and missing `hook` and `guard` commands. Use GitHub releases for the latest features.
+
 ## Skills Overview (27 Skills)
 
 ### Core Development
@@ -358,6 +386,84 @@ Output:
 ```
 
 ### Terraphim Hooks Integration
+
+**User-Level Hooks Configuration:**
+
+Add to `~/.claude/settings.local.json` for global hooks across all projects:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/hooks/pre_tool_use.sh"
+      }]
+    }],
+    "PostToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/hooks/post_tool_use.sh"
+      }]
+    }]
+  }
+}
+```
+
+Create `~/.claude/hooks/pre_tool_use.sh`:
+
+```bash
+#!/bin/bash
+# Terraphim PreToolUse hook - git-safety-guard + knowledge graph replacement
+set -euo pipefail
+
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+[ "$TOOL_NAME" != "Bash" ] && exit 0
+[ -z "$COMMAND" ] && exit 0
+
+AGENT=""
+command -v terraphim-agent >/dev/null 2>&1 && AGENT="terraphim-agent"
+[ -z "$AGENT" ] && [ -x "$HOME/.cargo/bin/terraphim-agent" ] && AGENT="$HOME/.cargo/bin/terraphim-agent"
+[ -z "$AGENT" ] && exit 0
+
+# Step 1: Block destructive commands
+GUARD_RESULT=$($AGENT guard --json <<< "$COMMAND" 2>/dev/null || echo '{"decision":"allow"}')
+if echo "$GUARD_RESULT" | jq -e '.decision == "block"' >/dev/null 2>&1; then
+    REASON=$(echo "$GUARD_RESULT" | jq -r '.reason // "Blocked by git-safety-guard"')
+    cat <<EOF
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: $REASON"}}
+EOF
+    exit 0
+fi
+
+# Step 2: Knowledge graph replacement (npm -> bun, etc.)
+cd ~/.config/terraphim 2>/dev/null || exit 0
+$AGENT hook --hook-type pre-tool-use --json <<< "$INPUT" 2>/dev/null
+```
+
+**Knowledge Graph Setup:**
+
+Create replacement rules in `~/.config/terraphim/docs/src/kg/`:
+
+```bash
+mkdir -p ~/.config/terraphim/docs/src/kg
+
+# Example: npm -> bun
+cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+# bun install
+
+Install dependencies using Bun package manager.
+
+synonyms:: npm install, yarn install, pnpm install, npm i
+EOF
+```
+
+**Usage Examples:**
 
 ```
 You: "Set up Terraphim hooks to replace npm with bun"

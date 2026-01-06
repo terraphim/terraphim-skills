@@ -56,11 +56,23 @@ Terraphim hooks intercept text at key points (CLI commands, commit messages) and
 ### Quick Start (Using Released Binary)
 
 ```bash
-# Download and install terraphim-agent from GitHub releases
-gh release download v1.3.0 --repo terraphim/terraphim-ai \
+# Download and install terraphim-agent from GitHub releases (latest version)
+# macOS ARM64 (Apple Silicon)
+gh release download --repo terraphim/terraphim-ai \
   --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
 chmod +x /tmp/terraphim-agent-aarch64-apple-darwin
 mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+
+# macOS x86_64 (Intel)
+# gh release download --repo terraphim/terraphim-ai \
+#   --pattern "terraphim-agent-x86_64-apple-darwin" --dir /tmp
+
+# Linux x86_64
+# gh release download --repo terraphim/terraphim-ai \
+#   --pattern "terraphim-agent-x86_64-unknown-linux-gnu" --dir /tmp
+
+# Note: crates.io version (cargo install terraphim_agent) is outdated (v1.0.0)
+# and missing hook/guard commands. Use GitHub releases for latest features.
 
 # Create knowledge graph directory
 mkdir -p ~/.config/terraphim/docs/src/kg
