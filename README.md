@@ -132,13 +132,29 @@ Create/update `~/.claude/settings.local.json`:
 }
 ```
 
-### Step 4: Create Hook Scripts
+### Step 4: Install Hook Scripts
+
+**Option A: Use the install script (Recommended)**
+
+```bash
+# From the terraphim-claude-skills repository
+cd examples/hooks
+./install.sh
+```
+
+This automatically:
+- Copies hook scripts to `~/.claude/hooks/`
+- Creates knowledge graph directory
+- Adds sample replacement rules (npm->bun, Claude Code->Terraphim AI)
+
+**Option B: Manual installation**
 
 Create `~/.claude/hooks/pre_tool_use.sh`:
 
 ```bash
 #!/bin/bash
 # Terraphim PreToolUse hook - git-safety-guard + knowledge graph replacement
+# Replaces text in ALL bash commands: git commit, gh pr create, etc.
 set -euo pipefail
 
 INPUT=$(cat)
@@ -163,8 +179,19 @@ EOF
     exit 0
 fi
 
-# Step 2: Knowledge graph replacement (npm -> bun, etc.)
+# Step 2: Knowledge graph replacement for ALL commands
 cd ~/.config/terraphim 2>/dev/null || exit 0
+$AGENT graph --role "Terraphim Engineer" >/dev/null 2>&1 || true
+NEW_COMMAND=$(echo "$COMMAND" | $AGENT replace --role "Terraphim Engineer" 2>/dev/null || echo "$COMMAND")
+
+if [ "$NEW_COMMAND" != "$COMMAND" ] && [ -n "$NEW_COMMAND" ]; then
+    cat <<EOF
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","updatedInput":{"command":$(echo "$NEW_COMMAND" | jq -Rs .)}}}
+EOF
+    exit 0
+fi
+
+# Step 3: Fallback handler
 $AGENT hook --hook-type pre-tool-use --json <<< "$INPUT" 2>/dev/null
 ```
 
@@ -180,7 +207,11 @@ Create `~/.claude/hooks/post_tool_use.sh`:
 #!/bin/bash
 # Terraphim PostToolUse hook - processes tool results
 INPUT=$(cat)
-terraphim-agent hook --hook-type post-tool-use --json <<< "$INPUT" 2>/dev/null || exit 0
+AGENT=""
+command -v terraphim-agent >/dev/null 2>&1 && AGENT="terraphim-agent"
+[ -z "$AGENT" ] && [ -x "$HOME/.cargo/bin/terraphim-agent" ] && AGENT="$HOME/.cargo/bin/terraphim-agent"
+[ -z "$AGENT" ] && exit 0
+$AGENT hook --hook-type post-tool-use --json <<< "$INPUT" 2>/dev/null || exit 0
 ```
 
 Make it executable:
@@ -212,7 +243,22 @@ Execute packages using Bun.
 
 synonyms:: npx, pnpx, yarn dlx
 EOF
+
+# Claude Code -> Terraphim AI replacement (for git commits, PRs, etc.)
+cat > ~/.config/terraphim/docs/src/kg/terraphim_ai.md << 'EOF'
+# Terraphim AI
+
+Terraphim AI - Knowledge graph powered development.
+
+synonyms:: Claude Code, Claude Opus 4.5
+EOF
 ```
+
+**Note:** Replacements work on ALL bash commands including:
+- `git commit -m "..."` - commit messages
+- `gh pr create --body "..."` - PR descriptions
+- `gh issue create --body "..."` - issue descriptions
+- Any command containing the synonym text
 
 ### Step 6: Verify Installation
 
@@ -560,6 +606,13 @@ Output:
 
 ### Terraphim Hooks Integration
 
+**Quick Install:**
+
+```bash
+# From the terraphim-claude-skills repository
+cd examples/hooks && ./install.sh
+```
+
 **User-Level Hooks Configuration:**
 
 Add to `~/.claude/settings.local.json` for global hooks across all projects:
@@ -585,39 +638,13 @@ Add to `~/.claude/settings.local.json` for global hooks across all projects:
 }
 ```
 
-Create `~/.claude/hooks/pre_tool_use.sh`:
+**What the hooks do:**
 
-```bash
-#!/bin/bash
-# Terraphim PreToolUse hook - git-safety-guard + knowledge graph replacement
-set -euo pipefail
-
-INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-
-[ "$TOOL_NAME" != "Bash" ] && exit 0
-[ -z "$COMMAND" ] && exit 0
-
-AGENT=""
-command -v terraphim-agent >/dev/null 2>&1 && AGENT="terraphim-agent"
-[ -z "$AGENT" ] && [ -x "$HOME/.cargo/bin/terraphim-agent" ] && AGENT="$HOME/.cargo/bin/terraphim-agent"
-[ -z "$AGENT" ] && exit 0
-
-# Step 1: Block destructive commands
-GUARD_RESULT=$($AGENT guard --json <<< "$COMMAND" 2>/dev/null || echo '{"decision":"allow"}')
-if echo "$GUARD_RESULT" | jq -e '.decision == "block"' >/dev/null 2>&1; then
-    REASON=$(echo "$GUARD_RESULT" | jq -r '.reason // "Blocked by git-safety-guard"')
-    cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: $REASON"}}
-EOF
-    exit 0
-fi
-
-# Step 2: Knowledge graph replacement (npm -> bun, etc.)
-cd ~/.config/terraphim 2>/dev/null || exit 0
-$AGENT hook --hook-type pre-tool-use --json <<< "$INPUT" 2>/dev/null
-```
+1. **Git Safety Guard** - Blocks destructive commands like `git reset --hard`, `rm -rf /`, `git push --force`
+2. **Knowledge Graph Replacement** - Replaces text in ALL bash commands:
+   - `git commit -m "Generated with [Claude Code]"` -> `"Generated with [Terraphim AI]"`
+   - `gh pr create --body "Claude Code"` -> `--body "Terraphim AI"`
+   - `npm install` -> `bun install`
 
 **Knowledge Graph Setup:**
 
@@ -633,6 +660,15 @@ cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
 Install dependencies using Bun package manager.
 
 synonyms:: npm install, yarn install, pnpm install, npm i
+EOF
+
+# Example: Claude Code -> Terraphim AI
+cat > ~/.config/terraphim/docs/src/kg/terraphim_ai.md << 'EOF'
+# Terraphim AI
+
+Terraphim AI - Knowledge graph powered development.
+
+synonyms:: Claude Code, Claude Opus 4.5
 EOF
 ```
 
