@@ -227,7 +227,7 @@ Create replacement rules:
 mkdir -p ~/.config/terraphim/docs/src/kg
 
 # npm -> bun replacement
-cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+cat > ~/.config/terraphim/docs/src/kg/"bun install.md" << 'EOF'
 # bun install
 
 Install dependencies using Bun package manager.
@@ -654,7 +654,7 @@ Create replacement rules in `~/.config/terraphim/docs/src/kg/`:
 mkdir -p ~/.config/terraphim/docs/src/kg
 
 # Example: npm -> bun
-cat > ~/.config/terraphim/docs/src/kg/bun_install.md << 'EOF'
+cat > ~/.config/terraphim/docs/src/kg/"bun install.md" << 'EOF'
 # bun install
 
 Install dependencies using Bun package manager.
