@@ -63,23 +63,28 @@ cd ~/.config/terraphim 2>/dev/null || exit 0
 # Build knowledge graph (needed for replacement)
 $AGENT graph --role "Terraphim Engineer" >/dev/null 2>&1 || true
 
-# Replace text in the command using terraphim
-NEW_COMMAND=$(echo "$COMMAND" | $AGENT replace --role "Terraphim Engineer" 2>/dev/null || echo "$COMMAND")
+# Replace text in the command using terraphim with JSON output
+# Use printf to avoid adding trailing newlines
+REPLACE_RESULT=$(printf '%s' "$COMMAND" | $AGENT replace --role "Terraphim Engineer" --json 2>/dev/null)
 
-# If replacement changed the command, output modified version
-if [ "$NEW_COMMAND" != "$COMMAND" ] && [ -n "$NEW_COMMAND" ]; then
-    cat <<EOF
+# Check if replacement happened
+if [ -n "$REPLACE_RESULT" ]; then
+    CHANGED=$(echo "$REPLACE_RESULT" | jq -r '.changed // false')
+    if [ "$CHANGED" = "true" ]; then
+        NEW_COMMAND=$(echo "$REPLACE_RESULT" | jq -r '.result')
+        cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
     "permissionDecision": "allow",
     "updatedInput": {
-      "command": $(echo "$NEW_COMMAND" | jq -Rs .)
+      "command": $(echo "$REPLACE_RESULT" | jq '.result')
     }
   }
 }
 EOF
-    exit 0
+        exit 0
+    fi
 fi
 
 # Step 3: Fallback to terraphim-agent hook handler
