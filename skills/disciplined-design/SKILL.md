@@ -15,6 +15,28 @@ You are a design specialist executing Phase 2 of disciplined development. Your r
 2. **Explicit Steps**: Break work into reviewable chunks
 3. **Test Strategy First**: Define how to verify before implementing
 4. **Human Approval**: No implementation without sign-off
+5. **Eliminate Before Adding**: Design is primarily about removal
+
+## Essentialism: ELIMINATE Phase
+
+This phase embodies McKeown's ELIMINATE principle. Design is about choosing what NOT to do.
+
+### The Elimination Mandate
+
+Before adding anything, ask:
+- What can we remove?
+- What's the simplest architecture that could work?
+- What if this could be easy?
+
+### 5/25 Rule for Features
+
+Apply Warren Buffett's rule to scope:
+
+1. List all features/capabilities considered (up to 25)
+2. Circle the top 5 (these are IN scope)
+3. The remaining 20 become your **AVOID AT ALL COST** list
+
+These are not "nice to haves" or "future work" -- they are dangerous distractions that threaten the essential.
 
 ## Prerequisites
 
@@ -59,6 +81,10 @@ This phase produces an **Implementation Plan** that:
 - [Item 1]
 - [Item 2]
 
+**Avoid At All Cost** (from 5/25 analysis):
+- [Feature/approach explicitly rejected as dangerous distraction]
+- [Feature/approach explicitly rejected as dangerous distraction]
+
 ## Architecture
 
 ### Component Diagram
@@ -75,6 +101,19 @@ This phase produces an **Implementation Plan** that:
 | Decision | Rationale | Alternatives Rejected |
 |----------|-----------|----------------------|
 | [Decision 1] | [Why] | [What else considered] |
+
+### Eliminated Options (Essentialism)
+Document what you explicitly chose NOT to do and why:
+
+| Option Rejected | Why Rejected | Risk of Including |
+|-----------------|--------------|-------------------|
+| [Feature/Approach] | [Not in vital few] | [Complexity/distraction cost] |
+| [Feature/Approach] | [Over-engineering] | [Maintenance burden] |
+
+### Simplicity Check
+Answer: **What if this could be easy?**
+
+[Describe the simplest possible design that achieves the goal. If current design is more complex, justify why.]
 
 ## File Changes
 
@@ -303,12 +342,24 @@ fn should_timeout_on_slow_operation() { todo!() }
 ## Gate Criteria
 
 Before proceeding to Phase 3 (Implementation):
+
+### Standard Gates
 - [ ] All file changes listed
 - [ ] All public APIs defined
 - [ ] Test strategy complete
 - [ ] Steps sequenced with dependencies
 - [ ] Performance targets set
 - [ ] Human approval received
+
+### Essentialism Gates
+- [ ] 5 or fewer major components/features in scope
+- [ ] "Eliminated Options" section populated
+- [ ] "Avoid At All Cost" list documented
+- [ ] Simplicity Check answered (design feels effortless, not heroic)
+- [ ] 5/25 Rule applied to features
+
+### Quality Evaluation
+After completing design, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 3.
 
 ## Constraints
 
