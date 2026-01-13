@@ -15,6 +15,23 @@ You are a research specialist executing Phase 1 of disciplined development. Your
 2. **Surface Unknowns**: Find what you don't know
 3. **Map Dependencies**: Understand what exists
 4. **Document Everything**: Enable informed decisions
+5. **Focus on Vital Few**: Identify what's essential, eliminate the rest
+
+## Essentialism: EXPLORE Phase
+
+This phase embodies McKeown's EXPLORE principle. Before diving into research, validate that this work is essential.
+
+### Essential Questions Check
+
+Before proceeding with research, answer honestly:
+
+| Question | Answer | If NO |
+|----------|--------|-------|
+| Does this problem energize us to solve it? | Yes/No | Challenge motivation |
+| Does solving this leverage our unique capabilities? | Yes/No | Challenge fit |
+| Does this meet a significant, validated need? | Yes/No | Challenge value |
+
+**Rule**: If < 2 questions answered YES, STOP. Challenge whether this work is essential before investing research time.
 
 ## Phase 1 Objectives
 
@@ -60,6 +77,16 @@ This phase produces a **Research Document** that enables informed decision-makin
 
 [2-3 sentence summary of the problem and key findings]
 
+## Essential Questions Check
+
+| Question | Answer | Evidence |
+|----------|--------|----------|
+| Energizing? | Yes/No | [Why this matters to us] |
+| Leverages strengths? | Yes/No | [Our unique capability] |
+| Meets real need? | Yes/No | [Validated need source] |
+
+**Proceed**: [Yes - at least 2/3 YES / No - challenge essentiality]
+
 ## Problem Statement
 
 ### Description
@@ -101,6 +128,22 @@ This phase produces a **Research Document** that enables informed decision-makin
 |-------------|--------|---------|
 | Latency | < X ms | Y ms |
 | Throughput | X req/s | Y req/s |
+
+## Vital Few (Essentialism)
+
+### Essential Constraints (Max 3)
+List only the constraints that actually matter (not everything that could matter):
+
+| Constraint | Why It's Vital | Evidence |
+|------------|----------------|----------|
+| [Must have X] | [Impact if missing] | [Source] |
+
+### Eliminated from Scope
+Apply the 5/25 Rule. List what you explicitly chose NOT to investigate:
+
+| Eliminated Item | Why Eliminated |
+|-----------------|----------------|
+| [Topic/Feature] | [Not in top 5 priorities] |
 
 ## Dependencies
 
@@ -222,11 +265,22 @@ Phase 1 produces:
 ## Gate Criteria
 
 Before proceeding to Phase 2 (Design):
+
+### Standard Gates
 - [ ] Research document completed
 - [ ] All sections filled in (or explicitly marked N/A)
 - [ ] Risks identified and categorized
 - [ ] Human approval received
 - [ ] Open questions resolved or explicitly deferred
+
+### Essentialism Gates
+- [ ] Essential Questions Check completed (2/3 YES minimum)
+- [ ] Vital Few section completed (max 3 essential constraints)
+- [ ] Eliminated Items documented (what we chose NOT to do)
+- [ ] Passes 90% rule: Is this work a HELL YES?
+
+### Quality Evaluation
+After completing research, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 2.
 
 ## Constraints
 
