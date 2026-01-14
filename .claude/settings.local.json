@@ -5,7 +5,8 @@
       "WebFetch(domain:opencode.ai)",
       "Bash(terraphim-agent:*)",
       "Bash(gh release:*)",
-      "Bash(~/.cargo/bin/terraphim-agent hook:*)"
+      "Bash(~/.cargo/bin/terraphim-agent hook:*)",
+      "WebSearch"
     ]
   },
   "hooks": {

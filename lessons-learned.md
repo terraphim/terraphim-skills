@@ -1,5 +1,113 @@
 # Lessons Learned
 
+## 2026-01-14: Troubleshooting Silent Hook Failures
+
+### Discovery: Fail-Open Design Hides Missing Dependencies
+- **Issue:** terraphim hook wasn't working but no errors were shown
+- **Root cause:** `terraphim-agent` binary was not installed at `~/.cargo/bin/terraphim-agent`
+- **Hook behavior:** Silently exits with success (line 40: `[ -z "$AGENT" ] && exit 0`)
+- **User experience:** Commands execute normally, but text replacement doesn't happen
+- **Lesson:** Fail-open design is great for reliability but terrible for debugging
+
+### Discovery: Installation Requires Two Steps
+- **Step 1:** Install the binary from GitHub releases
+- **Step 2:** Build the knowledge graph with `terraphim-agent graph --role "Terraphim Engineer"`
+- **Common mistake:** Installing binary but forgetting to build knowledge graph
+- **Result:** Hook runs but replacements don't happen because thesaurus is missing
+- **Pattern:**
+  ```bash
+  # Install
+  gh release download --repo terraphim/terraphim-ai \
+    --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
+  mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+  chmod +x ~/.cargo/bin/terraphim-agent
+
+  # REQUIRED: Build knowledge graph
+  cd ~/.config/terraphim
+  terraphim-agent graph --role "Terraphim Engineer"
+  ```
+
+### Discovery: Hook Testing Requires Exact JSON Format
+- **Issue:** Can't just run hook script directly - needs proper JSON input
+- **Solution:** Simulate Claude Code's JSON format:
+  ```bash
+  echo '{"tool_name":"Bash","tool_input":{"command":"echo Claude Code"}}' | \
+    ~/.claude/hooks/pre_tool_use.sh
+  ```
+- **Tip:** Use `2>/dev/null` to suppress stderr warnings in production
+- **Tip:** Use `jq .` to pretty-print JSON output for debugging
+
+### Discovery: terraphim-agent Stderr Warnings Are Normal
+- When running `terraphim-agent replace`, multiple WARN messages appear:
+  - `embedded_config.json: read failed NotFound`
+  - `thesaurus_*.json: read failed NotFound`
+- These are logged to stderr and don't affect functionality
+- Hook script uses `2>/dev/null` to hide them from users
+- JSON output on stdout is always correct despite warnings
+
+### Best Practice: Diagnostic Checklist for Silent Hook Failures
+When hooks aren't working, check in this order:
+1. **Binary exists:**
+   ```bash
+   which terraphim-agent
+   [ -x "$HOME/.cargo/bin/terraphim-agent" ] && echo "Found" || echo "Missing"
+   ```
+
+2. **Binary works:**
+   ```bash
+   ~/.cargo/bin/terraphim-agent --version
+   ```
+
+3. **Knowledge graph exists:**
+   ```bash
+   ls -la ~/.config/terraphim/docs/src/kg/
+   ```
+
+4. **Knowledge graph built:**
+   ```bash
+   cd ~/.config/terraphim
+   ~/.cargo/bin/terraphim-agent graph --role "Terraphim Engineer"
+   ```
+
+5. **Replacement works:**
+   ```bash
+   cd ~/.config/terraphim
+   echo "Claude Code" | ~/.cargo/bin/terraphim-agent replace --role "Terraphim Engineer"
+   ```
+
+6. **Hook works:**
+   ```bash
+   echo '{"tool_name":"Bash","tool_input":{"command":"echo Claude Code"}}' | \
+     ~/.claude/hooks/pre_tool_use.sh 2>/dev/null
+   ```
+
+### Pitfall: Version Mismatch Between Binary and Documentation
+- Previous handover mentioned v1.4.7 from GitHub releases
+- This session installed v1.3.0 (latest available release)
+- Always check `gh release list --repo terraphim/terraphim-ai` for actual versions
+- Don't assume documentation version numbers are current
+
+### Debugging Approach That Worked
+1. User reported "hook not triggered" (but didn't specify error)
+2. Read hook script to understand logic flow
+3. Identified fail-open exit at line 40: `[ -z "$AGENT" ] && exit 0`
+4. Checked if binary exists: `which terraphim-agent` (not found)
+5. Installed binary from GitHub releases
+6. Built knowledge graph (required step often forgotten)
+7. Tested each component separately (replace, guard, hook)
+8. Verified end-to-end with full JSON input simulation
+
+### Recommendation for Future: Improve Hook Observability
+**Problem:** Silent failures make troubleshooting require deep technical knowledge
+
+**Potential solutions:**
+1. Add debug mode that logs missing dependencies to a file
+2. Create health check command: `terraphim-agent health --check-hooks`
+3. Hook could log to `~/.claude/hooks/pre_tool_use.log` when agent missing
+4. Claude Code could show hook status in UI (installed vs active vs failing)
+
+---
+
 ## 2026-01-06: User-Level Hooks Configuration
 
 ### Discovery: crates.io vs GitHub Releases Version Gap
