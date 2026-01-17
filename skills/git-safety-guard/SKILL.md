@@ -58,6 +58,9 @@ Pattern Matching (Regex)
 | `rm -rf` (non-temp paths) | Recursive file deletion |
 | `git stash drop` | Permanently deletes stashed changes |
 | `git stash clear` | Deletes ALL stashed changes |
+| `git commit --no-verify` | Bypasses pre-commit and commit-msg hooks |
+| `git commit -n` | Same as --no-verify |
+| `git push --no-verify` | Bypasses pre-push hooks |
 
 ## Commands Explicitly Allowed
 
