@@ -1,233 +1,151 @@
 # Handover Document - terraphim-skills
 
-**Date:** 2026-01-14
-**Branch:** feat/xero-skill
-**Last Commit:** fdf7741
+**Date:** 2026-01-17
+**Branch:** main
+**Last Commit:** 37bd4e1
 
 ## Progress Summary
 
 ### Tasks Completed This Session
 
-1. **Diagnosed terraphim Hook Not Triggering:**
-   - Investigated why "Claude Code" was not being replaced with "Terraphim AI" in PR bodies
-   - Root cause: `terraphim-agent` binary was not installed
-   - Hook has fail-open design (pre_tool_use.sh:40) that silently exits when agent not found
+1. **Implemented --no-verify Blocking in Git Safety Guard:**
+   - Updated `skills/git-safety-guard/SKILL.md` to document new blocked patterns
+   - Added `git commit --no-verify`, `git commit -n`, and `git push --no-verify` to blocked commands table
+   - Commit: 37bd4e1 feat(git-safety-guard): block hook bypass flags
 
-2. **Installed terraphim-agent Binary:**
-   - Downloaded v1.3.0 from GitHub releases for ARM64 macOS
-   - Installed to `~/.cargo/bin/terraphim-agent`
-   - Verified installation: `terraphim-agent --version` shows v1.3.0
+2. **Updated Global PreToolUse Hook:**
+   - Modified `~/.claude/hooks/pre_tool_use.sh` to intercept and block hook bypass flags
+   - Implemented quote stripping to avoid false positives in commit messages
+   - Hook now blocks commands before they reach terraphim-agent replacement
 
-3. **Built Knowledge Graph:**
-   - Changed to `~/.config/terraphim` directory
-   - Ran `terraphim-agent graph --role "Terraphim Engineer"`
-   - Generated thesaurus for 10 concepts from KG files
-
-4. **Verified Hook Functionality:**
-   - Tested text replacement: "Claude Code" → "Terraphim AI" ✓
-   - Tested full PR command with HEREDOC body ✓
-   - Tested git commit message replacement ✓
-   - Hook now properly intercepts all Bash commands
-
-5. **Updated Settings:**
-   - Added `WebSearch` permission to `.claude/settings.local.json`
+3. **Created GitHub Issue:**
+   - Issue #4: "Block git --no-verify to enforce hook execution"
+   - Documents all changes and testing verification
 
 ### Current State
 
 **What's Working:**
-- terraphim-agent v1.3.0 installed and operational
-- PreToolUse hook successfully replacing text in ALL Bash commands
-- Knowledge graph contains 5 replacement rules:
-  - `Claude Code` → `Terraphim AI`
-  - `Claude Opus 4.5` → `Terraphim AI`
-  - `npm install` → `bun install`
-  - `npm run` → `bun run`
-  - `npx` → `bunx`
-- Git safety guard blocking destructive commands
-- Fail-open semantics ensure commands pass through if agent unavailable
+- PreToolUse hook blocks `git commit --no-verify`
+- PreToolUse hook blocks `git commit -n` (short form)
+- PreToolUse hook blocks `git push --no-verify`
+- Normal git commits pass through without blocking
+- Commit messages containing "--no-verify" as text are NOT blocked (fixed false positive issue)
+- terraphim-agent text replacement still works after guard check
 
 **Verified Tests:**
 ```bash
-# Direct replacement test
-cd ~/.config/terraphim && echo 'Claude Code' | terraphim-agent replace --role "Terraphim Engineer" --json
-# {"result":"Terraphim AI\n","changed":false}
+# Should pass through (normal commit)
+echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
+# Output: {"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}
 
-# Hook test - simple command
-echo '{"tool_name":"Bash","tool_input":{"command":"echo \"Claude Code\""}}' | ~/.claude/hooks/pre_tool_use.sh
-# {"tool_name":"Bash","tool_input":{"command":"echo \"Terraphim AI\""}}
+# Should be blocked (--no-verify flag)
+echo '{"tool_name":"Bash","tool_input":{"command":"git commit --no-verify -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
+# Output: {"hookSpecificOutput":{"permissionDecision":"deny",...}}
 
-# Hook test - git commit
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m '\''Generated with Claude Code'\''"}}' | ~/.claude/hooks/pre_tool_use.sh
-# {"tool_name":"Bash","tool_input":{"command":"git commit -m '\''Generated with Terraphim AI'\''"}}
-
-# Hook test - PR creation with HEREDOC
-cat << 'EOF' | ~/.claude/hooks/pre_tool_use.sh | jq .
-{"tool_name":"Bash","tool_input":{"command":"gh pr create --title \"Test\" --body \"$(cat <<'PREOF'\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nPREOF\n)\""}}
-EOF
-# Successfully replaces Claude Code → Terraphim AI in PR body
+# Should pass through (--no-verify in message text, not as flag)
+echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"block --no-verify in hooks\""}}' | ~/.claude/hooks/pre_tool_use.sh
+# Output: {"tool_name":"Bash","tool_input":{"command":"git commit -m \"block --no-verify in hooks\""}}
 ```
 
-**What Changed:**
-- `.claude/settings.local.json`: Added WebSearch permission
-- `~/.cargo/bin/terraphim-agent`: Newly installed (was missing)
-
 **What's Blocked:**
-- None - hook is now fully functional
+- None - all tasks completed successfully
 
 ## Technical Context
 
 ```
-Branch: feat/xero-skill
+Branch: main
 Recent commits:
-fdf7741 feat(skill): add Xero API integration skill
-5c49ad6 fix(config): add hooks to project-level settings
-8231542 fix(hooks): remove trailing newline from hook output
-5c50e57 feat(hooks): Add PreToolUse hooks with knowledge graph replacement for all commands
-9417f4c docs: update handover and lessons learned for 2026-01-06 session
+37bd4e1 feat(git-safety-guard): block hook bypass flags
+bfed4e0 Merge pull request #3 from terraphim/feat/xero-skill
+4b0c24c docs: troubleshoot and fix terraphim hook not triggering
+7f0e976 feat(agents): add V-model orchestration agents
+87f8476 feat(skills): integrate Essentialism + Effortless framework
 
 Modified files:
-- .claude/settings.local.json (WebSearch permission added)
+- None (all committed and pushed)
 
 Untracked files:
 - crates/ (terraphim_settings workspace)
-- docs/ (best-practices documentation)
 ```
 
-## Key Files
+## Key Files Changed
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `~/.cargo/bin/terraphim-agent` | Text replacement engine | v1.3.0 installed |
-| `~/.claude/hooks/pre_tool_use.sh` | Guard + replacement hook | Working |
-| `~/.claude/hooks/post_tool_use.sh` | Post-execution hook | Working |
-| `~/.config/terraphim/docs/src/kg/` | Knowledge graph source | 5 files |
-| `.claude/settings.local.json` | Project hook config | Updated |
-| `~/.claude/settings.local.json` | User-level hook config | Active |
+| `skills/git-safety-guard/SKILL.md` | Documents blocked git patterns | Updated with --no-verify |
+| `~/.claude/hooks/pre_tool_use.sh` | Global PreToolUse hook | Updated with blocking logic |
 
-## Installation State
+## Current Hook Implementation
+
+The `~/.claude/hooks/pre_tool_use.sh` now has two-stage processing:
 
 ```
-Component                           Status      Version/Location
----------------------------------------------------------------------------------------------------
-terraphim-agent binary              ✓ Installed v1.3.0 at ~/.cargo/bin/terraphim-agent
-Knowledge graph                     ✓ Built     10 concepts for "Terraphim Engineer" role
-PreToolUse hook                     ✓ Active    ~/.claude/hooks/pre_tool_use.sh (executable)
-PostToolUse hook                    ✓ Active    ~/.claude/hooks/post_tool_use.sh (executable)
-User-level hook config              ✓ Active    ~/.claude/settings.local.json
-Project-level hook config           ✓ Active    .claude/settings.local.json
-Knowledge graph files               ✓ Present   5 files in ~/.config/terraphim/docs/src/kg/
+1. GUARD STAGE (New)
+   |-- Extract command from JSON input
+   |-- Strip quoted strings to avoid false positives
+   |-- Check for --no-verify or -n flags in git commit/push
+   |-- If found: Return deny decision, EXIT
+   v
+2. REPLACEMENT STAGE (Existing)
+   |-- Change to ~/.config/terraphim
+   |-- Run terraphim-agent hook for text replacement
+   |-- Return modified JSON or original
 ```
 
 ## Commits Made This Session
 
-None - troubleshooting session only. Changes to commit:
-- `.claude/settings.local.json` (WebSearch permission)
+| Commit | Message | Files Changed |
+|--------|---------|---------------|
+| 37bd4e1 | feat(git-safety-guard): block hook bypass flags | skills/git-safety-guard/SKILL.md |
 
 ## Next Steps
 
-### Priority 1: Test Hook in Production Use
-- Create a test PR with the hook active
-- Verify "Claude Code" gets replaced with "Terraphim AI" in actual PR bodies
-- Monitor console output to see if hook transformation is visible
-
-### Priority 2: Document Troubleshooting Process
-- Add troubleshooting section to README.md covering:
-  - How to verify terraphim-agent is installed
-  - How to test hooks manually
-  - Common failure modes (missing binary, missing KG)
-
-### Priority 3: Consider Improving Hook Error Reporting
-**Current Issue:** Fail-open design silently allows commands when agent not found
-**Improvement Ideas:**
-- Add debug mode that logs when agent is missing
-- Create a health check command: `terraphim-agent health`
-- Document expected vs actual behavior when components missing
-
-### Priority 4: Complete Xero Skill Work
-- Review changes on feat/xero-skill branch
-- Address any outstanding issues from fdf7741 commit
-- Consider merging or closing branch
-
-### Priority 5: Handle Untracked Files
-- Review `crates/` directory - likely terraphim_settings workspace
-- Review `docs/best-practices-skills-hooks-claude-code-codex-opencode.md`
+### Priority 1: Handle Untracked crates/ Directory
+- Review `crates/` directory - appears to be terraphim_settings workspace
 - Decide whether to commit, gitignore, or remove
 
-## Installation Commands (Verified Working)
+### Priority 2: Test Hook in Production
+- Use Claude Code for normal development workflow
+- Verify hook correctly blocks --no-verify attempts
+- Confirm text replacement still works after guard check
+
+### Priority 3: Consider Additional Guard Patterns
+Potential additions to git-safety-guard:
+- `git rebase --skip` (skips commits during rebase)
+- `git cherry-pick --skip` (skips commits during cherry-pick)
+- Other flags that bypass safety checks
+
+### Priority 4: Document Hook Architecture
+- The pre_tool_use.sh now has two responsibilities (guard + replace)
+- Consider splitting into separate scripts for clarity
+- Update terraphim-hooks skill documentation
+
+## Related Issues
+
+| Issue | Title | Status |
+|-------|-------|--------|
+| #4 | Block git --no-verify to enforce hook execution | Open |
+
+## Installation Commands (Updated)
+
+The global hook is already installed at `~/.claude/hooks/pre_tool_use.sh`. To verify:
 
 ```bash
-# Install terraphim-agent binary
-mkdir -p ~/.cargo/bin
-gh release download --repo terraphim/terraphim-ai \
-  --pattern "terraphim-agent-aarch64-apple-darwin" --dir /tmp
-chmod +x /tmp/terraphim-agent-aarch64-apple-darwin
-mv /tmp/terraphim-agent-aarch64-apple-darwin ~/.cargo/bin/terraphim-agent
+# Check hook exists and is executable
+ls -la ~/.claude/hooks/pre_tool_use.sh
 
-# Verify installation
-~/.cargo/bin/terraphim-agent --version
+# Test guard functionality
+echo '{"tool_name":"Bash","tool_input":{"command":"git commit --no-verify -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
 
-# Build knowledge graph (REQUIRED after installation)
-cd ~/.config/terraphim
-~/.cargo/bin/terraphim-agent graph --role "Terraphim Engineer"
-
-# Test replacement
-echo "Claude Code" | ~/.cargo/bin/terraphim-agent replace --role "Terraphim Engineer"
-# Should output: Terraphim AI
-
-# Test hook
-echo '{"tool_name":"Bash","tool_input":{"command":"echo Claude Code"}}' | ~/.claude/hooks/pre_tool_use.sh
-# Should output JSON with "echo Terraphim AI"
+# Test normal commit passes through
+echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
 ```
-
-## Debugging Commands
-
-```bash
-# Check if terraphim-agent exists
-which terraphim-agent
-[ -x "$HOME/.cargo/bin/terraphim-agent" ] && echo "Found" || echo "Missing"
-
-# Check hook script permissions
-ls -la ~/.claude/hooks/
-
-# Test hook components separately
-cd ~/.config/terraphim
-
-# 1. Test guard (blocks destructive commands)
-echo "git reset --hard" | ~/.cargo/bin/terraphim-agent guard --json
-
-# 2. Test replace (text substitution)
-echo "Claude Code is great" | ~/.cargo/bin/terraphim-agent replace --role "Terraphim Engineer" --json
-
-# 3. Test full hook (complete integration)
-echo '{"tool_name":"Bash","tool_input":{"command":"echo Claude Code"}}' | ~/.claude/hooks/pre_tool_use.sh 2>/dev/null
-
-# Check knowledge graph files
-ls -la ~/.config/terraphim/docs/src/kg/
-
-# Rebuild knowledge graph
-cd ~/.config/terraphim
-~/.cargo/bin/terraphim-agent graph --role "Terraphim Engineer"
-```
-
-## Related Repositories
-
-| Repository | Purpose | Status |
-|------------|---------|--------|
-| [terraphim/terraphim-skills](https://github.com/terraphim/terraphim-skills) | Claude Code plugin marketplace | This repo |
-| [terraphim/terraphim-ai](https://github.com/terraphim/terraphim-ai) | terraphim-agent source + releases | v1.3.0 |
 
 ## Known Issues
 
-### terraphim-agent Warnings
-When running `terraphim-agent replace`, you may see multiple WARN messages about `embedded_config.json` and `thesaurus_*.json` not found in memory. These warnings can be safely ignored - they're logged to stderr and don't affect functionality. The hook script uses `2>/dev/null` to suppress them in production.
+### HEREDOC Commands with Blocked Text
+When using HEREDOC syntax for commit messages, the shell expands the command before the hook sees it. If the expanded text contains "--no-verify" anywhere (even in message body), the hook may incorrectly block it.
 
-### Hook Fail-Open Design
-The PreToolUse hook is designed to fail-open (line 40 in pre_tool_use.sh), meaning:
-- If terraphim-agent is not installed, commands pass through unchanged
-- No error message is shown to the user
-- This makes troubleshooting harder since there's no indication the hook isn't working
+**Workaround:** Avoid mentioning "--no-verify" literally in commit messages. Use alternative phrasing like "hook bypass flags" or "verify skip flag".
 
-**Recommended:** Periodically verify terraphim-agent is installed and working:
-```bash
-~/.cargo/bin/terraphim-agent --version
-```
+**Status:** Fixed by stripping quoted strings before pattern matching, but HEREDOC expansion happens before JSON encoding.

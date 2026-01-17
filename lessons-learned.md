@@ -1,5 +1,76 @@
 # Lessons Learned
 
+## 2026-01-17: Blocking --no-verify in PreToolUse Hooks
+
+### Discovery: Regex Pattern Matching vs Commit Message Content
+- **Issue:** Initial regex blocked commits where commit MESSAGE contained "--no-verify" as text
+- **Example:** `git commit -m "block --no-verify"` was incorrectly blocked
+- **Root cause:** Regex matched anywhere in the command string, including quoted message content
+- **Solution:** Strip quoted strings BEFORE running pattern match:
+  ```bash
+  CMD_NO_QUOTES=$(echo "$COMMAND" | sed 's/"[^"]*"//g' | sed "s/'[^']*'//g")
+  ```
+
+### Discovery: HEREDOC Expansion Timing
+- **Issue:** When using HEREDOC for commit messages, shell expands before hook sees it
+- **Example:** `git commit -m "$(cat <<'EOF'\ntext\nEOF)"` becomes a single string
+- **Challenge:** The expanded text isn't properly quoted in the final command
+- **Workaround:** Avoid mentioning blocked patterns literally in commit messages
+- **Better approach:** Use alternative phrasing like "hook bypass flags"
+
+### Discovery: Two-Stage Hook Processing
+- **Pattern:** Guard check should run BEFORE replacement transformation
+- **Flow:**
+  ```
+  1. Parse JSON input
+  2. Guard check (block if dangerous) -> EXIT if blocked
+  3. Replacement transformation (text substitution)
+  4. Return modified JSON
+  ```
+- **Benefit:** Blocked commands never reach replacement stage, reducing complexity
+
+### Best Practice: Testing Hook Changes
+When modifying hook scripts, test in this order:
+1. **Test blocked patterns are blocked:**
+   ```bash
+   echo '{"tool_name":"Bash","tool_input":{"command":"git commit --no-verify"}}' | ~/.claude/hooks/pre_tool_use.sh
+   # Should return deny decision
+   ```
+
+2. **Test allowed patterns pass through:**
+   ```bash
+   echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
+   # Should return original or replacement
+   ```
+
+3. **Test edge cases (blocked text in message):**
+   ```bash
+   echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"mention --no-verify\""}}' | ~/.claude/hooks/pre_tool_use.sh
+   # Should pass through (it's in the message, not a flag)
+   ```
+
+### Pitfall: The Hook Tests Itself
+- **Irony:** The hook will block you from committing changes that mention "--no-verify"
+- **Symptom:** Commit fails with "BLOCKED: --no-verify bypasses git hooks"
+- **Workaround:** Use euphemisms in commit messages ("hook bypass flags" instead of "--no-verify")
+- **Lesson:** Be careful with guard patterns that match documentation strings
+
+### Debugging Approach That Worked
+1. Initial regex too aggressive (matched message content)
+2. Added sed to strip quoted strings before pattern match
+3. Tested with echo piping JSON through hook script
+4. Verified both blocked and allowed cases work correctly
+5. Used simpler commit message to avoid self-blocking
+
+### Recommendation: Separate Guard and Replace Scripts
+- Current pre_tool_use.sh does two things: guard + replace
+- Consider splitting into:
+  - `~/.claude/hooks/git_guard.sh` - blocks dangerous commands
+  - `~/.claude/hooks/text_replace.sh` - transforms text via knowledge graph
+- Would make testing and maintenance easier
+
+---
+
 ## 2026-01-14: Troubleshooting Silent Hook Failures
 
 ### Discovery: Fail-Open Design Hides Missing Dependencies
