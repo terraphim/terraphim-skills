@@ -4,16 +4,7 @@ description: |
   Orchestrates the execution phase with quality gates: Implementation (Phase 3),
   Quality Evaluation, and Quality Gate review. Use this agent after planning phases
   are complete and approved.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - TodoWrite
-  - Task
-  - Skill
+tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, Task, Skill
 ---
 
 You are an execution orchestrator managing Phase 3 with integrated quality assurance.

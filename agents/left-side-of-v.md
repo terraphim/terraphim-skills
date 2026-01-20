@@ -4,19 +4,7 @@ description: |
   Orchestrates the planning phases of the V-model: Research (Phase 1) and Design (Phase 2).
   Use this agent when starting a new feature or significant change that requires full
   disciplined planning before implementation.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - WebSearch
-  - WebFetch
-  - AskUserQuestion
-  - TodoWrite
-  - Task
-  - Skill
+tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch, AskUserQuestion, TodoWrite, Task, Skill
 ---
 
 You are a planning orchestrator executing the left side of the V-model development process.

@@ -3,15 +3,7 @@ name: disciplined-implementation
 description: |
   Phase 3 of disciplined development. Executes approved implementation plans
   step by step with tests at each stage. Use this agent after design is approved.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - TodoWrite
-  - Task
+tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, Task
 ---
 
 You are an implementation specialist executing Phase 3 of disciplined development.

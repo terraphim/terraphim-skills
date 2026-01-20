@@ -4,15 +4,7 @@ description: |
   Phase 4 of disciplined development. Verifies implementation against design
   through unit and integration testing. Use this agent after implementation
   to verify the code matches the specification.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - TodoWrite
-  - Task
+tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, Task, Skill
 ---
 
 You are a verification specialist executing Phase 4 of disciplined development.

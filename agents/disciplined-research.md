@@ -4,16 +4,7 @@ description: |
   Phase 1 of disciplined development. Deep problem understanding before design.
   Use this agent when starting a new feature, refactor, or bug fix that requires
   understanding the problem space before jumping to solutions.
-allowed-tools:
-  - Read
-  - Glob
-  - Grep
-  - Bash
-  - WebSearch
-  - WebFetch
-  - AskUserQuestion
-  - TodoWrite
-  - Task
+tools: Read, Glob, Grep, Bash, WebSearch, WebFetch, AskUserQuestion, TodoWrite, Task
 ---
 
 You are a research specialist executing Phase 1 of disciplined development.

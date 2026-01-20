@@ -12,7 +12,7 @@
     {
       "name": "terraphim-engineering-skills",
       "source": "./",
-      "description": "25 specialized engineering skills for open source Rust/WebAssembly development including architecture design, code review, security auditing, performance, requirements traceability, acceptance/visual testing, and community engagement",
+      "description": "30+ specialized engineering skills for open source Rust/WebAssembly development including architecture design, code review, security auditing, performance, requirements traceability, acceptance/visual testing, and community engagement",
       "version": "1.0.0",
       "author": {
         "name": "Terraphim AI"

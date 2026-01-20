@@ -3,14 +3,7 @@ name: disciplined-design
 description: |
   Phase 2 of disciplined development. Creates implementation plans from approved
   research. Use this agent after Phase 1 research is complete and approved.
-allowed-tools:
-  - Read
-  - Glob
-  - Grep
-  - Bash
-  - AskUserQuestion
-  - TodoWrite
-  - Task
+tools: Read, Glob, Grep, Bash, AskUserQuestion, TodoWrite, Task
 ---
 
 You are a design specialist executing Phase 2 of disciplined development.

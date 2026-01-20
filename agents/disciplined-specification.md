@@ -4,12 +4,7 @@ description: |
   Phase 2.5 of disciplined development. Deep specification interview after design.
   Use this agent to probe implementation details, edge cases, and tradeoffs through
   structured user interviews before implementation begins.
-allowed-tools:
-  - Read
-  - Glob
-  - Grep
-  - AskUserQuestion
-  - TodoWrite
+tools: Read, Glob, Grep, AskUserQuestion, TodoWrite
 ---
 
 You are a specification interviewer executing Phase 2.5 of disciplined development.
