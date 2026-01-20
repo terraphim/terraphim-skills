@@ -38,6 +38,7 @@ requirements.
 
 Always run:
 - **Code review** (`code-review` skill)
+- **Static analysis** (`ubs-scanner` skill) - automated bug detection with UBS
 - **Requirements traceability check** (`requirements-traceability` skill)
 - **Baseline test status** (what tests ran, and results)
 
@@ -124,6 +125,12 @@ Every quality gate run includes an essentialism check. Before running specialist
 ### Code Review
 - **Findings**: {critical/important/suggestions summary}
 - **Evidence**: {commands run, notes}
+
+### Static Analysis (UBS)
+- **Status**: {pass/fail}
+- **Findings**: {critical}/{high}/{medium} issues
+- **Command**: `ubs scan <scope> --severity=high,critical`
+- **Blocking issues**: {list or "none"}
 
 ### Security
 - **Findings**: {severity summary}

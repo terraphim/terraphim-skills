@@ -71,6 +71,7 @@ Produces:
 ```
 1. VERIFICATION PHASE
    |-- Execute disciplined-verification skill
+   |-- Run UBS scan (ubs-scanner) - automated bug detection
    |-- Build traceability matrix (REQ -> design -> code -> test)
    |-- Run unit tests
    |-- Run integration tests
@@ -123,6 +124,7 @@ When defects are found, trace them to their origin:
 
 ### Phase 4 (Verification)
 - `requirements-traceability`: Build traceability matrix
+- `ubs-scanner`: Automated bug detection (1000+ patterns, always run)
 - `code-review`: Verify code quality
 - `security-audit`: Security verification (if applicable)
 - `rust-performance`: Performance verification (if applicable)
