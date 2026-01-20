@@ -23,6 +23,7 @@ This skill orchestrates verification by leveraging specialist skills:
 
 | Specialist Skill | When to Use | Output |
 |------------------|-------------|--------|
+| `ubs-scanner` | **Always first** - automated bug detection | Bug findings + remediation |
 | `requirements-traceability` | Build REQ->design->code->test matrix | Traceability matrix + gaps |
 | `code-review` | Verify code quality and patterns | Review findings + checklist |
 | `security-audit` | If touching auth, crypto, untrusted input | Security findings |
@@ -32,6 +33,11 @@ This skill orchestrates verification by leveraging specialist skills:
 ### Invoking Specialist Skills
 
 ```
+FIRST (Always):
+  0. Run `ubs-scanner` for automated bug detection
+     - Catches null pointers, security issues, async mistakes
+     - Block on critical findings, track high findings
+
 During Part A (Unit Testing):
   1. Use `requirements-traceability` to build initial matrix
   2. Use `testing` skill patterns for test implementation
@@ -242,6 +248,12 @@ WHEN defect found:
 
 ## Specialist Skill Results
 
+### Static Analysis (`ubs-scanner` skill) - always run first
+- **Command**: `ubs scan ./src --severity=high,critical`
+- **Critical findings**: X (must be 0 to pass)
+- **High findings**: Y (document and address)
+- **Evidence**: [UBS report path]
+
 ### Requirements Traceability (`requirements-traceability` skill)
 - **Matrix location**: [path or link]
 - **Requirements in scope**: X
@@ -301,6 +313,7 @@ Questions asked via AskUserQuestionTool:
 
 ## Gate Checklist
 
+- [ ] UBS scan passed - 0 critical findings (`ubs-scanner`)
 - [ ] All public functions have unit tests
 - [ ] Edge cases from Phase 2.5 covered
 - [ ] Coverage > 80% on critical paths
@@ -339,6 +352,7 @@ Use AskUserQuestionTool to gather information about verification concerns:
 ## Gate Criteria
 
 Before proceeding to Phase 5 (Validation):
+- [ ] UBS scan completed with 0 critical findings (`ubs-scanner`)
 - [ ] All public functions have unit tests
 - [ ] Edge cases from Phase 2.5 specification covered
 - [ ] Coverage > 80% on critical paths

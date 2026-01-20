@@ -49,6 +49,7 @@ Produces **Verification Report** containing:
 ## Specialist Skills Used
 
 - `requirements-traceability`: Build traceability matrix
+- `ubs-scanner`: Automated bug detection (always run first)
 - `code-review`: Verify code quality
 - `security-audit`: Security verification (if applicable)
 - `rust-performance`: Performance verification (if applicable)
@@ -57,10 +58,11 @@ Produces **Verification Report** containing:
 ## Process
 
 1. Review implementation and design
-2. Build traceability matrix
-3. Execute test suites
-4. Analyze coverage and gaps
-5. Document defects with originating phase
-6. Provide Go/No-Go recommendation
+2. Run UBS scan (ubs-scanner) for automated bug detection
+3. Build traceability matrix
+4. Execute test suites
+5. Analyze coverage and gaps
+6. Document defects with originating phase
+7. Provide Go/No-Go recommendation
 
 Defects loop back to the left-side phase where they originated.
