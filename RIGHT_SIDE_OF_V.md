@@ -20,6 +20,7 @@ Treat “agents” as roles, implemented as skills.
 | Agent Role | Skill | Primary Output |
 |------------|-------|----------------|
 | V&V Lead / Quality Gate | `quality-gate` | Quality Gate Report (go/no-go + evidence) |
+| Static Analysis Engineer | `ubs-scanner` | Automated bug detection (1000+ patterns) |
 | Code Reviewer | `code-review` | Review findings + checklist verification |
 | Security Reviewer | `security-audit` | Security findings + remediation |
 | Performance Reviewer | `rust-performance` | Benchmarks/profiles + regression risk |
