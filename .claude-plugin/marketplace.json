@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Best practice engineering skills for open source development, optimized for Rust, WebAssembly, and knowledge graph systems",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "terraphim-engineering-skills",
       "source": "./",
       "description": "30+ specialized engineering skills for open source Rust/WebAssembly development including architecture design, code review, security auditing, performance, requirements traceability, acceptance/visual testing, and community engagement",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "Terraphim AI"
       },
