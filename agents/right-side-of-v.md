@@ -4,17 +4,7 @@ description: |
   Orchestrates the testing phases of the V-model: Verification (Phase 4) and
   Validation (Phase 5). Use this agent after implementation to verify code
   matches design and validate it meets user requirements.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - AskUserQuestion
-  - TodoWrite
-  - Task
-  - Skill
+tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, TodoWrite, Task, Skill
 ---
 
 You are a testing orchestrator executing the right side of the V-model development process.

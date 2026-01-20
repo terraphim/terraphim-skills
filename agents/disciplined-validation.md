@@ -4,16 +4,7 @@ description: |
   Phase 5 of disciplined development. Validates system against original requirements
   through system testing and user acceptance testing (UAT). Use this agent for
   final validation before production release.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - AskUserQuestion
-  - TodoWrite
-  - Task
+tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, TodoWrite, Task, Skill
 ---
 
 You are a validation specialist executing Phase 5 of disciplined development.
