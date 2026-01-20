@@ -108,6 +108,7 @@ Create/update `~/.claude/settings.local.json`:
       "Skill(terraphim-engineering-skills:session-search)",
       "Skill(terraphim-engineering-skills:local-knowledge)",
       "Skill(terraphim-engineering-skills:quality-gate)",
+      "Skill(terraphim-engineering-skills:ubs-scanner)",
       "Skill(terraphim-engineering-skills:rust-development)",
       "Skill(terraphim-engineering-skills:rust-performance)",
       "Bash(terraphim-agent:*)"
@@ -276,7 +277,7 @@ echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' 
 # Expected: BLOCKED message
 ```
 
-## Skills Overview (27 Skills)
+## Skills Overview (31 Skills)
 
 ### Core Development
 
@@ -308,12 +309,13 @@ echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' 
 |-------|-------------|
 | `gpui-components` | GPUI desktop UI components following Zed editor patterns. |
 
-### Code Quality
+### Code Quality & Static Analysis
 
 | Skill | Description |
 |-------|-------------|
 | `code-review` | Thorough review for bugs, security, performance. Actionable feedback. |
 | `security-audit` | Vulnerability assessment, unsafe code review, OWASP compliance. |
+| `ubs-scanner` | Ultimate Bug Scanner integration. Detects 1000+ bug patterns across 8 languages. |
 
 ### Verification & Validation (Right Side of V)
 
@@ -530,6 +532,30 @@ Output:
 - Unsafe code review
 - Input validation check
 - Remediation recommendations
+```
+
+### Static Analysis (UBS)
+
+```
+You: "Run UBS to scan this codebase for bugs"
+Claude: [ubs-scanner skill]
+
+Output:
+- Bug scan across all supported languages
+- Critical/high/medium findings summary
+- Specific file:line locations
+- Remediation code examples
+```
+
+```
+You: "Check these changes for common AI coding mistakes"
+Claude: [ubs-scanner skill]
+
+Output:
+- Missing async/await detection
+- Null pointer access patterns
+- Resource leak identification
+- Security vulnerability flags
 ```
 
 ### Testing & Debugging
@@ -788,10 +814,11 @@ Claude workflow:
 1. [architecture] → Design auth system, create ADR
 2. [security-audit] → Review design for vulnerabilities
 3. [implementation] → Write auth code with tests
-4. [code-review] → Self-review before PR
-5. [documentation] → Document the new endpoints
-6. [devops] → Update CI for auth tests
-7. [quality-gate] → Verify readiness (traceability, UAT/visual if needed) and produce evidence
+4. [ubs-scanner] → Automated bug detection scan
+5. [code-review] → Self-review before PR
+6. [documentation] → Document the new endpoints
+7. [devops] → Update CI for auth tests
+8. [quality-gate] → Verify readiness (traceability, UAT/visual if needed) and produce evidence
 ```
 
 ## Best Practices
