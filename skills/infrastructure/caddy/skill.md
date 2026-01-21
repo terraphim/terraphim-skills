@@ -1,5 +1,5 @@
 ---
-name: server-management
+name: caddy
 description: |
   Comprehensive Caddy web server management across multiple environments.
   Handles multi-server operations, zero-downtime deployments, secret management
