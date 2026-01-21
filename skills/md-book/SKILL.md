@@ -1,3 +1,12 @@
+---
+name: md-book
+description: |
+  MD-Book documentation generator skill. Use when working with MD-Book, a modern
+  mdbook replacement for generating HTML documentation from Markdown files.
+  Supports syntax highlighting, live reload, Pagefind search, and Tera templates.
+license: Apache-2.0
+---
+
 # MD-Book Documentation Generator Skill
 
 Use this skill when working with MD-Book, a modern mdbook replacement for generating HTML documentation from Markdown files.

@@ -1,3 +1,12 @@
+---
+name: server-management
+description: |
+  Comprehensive Caddy web server management across multiple environments.
+  Handles multi-server operations, zero-downtime deployments, secret management
+  with 1Password, custom builds with plugins, and systemd service management.
+license: Apache-2.0
+---
+
 # Caddy Server Management Skill
 
 **Version:** 1.0.0
