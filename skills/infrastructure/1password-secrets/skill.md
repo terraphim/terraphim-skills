@@ -1,5 +1,5 @@
 ---
-name: secrets-management
+name: 1password-secrets
 description: |
   Secure secret management using 1Password CLI. Detect plaintext secrets in files
   and codebases, convert environment files to 1Password templates, inject secrets
