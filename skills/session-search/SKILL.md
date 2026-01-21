@@ -340,13 +340,13 @@ pub struct SessionMetadata {
 ```toml
 [dependencies]
 terraphim_agent = {
-    version = "1.0",
+    version = "1.6",
     features = ["repl-sessions"]
 }
 
 terraphim_sessions = {
-    version = "0.1",
-    features = ["cla-full", "enrichment"]
+    version = "1.6",
+    features = ["tsa-full", "enrichment"]
 }
 ```
 
