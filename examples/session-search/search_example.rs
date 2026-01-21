@@ -8,7 +8,7 @@
 //! Add to Cargo.toml:
 //! ```toml
 //! [dependencies]
-//! terraphim_sessions = { version = "0.1", features = ["cla-full", "enrichment"] }
+//! terraphim_sessions = { version = "1.6", features = ["tsa-full", "enrichment"] }
 //! tokio = { version = "1", features = ["full"] }
 //! anyhow = "1.0"
 //! ```
