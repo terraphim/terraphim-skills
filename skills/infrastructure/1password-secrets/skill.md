@@ -1,3 +1,12 @@
+---
+name: secrets-management
+description: |
+  Secure secret management using 1Password CLI. Detect plaintext secrets in files
+  and codebases, convert environment files to 1Password templates, inject secrets
+  securely using op inject, and audit codebases for security compliance.
+license: Apache-2.0
+---
+
 # 1Password Secret Management Skill
 
 **Version:** 1.0.0
