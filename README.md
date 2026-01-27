@@ -1,12 +1,26 @@
-# Terraphim Claude Skills
+# Terraphim Engineering Skills
 
-Best practice engineering skills for open source Rust/WebAssembly development. A public plugin marketplace for Claude Code.
+32+ specialized skills for AI-assisted software development. Optimized for Rust, WebAssembly, and open source workflows.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![skills.sh](https://img.shields.io/badge/skills.sh-compatible-green.svg)](https://skills.sh)
 
-## Installation
+## Quick Install (skills.sh)
 
-### From GitHub (Recommended)
+```bash
+# Install all skills to your AI coding agents
+npx skills add terraphim/terraphim-skills
+
+# Or install specific skills only
+npx skills add terraphim/terraphim-skills --skill architecture --skill implementation
+
+# List available skills
+npx skills add terraphim/terraphim-skills --list
+```
+
+Installs to: Claude Code, Cursor, Codex, Amp, VS Code, Copilot, Gemini CLI, Goose, Letta, and OpenCode.
+
+## Alternative: Claude Code Plugin Marketplace
 
 ```bash
 # Add the Terraphim marketplace
@@ -868,15 +882,19 @@ Apache-2.0 - See [LICENSE](LICENSE) for details.
 
 ## Related Projects
 
-| Repository | Platform | Installation |
-|------------|----------|--------------|
-| [terraphim/codex-skills](https://github.com/terraphim/codex-skills) | OpenAI Codex CLI | `~/.codex/skills/` |
-| [terraphim/opencode-skills](https://github.com/terraphim/opencode-skills) | OpenCode | `~/.config/opencode/skill/` |
-| [terraphim/terraphim-skills](https://github.com/terraphim/terraphim-skills) | Claude Code | Plugin marketplace |
+This is the canonical repository for Terraphim engineering skills. Use `npx skills add terraphim/terraphim-skills` for all platforms.
+
+| Repository | Status | Notes |
+|------------|--------|-------|
+| [terraphim/terraphim-skills](https://github.com/terraphim/terraphim-skills) | **Active** | Canonical source for all platforms |
+| [terraphim/codex-skills](https://github.com/terraphim/codex-skills) | Archived | Use terraphim-skills instead |
+| [terraphim/opencode-skills](https://github.com/terraphim/opencode-skills) | Archived | Use terraphim-skills instead |
+| [terraphim/terraphim-claude-skills](https://github.com/terraphim/terraphim-claude-skills) | Archived | Use terraphim-skills instead |
 
 See also:
 - [Terraphim AI](https://github.com/terraphim/terraphim-ai) - Knowledge graph system
-- [Claude Code](https://claude.ai/code) - AI-powered development
+- [skills.sh](https://skills.sh) - Open agent skills ecosystem
+- [vercel-labs/skills](https://github.com/vercel-labs/skills) - skills CLI tool
 
 ## Support
 
