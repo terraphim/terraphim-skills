@@ -95,6 +95,21 @@ essentialism_check:
 
 ---
 
+## LLM Coding Discipline (Karpathy Principles)
+
+Four principles for reducing common LLM coding mistakes, integrated into the disciplined-* skills:
+
+| Principle | Skill Integration |
+|-----------|-------------------|
+| **Think Before Coding**: Surface assumptions, present interpretations | disciplined-research |
+| **Simplicity First**: Minimum code, nothing speculative | disciplined-design |
+| **Surgical Changes**: Touch only what you must | disciplined-implementation |
+| **Goal-Driven Execution**: Define success criteria, loop until verified | disciplined-implementation |
+
+*Attribution: Derived from Andrej Karpathy's observations on LLM limitations.*
+
+---
+
 ## Daily Practice
 
 ### Before Starting Work
@@ -112,3 +127,4 @@ essentialism_check:
 - [Tim Ferriss #786: Essentialism with Greg McKeown](https://tim.blog/2025/01/09/personal-reboot-greg-mckeown/)
 - *Essentialism: The Disciplined Pursuit of Less* by Greg McKeown
 - *Effortless: Make It Easier to Do What Matters Most* by Greg McKeown
+- [Karpathy Guidelines for LLM Coding](https://github.com/forrestchang/andrej-karpthy-skills) by Andrej Karpathy
