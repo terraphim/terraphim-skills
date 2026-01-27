@@ -63,6 +63,33 @@ This phase produces a **Research Document** that enables informed decision-makin
 - What assumptions are we making?
 - What external dependencies exist?
 
+## LLM Coding Discipline: Think Before Coding
+
+> "Don't assume. Don't hide confusion. Surface tradeoffs."
+> -- Andrej Karpathy
+
+Before proceeding with any research conclusions:
+
+### State Assumptions Explicitly
+Never silently choose one interpretation. Document every assumption:
+- "I am assuming X because..."
+- "This interpretation requires Y to be true..."
+
+### Present Multiple Interpretations
+When requirements are ambiguous, present options rather than picking one:
+- "This could mean A (implications...) or B (implications...)"
+- "Clarification needed before proceeding"
+
+### Name Your Confusion
+If something is unclear, stop and surface it:
+- "I don't understand how X relates to Y"
+- "The requirement for Z seems to conflict with W"
+
+### Acknowledge Simpler Approaches
+Before recommending complexity, ask:
+- "Is there a simpler way to achieve this?"
+- "What's the minimum viable approach?"
+
 ## Research Document Template
 
 ```markdown
@@ -168,9 +195,21 @@ Apply the 5/25 Rule. List what you explicitly chose NOT to investigate:
 1. [Question 1] - [Who can answer]
 2. [Question 2] - [Required investigation]
 
-### Assumptions
-1. [Assumption 1] - [Basis for assumption]
-2. [Assumption 2] - [Basis for assumption]
+### Assumptions Explicitly Stated
+Document every assumption with its basis and risk if wrong:
+
+| Assumption | Basis | Risk if Wrong | Verified? |
+|------------|-------|---------------|-----------|
+| [Assumption 1] | [Why we believe this] | [Impact if false] | Yes/No |
+| [Assumption 2] | [Evidence or reasoning] | [What breaks] | Yes/No |
+
+### Multiple Interpretations Considered
+If requirements were ambiguous, document alternatives explored:
+
+| Interpretation | Implications | Why Chosen/Rejected |
+|----------------|--------------|---------------------|
+| [Option A] | [What this means] | [Rationale] |
+| [Option B] | [What this means] | [Rationale] |
 
 ## Research Findings
 

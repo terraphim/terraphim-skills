@@ -111,9 +111,22 @@ Document what you explicitly chose NOT to do and why:
 | [Feature/Approach] | [Over-engineering] | [Maintenance burden] |
 
 ### Simplicity Check
+
+> "Minimum code that solves the problem. Nothing speculative."
+> -- Andrej Karpathy
+
 Answer: **What if this could be easy?**
 
 [Describe the simplest possible design that achieves the goal. If current design is more complex, justify why.]
+
+**Senior Engineer Test**: Would a senior engineer call this overcomplicated? If yes, simplify.
+
+**Nothing Speculative Checklist**:
+- [ ] No features the user didn't request
+- [ ] No abstractions "in case we need them later"
+- [ ] No flexibility "just in case"
+- [ ] No error handling for scenarios that cannot occur
+- [ ] No premature optimization
 
 ## File Changes
 

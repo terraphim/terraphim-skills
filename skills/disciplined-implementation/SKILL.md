@@ -32,6 +32,61 @@ If implementation feels heroic:
 
 Slow is smooth, smooth is fast.
 
+## Surgical Changes Protocol
+
+> "Touch only what you must. Clean up only your own mess."
+> -- Andrej Karpathy
+
+When modifying existing code:
+
+### Preserve Adjacent Code
+- Do NOT "improve" code you're not asked to change
+- Do NOT refactor nearby code even if you'd do it differently
+- Preserve existing formatting and style in unchanged sections
+
+### Clean Up Only Your Mess
+- Remove only imports and variables that YOUR changes made obsolete
+- Do NOT eliminate pre-existing dead code unless explicitly requested
+- Do NOT add comments to unchanged code
+
+### Diff Review Checklist
+Before committing, review the diff and verify:
+- [ ] Every changed line directly addresses the user's request
+- [ ] No "drive-by" improvements to unrelated code
+- [ ] No reformatting of unchanged lines
+- [ ] No new abstractions beyond what was requested
+
+### The Surgical Test
+If someone asks "why did you change this line?" and the answer isn't directly related to the task, revert it.
+
+## Goal-Driven Execution
+
+> "Define success criteria. Loop until verified."
+> -- Andrej Karpathy
+
+### Transform Vague into Measurable
+Before implementing, convert the request into measurable goals:
+
+| Vague Request | Measurable Goal | Verification |
+|---------------|-----------------|--------------|
+| "Make it faster" | "Reduce latency to <100ms" | Benchmark before/after |
+| "Fix the bug" | "Input X produces output Y" | Test case passes |
+| "Add feature Z" | "User can do A, B, C" | Integration test |
+
+### Verification Loop
+For each implementation step:
+```
+1. Define: What does "done" look like?
+2. Implement: Write code to achieve it
+3. Verify: Run tests/checks to confirm
+4. Loop: If not verified, return to step 2
+```
+
+### Don't Declare Victory Prematurely
+- Run the tests, don't assume they pass
+- Check the output, don't assume it's correct
+- Verify edge cases, don't assume they work
+
 ## Prerequisites
 
 Phase 3 requires:
