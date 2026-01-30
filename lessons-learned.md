@@ -325,3 +325,99 @@ When creating a Claude Code plugin marketplace:
    ```bash
    claude plugin marketplace add /path/to/local/plugin
    ```
+
+---
+
+## 2026-01-30: OpenCode Skills vs Agents Architecture
+
+### Discovery: Skills and Agents Are Different Concepts in OpenCode
+- **Skills:** Reusable prompts/instructions, managed by skills.sh, cross-platform
+- **Agents:** Platform-specific orchestration configs with different YAML schema
+- **Key difference:** skills.sh only manages skills, NOT agents
+- **Consequence:** Reinstalling skills does not fix agent configuration issues
+
+### Discovery: OpenCode Agent YAML Format Differs from Claude Code
+**Claude Code format (in repo `agents/`):**
+```yaml
+---
+name: disciplined-implementation
+description: |
+  Phase 3 description...
+tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, Task
+---
+```
+
+**OpenCode format (in `~/.config/opencode/agent/`):**
+```yaml
+---
+description: Phase 3 description...
+mode: primary
+temperature: 0.2
+tools:
+  write: true
+  edit: true
+  bash: true
+permission:
+  write: allow
+  edit: allow
+  bash: allow
+---
+```
+
+- **Tools:** String list vs object with booleans
+- **Mode:** OpenCode has `mode: primary|subagent` (subagent = hidden from list)
+- **Model:** OpenCode allows `model: provider/model-name` (can cause errors if invalid)
+
+### Discovery: Invalid Model Reference Causes Silent Failure
+- **Issue:** `model: xai/grok-code-fast` in agent config caused OpenCode startup error
+- **Symptom:** "Configuration is invalid... expected record, received string tools"
+- **Misleading:** Error message mentioned "tools" but root cause was invalid model
+- **Fix:** Remove the `model:` line entirely to use default model
+
+### Discovery: OpenCode Path Plural vs Singular Confusion
+- **Old docs:** `~/.config/opencode/skill/` (singular) - from oh-my-opencode
+- **New docs:** `~/.config/opencode/skills/` (plural) - current OpenCode standard
+- **skills.sh:** Uses `skills/` (plural) - CORRECT
+- **Lesson:** Always verify against current official documentation, not community plugins
+
+### Discovery: GitHub Issues Often Have Outdated Resolutions
+- **Issue #54:** Reported singular vs plural path discrepancy
+- **Resolution:** Closed as "fixed" but OpenCode changed their expectation instead
+- **Lesson:** Check if the software changed to match the tool, not vice versa
+
+### Best Practice: Debugging OpenCode Agent Issues
+1. **Check for startup errors:**
+   ```bash
+   opencode 2>&1 | grep -i error
+   ```
+
+2. **Verify agent YAML format:**
+   - No `name:` field (use `description:` instead)
+   - `tools:` must be object, not string
+   - `mode:` should be `primary` to appear in list
+
+3. **Check for invalid model references:**
+   ```bash
+   grep "model:" ~/.config/opencode/agent/*.md
+   ```
+
+4. **Test agent visibility:**
+   - Start OpenCode, press Tab to cycle through agents
+   - If agent missing, check `mode: subagent` (hidden)
+
+### Pitfall: Fixing Repo Doesn't Fix Local Config
+- **Issue:** Fixed skills in repo, but OpenCode agents are in local config
+- **Location of agents:** `~/.config/opencode/agent/` (not in repo)
+- **Source:** `~/private_agents_settings/opencode/agent/` (separate from skills repo)
+- **Lesson:** Know which config files are repo-managed vs locally-managed
+
+### Recommendation: Consider Adding OpenCode Agents to Repo
+**Current state:**
+- Skills: In repo, managed by skills.sh
+- Agents (Claude Code format): In repo `agents/`
+- Agents (OpenCode format): NOT in repo, local only
+
+**Potential improvement:**
+- Add `opencode-agents/` directory with OpenCode-format agents
+- Or create conversion script from Claude Code format to OpenCode format
+- Document the installation process for OpenCode agents separately

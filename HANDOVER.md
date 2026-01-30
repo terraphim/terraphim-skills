@@ -1,151 +1,121 @@
 # Handover Document - terraphim-skills
 
-**Date:** 2026-01-17
+**Date:** 2026-01-30
 **Branch:** main
-**Last Commit:** 37bd4e1
+**Last Commit:** 6bcf7ff
 
 ## Progress Summary
 
 ### Tasks Completed This Session
 
-1. **Implemented --no-verify Blocking in Git Safety Guard:**
-   - Updated `skills/git-safety-guard/SKILL.md` to document new blocked patterns
-   - Added `git commit --no-verify`, `git commit -n`, and `git push --no-verify` to blocked commands table
-   - Commit: 37bd4e1 feat(git-safety-guard): block hook bypass flags
+1. **Fixed OpenCode Discipline Implementation Model Error:**
+   - Root cause: `~/.config/opencode/agent/disciplined-implementation.md` had invalid `model: xai/grok-code-fast`
+   - Also had `mode: subagent` which hid it from agent list
+   - Fixed by removing invalid model reference and changing to `mode: primary`
+   - Source file fixed: `~/private_agents_settings/opencode/agent/disciplined-implementation.md`
 
-2. **Updated Global PreToolUse Hook:**
-   - Modified `~/.claude/hooks/pre_tool_use.sh` to intercept and block hook bypass flags
-   - Implemented quote stripping to avoid false positives in commit messages
-   - Hook now blocks commands before they reach terraphim-agent replacement
+2. **Reinstalled Skills via skills.sh:**
+   - Ran `npx skills add . -g -y` to install 31 skills globally
+   - Skills installed to `~/.agents/skills/` with symlinks to 15 agent platforms
 
-3. **Created GitHub Issue:**
-   - Issue #4: "Block git --no-verify to enforce hook execution"
-   - Documents all changes and testing verification
+3. **Investigated skills.sh vs OpenCode Path Discrepancy:**
+   - Initial assumption: skills.sh uses `skills/` (plural), OpenCode expects `skill/` (singular)
+   - After investigation: OpenCode docs were updated to use `skills/` (plural)
+   - skills.sh is CORRECT - no fix needed
+   - Removed unnecessary fix script from repo
+
+4. **Updated Documentation:**
+   - Commit 4fc3ce1: Initial fix attempt (incorrect assumption)
+   - Commit 6bcf7ff: Corrected documentation, removed fix script
+   - Updated `docs/best-practices-skills-hooks-claude-code-codex-opencode.md` to use `skills/` (plural)
 
 ### Current State
 
 **What's Working:**
-- PreToolUse hook blocks `git commit --no-verify`
-- PreToolUse hook blocks `git commit -n` (short form)
-- PreToolUse hook blocks `git push --no-verify`
-- Normal git commits pass through without blocking
-- Commit messages containing "--no-verify" as text are NOT blocked (fixed false positive issue)
-- terraphim-agent text replacement still works after guard check
+- skills.sh installs 31 skills to `~/.config/opencode/skills/` (correct path)
+- OpenCode starts without errors
+- All discipline agents available: Disciplined-Research, Disciplined-Design, Disciplined-Implementation
+- Essentialism + Karpathy guidelines present in skill content
 
 **Verified Tests:**
 ```bash
-# Should pass through (normal commit)
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
-# Output: {"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}
+# Reinstall from repo
+npx skills add . -g -y
+# Result: 31 skills installed to 15 agents
 
-# Should be blocked (--no-verify flag)
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit --no-verify -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
-# Output: {"hookSpecificOutput":{"permissionDecision":"deny",...}}
+# OpenCode startup
+opencode
+# Result: No errors, agents visible via Tab cycling
 
-# Should pass through (--no-verify in message text, not as flag)
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"block --no-verify in hooks\""}}' | ~/.claude/hooks/pre_tool_use.sh
-# Output: {"tool_name":"Bash","tool_input":{"command":"git commit -m \"block --no-verify in hooks\""}}
+# Skills path verification
+ls ~/.config/opencode/skills/
+# Result: 31 symlinks to ~/.agents/skills/
 ```
 
-**What's Blocked:**
-- None - all tasks completed successfully
+**What's NOT in Repo (Local Config Only):**
+- OpenCode agents in `~/.config/opencode/agent/` - these use OpenCode-specific YAML format
+- The fix to `disciplined-implementation.md` (removed invalid model) is in local config only
+- Source of agents: `~/private_agents_settings/opencode/agent/`
 
 ## Technical Context
 
 ```
 Branch: main
 Recent commits:
-37bd4e1 feat(git-safety-guard): block hook bypass flags
-bfed4e0 Merge pull request #3 from terraphim/feat/xero-skill
-4b0c24c docs: troubleshoot and fix terraphim hook not triggering
-7f0e976 feat(agents): add V-model orchestration agents
-87f8476 feat(skills): integrate Essentialism + Effortless framework
+  6bcf7ff fix: correct OpenCode skill path documentation
+  4fc3ce1 fix: add OpenCode skill path fix script
+  714a25a feat: add terraphim_settings crate and cross-platform skills documentation
+  6b88b7e Merge remote: keep skills.sh README from canonical repo
+  25055c4 docs: archive repository - migrate to terraphim-skills
 
-Modified files:
-- None (all committed and pushed)
-
-Untracked files:
-- crates/ (terraphim_settings workspace)
+Working tree: clean
 ```
 
-## Key Files Changed
+## Architecture Clarification
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `skills/git-safety-guard/SKILL.md` | Documents blocked git patterns | Updated with --no-verify |
-| `~/.claude/hooks/pre_tool_use.sh` | Global PreToolUse hook | Updated with blocking logic |
+| Component | Location | Format | Managed By |
+|-----------|----------|--------|------------|
+| Skills | `~/.agents/skills/` | Claude Code YAML | skills.sh |
+| OpenCode Skills | `~/.config/opencode/skills/` | Symlinks | skills.sh |
+| OpenCode Agents | `~/.config/opencode/agent/` | OpenCode YAML | Manual |
+| Repo Agents | `agents/` | Claude Code YAML | Git |
 
-## Current Hook Implementation
-
-The `~/.claude/hooks/pre_tool_use.sh` now has two-stage processing:
-
-```
-1. GUARD STAGE (New)
-   |-- Extract command from JSON input
-   |-- Strip quoted strings to avoid false positives
-   |-- Check for --no-verify or -n flags in git commit/push
-   |-- If found: Return deny decision, EXIT
-   v
-2. REPLACEMENT STAGE (Existing)
-   |-- Change to ~/.config/terraphim
-   |-- Run terraphim-agent hook for text replacement
-   |-- Return modified JSON or original
-```
-
-## Commits Made This Session
-
-| Commit | Message | Files Changed |
-|--------|---------|---------------|
-| 37bd4e1 | feat(git-safety-guard): block hook bypass flags | skills/git-safety-guard/SKILL.md |
+**Key Difference:**
+- **Skills** = reusable prompts (cross-platform, managed by skills.sh)
+- **Agents** = platform-specific orchestration configs (OpenCode has different YAML schema)
 
 ## Next Steps
 
-### Priority 1: Handle Untracked crates/ Directory
-- Review `crates/` directory - appears to be terraphim_settings workspace
-- Decide whether to commit, gitignore, or remove
+### Priority 1: OpenCode Agent Management
+- [ ] Decide: Should OpenCode agents be added to repo?
+- [ ] If yes: Create `opencode-agents/` directory with OpenCode-format agents
+- [ ] Consider: Auto-conversion script from Claude Code format to OpenCode format
 
-### Priority 2: Test Hook in Production
-- Use Claude Code for normal development workflow
-- Verify hook correctly blocks --no-verify attempts
-- Confirm text replacement still works after guard check
+### Priority 2: Missing Discipline Phases in OpenCode
+- [ ] OpenCode agents only have: research, design, implementation, orchestrator, quality-gatekeeper
+- [ ] Missing: specification, verification, validation, left-side-of-v, right-side-of-v, execution-orchestrator
+- [ ] Consider: Port remaining agents to OpenCode format
 
-### Priority 3: Consider Additional Guard Patterns
-Potential additions to git-safety-guard:
-- `git rebase --skip` (skips commits during rebase)
-- `git cherry-pick --skip` (skips commits during cherry-pick)
-- Other flags that bypass safety checks
+### Priority 3: Documentation
+- [ ] Document the Skills vs Agents distinction clearly
+- [ ] Add OpenCode-specific setup instructions if agents are added to repo
 
-### Priority 4: Document Hook Architecture
-- The pre_tool_use.sh now has two responsibilities (guard + replace)
-- Consider splitting into separate scripts for clarity
-- Update terraphim-hooks skill documentation
+## Blockers
 
-## Related Issues
+None currently. All functionality working.
 
-| Issue | Title | Status |
-|-------|-------|--------|
-| #4 | Block git --no-verify to enforce hook execution | Open |
+## Files Changed This Session
 
-## Installation Commands (Updated)
+| File | Change |
+|------|--------|
+| `README.md` | Removed incorrect OpenCode fix section |
+| `docs/best-practices-skills-hooks-claude-code-codex-opencode.md` | Updated paths to `skills/` (plural) |
+| `scripts/fix-opencode-paths.sh` | Deleted (not needed) |
+| `.claude/settings.local.json` | Added session permissions |
 
-The global hook is already installed at `~/.claude/hooks/pre_tool_use.sh`. To verify:
+## Local Config Changes (Not in Repo)
 
-```bash
-# Check hook exists and is executable
-ls -la ~/.claude/hooks/pre_tool_use.sh
-
-# Test guard functionality
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit --no-verify -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
-
-# Test normal commit passes through
-echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"test\""}}' | ~/.claude/hooks/pre_tool_use.sh
-```
-
-## Known Issues
-
-### HEREDOC Commands with Blocked Text
-When using HEREDOC syntax for commit messages, the shell expands the command before the hook sees it. If the expanded text contains "--no-verify" anywhere (even in message body), the hook may incorrectly block it.
-
-**Workaround:** Avoid mentioning "--no-verify" literally in commit messages. Use alternative phrasing like "hook bypass flags" or "verify skip flag".
-
-**Status:** Fixed by stripping quoted strings before pattern matching, but HEREDOC expansion happens before JSON encoding.
+| File | Change |
+|------|--------|
+| `~/.config/opencode/agent/disciplined-implementation.md` | Removed `model: xai/grok-code-fast`, changed `mode: subagent` to `mode: primary` |
+| `~/private_agents_settings/opencode/agent/disciplined-implementation.md` | Same fix applied to source |
