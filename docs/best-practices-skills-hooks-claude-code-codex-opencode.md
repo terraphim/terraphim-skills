@@ -35,12 +35,12 @@ This document synthesizes best practices for building skills and hooks across th
 
 ### OpenCode (OpenCode.ai)
 
-**Installation**: Manual copy to config directory
-**Skill Location**: `~/.config/opencode/skill/` or `.opencode/skill/`
+**Installation**: skills.sh or manual copy to config directory
+**Skill Location**: `~/.config/opencode/skills/` or `.opencode/skills/`
 **Triggering**: Automatic discovery with on-demand invocation
 **Key Features**:
 - Compatible with Claude Code's `.claude/skills/` path
-- Single skill/ directory structure
+- skills/ directory structure (plural)
 - Agent definitions in AGENTS.md
 - Cross-platform compatibility
 
@@ -145,7 +145,7 @@ description: Brief description
 
 **File Structure**:
 ```
-~/.config/opencode/skill/
+~/.config/opencode/skills/
 ├── skill-name.md
 ├── another-skill.md
 └── AGENTS.md (optional)
@@ -537,7 +537,7 @@ def convert_claude_to_codex(skill_path):
 ```python
 # Direct copy (compatible structure)
 def deploy_to_opencode(skill_path):
-    copy_file(skill_path, "~/.config/opencode/skill/")
+    copy_file(skill_path, "~/.config/opencode/skills/")
 ```
 
 ### Compatibility Checklist
@@ -873,7 +873,7 @@ cp skill-name.md ~/.codex/skills/
 
 ### OpenCode
 ```bash
-cp skill-name.md ~/.config/opencode/skill/
+cp skill-name.md ~/.config/opencode/skills/
 ```
 
 ## Usage
@@ -1040,8 +1040,8 @@ cd skills && ./install.sh
 # install.sh
 
 # Copy skills
-mkdir -p ~/.config/opencode/skill/
-cp skill/*.md ~/.config/opencode/skill/
+mkdir -p ~/.config/opencode/skills/
+cp skill/*.md ~/.config/opencode/skills/
 
 echo "OpenCode skills installed"
 ```
@@ -1070,8 +1070,8 @@ install_codex() {
 
 install_opencode() {
     echo "Installing for OpenCode..."
-    mkdir -p ~/.config/opencode/skill/
-    cp skill/*.md ~/.config/opencode/skill/
+    mkdir -p ~/.config/opencode/skills/
+    cp skill/*.md ~/.config/opencode/skills/
 }
 
 # Parse arguments
@@ -1167,7 +1167,7 @@ Use `claude plugin install` to install
 ```markdown
 **Claude Code**: `claude plugin install`
 **Codex**: Copy to ~/.codex/skills/
-**OpenCode**: Copy to ~/.config/opencode/skill/
+**OpenCode**: Copy to ~/.config/opencode/skills/
 ```
 
 ### 6. Vague Success Criteria
