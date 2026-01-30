@@ -20,6 +20,19 @@ npx skills add terraphim/terraphim-skills --list
 
 Installs to: Claude Code, Cursor, Codex, Amp, VS Code, Copilot, Gemini CLI, Goose, Letta, and OpenCode.
 
+### OpenCode Fix (Required)
+
+skills.sh has a bug - it installs to `skills/` (plural) but OpenCode expects `skill/` (singular). Run this after installation:
+
+```bash
+# After npx skills add, fix OpenCode paths
+./scripts/fix-opencode-paths.sh
+
+# Or manually:
+rm -rf ~/.config/opencode/skills  # Remove incorrect plural directory
+ln -s ~/.agents/skills ~/.config/opencode/skill  # Create correct singular symlink
+```
+
 ## Alternative: Claude Code Plugin Marketplace
 
 ```bash

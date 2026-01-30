@@ -6,7 +6,13 @@
       "Bash(terraphim-agent:*)",
       "Bash(gh release:*)",
       "Bash(~/.cargo/bin/terraphim-agent hook:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(find:*)",
+      "Bash(git -C /home/alex/projects/terraphim/terraphim-skills log -p --all -S \"error\\\\|Error\\\\|ERROR\" -- \"*.json\" \"*.md\")",
+      "Bash(head:*)",
+      "Bash(tmux new-session:*)",
+      "Bash(tmux capture-pane:*)",
+      "WebFetch(domain:github.com)"
     ]
   },
   "hooks": {
