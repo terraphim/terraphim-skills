@@ -266,3 +266,29 @@ After running UBS:
 - Run UBS on all code changes before merge
 - Include UBS evidence in quality gate reports
 - Re-run after fixes to confirm resolution
+
+## References and Acknowledgments
+
+### Ultimate Bug Scanner
+
+UBS is created by [Jeff Emanuel (Dicklesworthstone)](https://github.com/Dicklesworthstone) and released under the MIT License.
+
+- **Repository**: [github.com/Dicklesworthstone/ultimate_bug_scanner](https://github.com/Dicklesworthstone/ultimate_bug_scanner)
+- **License**: MIT
+
+### Core Dependencies
+
+UBS builds upon these open source projects:
+
+| Project | Author | Description |
+|---------|--------|-------------|
+| [ast-grep](https://github.com/ast-grep/ast-grep) | [Herrington Darkholme](https://github.com/HerringtonDarkholme) | Syntax-aware AST search/rewrite tool written in Rust, used for JS/TS analysis |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | [Andrew Gallant](https://github.com/BurntSushi) | Fast regex search tool, provides 10x faster file searching |
+| [tree-sitter](https://tree-sitter.github.io/tree-sitter/) | Multiple contributors | Incremental parsing library underlying ast-grep |
+| [typos-cli](https://github.com/crate-ci/typos) | crate-ci | Spellchecker for source code identifiers |
+
+### Related Static Analysis Resources
+
+- [analysis-tools-dev/static-analysis](https://github.com/analysis-tools-dev/static-analysis) - Curated list of static analysis tools for all languages
+- [Semgrep](https://github.com/semgrep/semgrep) - Lightweight static analysis with pattern matching
+- [NIST Source Code Security Analyzers](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers) - NIST reference on security analysis tools

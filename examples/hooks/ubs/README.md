@@ -103,3 +103,19 @@ Development Flow:
 2. Commit → Post-hook reports findings
 3. PR ready → quality-gate skill runs full UBS scan
 ```
+
+## References
+
+### Ultimate Bug Scanner
+
+Created by [Jeff Emanuel (Dicklesworthstone)](https://github.com/Dicklesworthstone) under the MIT License.
+
+- **Repository**: [github.com/Dicklesworthstone/ultimate_bug_scanner](https://github.com/Dicklesworthstone/ultimate_bug_scanner)
+
+### Dependencies
+
+UBS leverages these open source projects:
+
+- [ast-grep](https://github.com/ast-grep/ast-grep) by Herrington Darkholme - AST-based code search
+- [ripgrep](https://github.com/BurntSushi/ripgrep) by Andrew Gallant - Fast regex search
+- [tree-sitter](https://tree-sitter.github.io/tree-sitter/) - Incremental parsing library
