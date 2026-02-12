@@ -114,8 +114,29 @@ Include ownership, environment details, and how to report bugs.
 **Attachments:** logs/screenshots
 ```
 
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Context
+
+Acceptance testing maps to the ZDP **Design** stage (Workflow 3: UAT Strategy) and **Deploy** stage (UAT execution). Test scenarios feed into the LCA and IOC gates.
+
+### Additional Guidance
+
+When working within a ZDP lifecycle:
+- Derive UAT scenarios from ZDP business scenarios (map each AT scenario to its source business scenario ID)
+- Add a `Business Scenario` column to the UAT Plan Scenarios table: `### AT-001: {title} (maps: REQ-..., BS-...)`
+- Align synthetic test data with privacy-preserving requirements from ZDP Workflow 3
+
+### Cross-References
+
+If available, coordinate with:
+- `/business-scenario-design` -- source business scenarios for UAT derivation
+- `/responsible-ai` -- Responsible-AI acceptance criteria
+
 ## Constraints
 
-- Do not mark scenarios as “passed” without stating environment and commit.
+- Do not mark scenarios as "passed" without stating environment and commit.
 - Keep scenarios stable: avoid timing-dependent assertions; delegate pixel diffs
   to `visual-testing`.
