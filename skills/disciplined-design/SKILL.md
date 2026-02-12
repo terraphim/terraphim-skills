@@ -374,6 +374,33 @@ Before proceeding to Phase 3 (Implementation):
 ### Quality Evaluation
 After completing design, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 3.
 
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Context
+
+Disciplined design maps to the ZDP **Design** stage (Workflows 2-4: Planning Phase). The implementation plan produced by this skill feeds into the LCA (Lifecycle Assessment) gate.
+
+### Additional Guidance
+
+When working within a ZDP lifecycle:
+- Ground design briefs in the validated domain model and context-engineered inputs
+- Decompose the system into cleanly separated components with clear boundaries
+- Include data-exchange flows and event models in the architecture section
+- Align UAT strategy with ZDP acceptance criteria and business scenarios
+- Address Responsible-AI and accessibility constraints before any code generation
+- Ensure model experiments are isolated from UI and application logic
+
+### Cross-References
+
+If available, coordinate outputs with:
+- `/architecture` -- system and ML architecture documents
+- `/acceptance-testing` -- UAT strategy aligned with business scenarios
+- `/responsible-ai` -- risk register populated during design
+- `/prompt-agent-spec` -- agent specifications for AI components
+- `/business-scenario-design` -- scenarios inform design decomposition
+
 ## Constraints
 
 - **No implementation** - Design only

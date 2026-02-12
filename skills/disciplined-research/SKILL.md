@@ -321,6 +321,31 @@ Before proceeding to Phase 2 (Design):
 ### Quality Evaluation
 After completing research, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 2.
 
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Context
+
+Disciplined research maps to the ZDP **Discovery** and early **Define** stages (Workflow 1: Research Phase). The research document produced by this skill feeds directly into the PFA (Problem Framing Agreement) gate.
+
+### Additional Guidance
+
+When working within a ZDP lifecycle:
+- Extract domain terms, synonyms, and structural concepts for domain model updates
+- Map findings to personas, end-to-end business scenarios, and event models
+- Enforce separation of concerns: problem understanding is independent from design choices
+- Include stakeholder map and decision authority map in research outputs
+- Log constraints across all ZDP dimensions: business, data, legal, ethical, technical
+
+### Cross-References
+
+If available, coordinate outputs with:
+- `/product-vision` -- research findings inform the PVVH document
+- `/business-scenario-design` -- domain understanding feeds scenario design
+- `/via-negativa-analysis` -- risk scan at Discovery stage
+- `/wardley-mapping` -- strategic landscape context
+
 ## Constraints
 
 - **No design** - This phase is purely about understanding
