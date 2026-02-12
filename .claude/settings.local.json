@@ -7,12 +7,14 @@
       "Bash(gh release:*)",
       "Bash(~/.cargo/bin/terraphim-agent hook:*)",
       "WebSearch",
-      "Bash(find:*)",
-      "Bash(git -C /home/alex/projects/terraphim/terraphim-skills log -p --all -S \"error\\\\|Error\\\\|ERROR\" -- \"*.json\" \"*.md\")",
-      "Bash(head:*)",
-      "Bash(tmux new-session:*)",
-      "Bash(tmux capture-pane:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:diataxis.fr)",
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && head -10 {}')",
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && head -4 {}')",
+      "Bash(ls:*)",
+      "Bash(echo:*)",
+      "Bash(bun:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)"
     ]
   },
   "hooks": {
