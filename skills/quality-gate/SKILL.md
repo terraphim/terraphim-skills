@@ -74,6 +74,68 @@ Every quality gate run includes an essentialism check. Before running specialist
 - Missing elimination documentation in design
 - Friction log shows systemic issues
 
+## ZDP Quality Gates (Optional)
+
+When this skill is invoked within a ZDP (Zestic AI Development Process) lifecycle with a specific gate type, use the corresponding checklist below in addition to the standard quality gate workflow. **This section can be ignored for standalone usage.**
+
+Each checklist item can be assessed with an epistemic status:
+- **Known/Sufficient** -- evidence exists and is adequate
+- **Partially Known** -- some evidence, gaps identified
+- **Contested** -- stakeholders disagree; escalate to mediation
+- **Underdetermined** -- insufficient evidence; request more data
+- **Out-of-Scope** -- requires domain expertise beyond this review
+
+Contested or Underdetermined items trigger escalation rather than forced pass/fail. Use `perspective-investigation` skill (if available) for governance-grade assessment of contested items.
+
+### PFA (Problem Framing Agreement) -- Discovery exit
+- [ ] Strategic context and business drivers documented
+- [ ] Stakeholder map complete
+- [ ] Problem hypotheses stated and testable
+- [ ] High-level risk scan performed (if available: `/via-negativa-analysis`)
+- [ ] Constraints and assumptions logged
+
+### LCO (Lifecycle Objectives) -- Define exit
+- [ ] Product Vision & Value Hypothesis approved (if available: `/product-vision`)
+- [ ] Personas and JTBD validated
+- [ ] End-to-end business scenarios drafted (if available: `/business-scenario-design`)
+- [ ] Domain model baselined
+- [ ] UX prototypes reviewed
+- [ ] Budget and timeline estimate drafted
+- [ ] Stakeholder sign-off obtained
+
+### LCA (Lifecycle Assessment) -- Design exit
+- [ ] AI & System Design Brief finalized (if available: `/architecture`)
+- [ ] Software & ML Architecture Doc approved
+- [ ] UX Flows & Interaction Contracts complete
+- [ ] Data Flows & Event Model released
+- [ ] UAT test strategy finalized (if available: `/acceptance-testing`)
+- [ ] Responsible AI Risk Register populated (if available: `/responsible-ai`)
+- [ ] Quality standards defined
+- [ ] Architect and stakeholder sign-off obtained
+
+### IOC (Initial Operational Capability) -- Develop exit
+- [ ] Slice deployed to staging
+- [ ] All critical tests passing
+- [ ] Monitoring configured (if available: `/mlops-monitoring`)
+- [ ] Prompt & Agent Specs documented (if available: `/prompt-agent-spec`)
+- [ ] Responsible-AI validation passed
+- [ ] Security review passed
+
+### FOC (Full Operational Capability) -- Deploy exit
+- [ ] All critical use cases live in production
+- [ ] Accessibility audit passed
+- [ ] Release notes published
+- [ ] Monitoring and alerting active
+- [ ] Incident runbooks created
+- [ ] Post-deploy review completed
+
+### CLR (Continuous Learning Release) -- Drive gate
+- [ ] Retrained model meets KPI thresholds
+- [ ] Bias and usability tests passed
+- [ ] Drift report reviewed (if available: `/mlops-monitoring`)
+- [ ] Decision log updated (iterate/retrain/retire)
+- [ ] Deployment approved
+
 ## Workflow
 
 1. **Intake + Risk Profile**
