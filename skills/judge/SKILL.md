@@ -58,7 +58,7 @@ for the full schema. Minimal structure:
 ```json
 {
   "task_id": "issue-18",
-  "model": "opencode/grok-code",
+  "model": "opencode/gpt-5-nano",
   "mode": "quick",
   "verdict": "accept",
   "scores": {
@@ -79,7 +79,7 @@ Output MUST be valid JSON only -- no markdown fencing, no preamble, no trailing 
 
 ### Quick Judge
 
-- **Model**: opencode/grok-code (fast, free)
+- **Model**: opencode/gpt-5-nano (fast, low latency)
 - **Purpose**: Rapid pass/fail screening at task completion
 - **Timeout**: 30 seconds
 - **Prompt template**: [references/prompt-quick.md](references/prompt-quick.md)
@@ -87,7 +87,7 @@ Output MUST be valid JSON only -- no markdown fencing, no preamble, no trailing 
 
 ### Deep Judge
 
-- **Model**: opencode/kimi-k2 (thorough, reasoning-capable)
+- **Model**: opencode/kimi-k2.5-free (thorough, reasoning-capable)
 - **Purpose**: Detailed evaluation with improvement suggestions
 - **Timeout**: 60 seconds
 - **Prompt template**: [references/prompt-deep.md](references/prompt-deep.md)
@@ -95,7 +95,7 @@ Output MUST be valid JSON only -- no markdown fencing, no preamble, no trailing 
 
 ### Tiebreaker
 
-- **Model**: github-copilot/claude-sonnet-4 (independent perspective)
+- **Model**: opencode/gpt-5.1-codex-mini (independent perspective, different provider)
 - **Purpose**: Resolve accept/reject disagreement between quick and deep judges
 - **Timeout**: 45 seconds
 - **Prompt template**: Uses deep prompt with prior verdicts appended

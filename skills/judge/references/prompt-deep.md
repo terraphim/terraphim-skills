@@ -1,6 +1,6 @@
 # Deep Judge Prompt Template
 
-Target model: opencode/kimi-k2
+Target model: opencode/kimi-k2.5-free
 Timeout: 60 seconds
 
 ## System Prompt
@@ -54,7 +54,7 @@ For each improvement, specify: what to fix, where it is, and why it matters.
 Respond with ONLY this JSON (no other text):
 {
   "task_id": "{{task_id}}",
-  "model": "opencode/kimi-k2",
+  "model": "opencode/kimi-k2.5-free",
   "mode": "deep",
   "verdict": "<accept|improve|reject>",
   "scores": {
@@ -101,7 +101,7 @@ You are the tiebreaker. Evaluate independently, then state your verdict.
 The prior verdicts are provided for context but must not override your assessment.
 ```
 
-When in tiebreaker mode, set `"model": "github-copilot/claude-sonnet-4"` and `"mode": "tiebreaker"`.
+When in tiebreaker mode, set `"model": "opencode/gpt-5.1-codex-mini"` and `"mode": "tiebreaker"`.
 
 ## Notes
 

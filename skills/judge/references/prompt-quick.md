@@ -1,6 +1,6 @@
 # Quick Judge Prompt Template
 
-Target model: opencode/grok-code
+Target model: opencode/gpt-5-nano
 Timeout: 30 seconds
 
 ## System Prompt
@@ -32,7 +32,7 @@ Verdict rules:
 Respond with ONLY this JSON (no other text):
 {
   "task_id": "{{task_id}}",
-  "model": "opencode/grok-code",
+  "model": "opencode/gpt-5-nano",
   "mode": "quick",
   "verdict": "<accept|improve|reject>",
   "scores": {
