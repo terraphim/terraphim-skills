@@ -24,9 +24,9 @@
       "type": "string",
       "description": "Model identifier used for this evaluation",
       "enum": [
-        "zen/gpt-5-nano",
-        "zen/kimi-k2.5-free",
-        "copilot/claude-sonnet-4"
+        "opencode/grok-code",
+        "opencode/kimi-k2",
+        "github-copilot/claude-sonnet-4"
       ]
     },
     "mode": {
