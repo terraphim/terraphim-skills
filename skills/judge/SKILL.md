@@ -139,11 +139,12 @@ Escalate to human review when:
 
 ### Runner Script
 
-The judge is invoked by `automation/judge/run-judge.sh` (Issue #20), which:
-- Accepts task context (files changed, task description)
-- Calls opencode with the appropriate prompt template
-- Parses verdict JSON and logs to JSONL
-- Implements the multi-iteration protocol
+The judge is invoked by `automation/judge/run-judge.sh` (v2), which:
+- Writes prompts to temp files (eliminates shell escaping issues with file content)
+- Calls opencode with `--file <tempfile>` for reliable prompt delivery
+- Parses verdict JSON from opencode's JSON event stream
+- Implements the multi-iteration protocol (quick -> deep -> tiebreaker)
+- Optionally enriches verdict logging with terraphim-cli term matching
 
 ### Verdict Logging
 
@@ -155,8 +156,42 @@ This enables:
 
 ### Pre-Push Hook
 
-Future integration (Issue #22) will invoke the judge as a pre-push hook via
-terraphim-agent, blocking pushes that receive a "reject" verdict.
+The judge can be invoked as a pre-push hook via `automation/judge/pre-push-judge.sh`,
+blocking pushes that receive a "reject" verdict.
+
+## Terraphim Integration (Optional)
+
+When terraphim-cli is available, the judge runner uses knowledge graph-based
+term normalization to identify rubric dimensions in model reasoning.
+
+### Knowledge Graph Setup
+
+```bash
+# Install judge KG files and configure role
+bash automation/judge/setup-judge-kg.sh
+
+# Verify installation
+terraphim-cli thesaurus --limit 50
+terraphim-cli find "factual correctness and actionability"
+```
+
+### KG Files
+
+Located in `automation/judge/kg/`:
+
+| File | Normalized Term | Purpose |
+|------|----------------|---------|
+| `judge-semantic.md` | judge-semantic | Synonyms for semantic quality dimension |
+| `judge-pragmatic.md` | judge-pragmatic | Synonyms for pragmatic quality dimension |
+| `judge-syntactic.md` | judge-syntactic | Synonyms for syntactic quality dimension |
+| `judge-verdicts.md` | judge-verdicts | Verdict vocabulary normalization |
+| `judge-checklist.md` | judge-checklist | Required verdict elements |
+
+### Fail-Open Design
+
+If terraphim-cli is not installed, the judge falls back to direct JSON
+extraction without term normalization. All core functionality works
+without terraphim -- the KG integration is an enrichment layer.
 
 ## Resources
 
