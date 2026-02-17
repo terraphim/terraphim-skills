@@ -379,6 +379,7 @@ fi
 if [[ -z "$QUICK_RESULT" ]] || ! validate_verdict "$QUICK_RESULT"; then
     echo "[Round ${ROUND}] Quick judge failed to produce valid verdict"
     echo "RESULT: Human fallback needed (invalid quick judge response)"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "invalid-json" || true
     exit 2
 fi
 
@@ -397,7 +398,7 @@ fi
 
 if [[ "$QUICK_VERDICT" == "reject" ]]; then
     echo "RESULT: REJECTED (quick judge, round ${ROUND})"
-    FINAL_VERDICT="reject"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
     exit 1
 fi
 
@@ -422,6 +423,7 @@ fi
 if [[ -z "$DEEP_RESULT" ]] || ! validate_verdict "$DEEP_RESULT"; then
     echo "[Round ${ROUND}] Deep judge failed to produce valid verdict"
     echo "RESULT: Human fallback needed (invalid deep judge response)"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "invalid-json" || true
     exit 2
 fi
 
@@ -445,10 +447,12 @@ if [[ "$NEEDS_TIEBREAKER" == "false" ]]; then
         exit 0
     elif [[ "$DEEP_VERDICT" == "reject" ]]; then
         echo "RESULT: REJECTED (deep judge, round ${ROUND})"
+        "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
         exit 1
     else
         # Both returned "improve" -- human fallback
         echo "RESULT: Human fallback needed (both judges returned 'improve')"
+        "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "disagreement" || true
         exit 2
     fi
 fi
@@ -476,6 +480,7 @@ fi
 if [[ -z "$TIEBREAKER_RESULT" ]] || ! validate_verdict "$TIEBREAKER_RESULT"; then
     echo "[Round ${ROUND}] Tiebreaker failed to produce valid verdict"
     echo "RESULT: Human fallback needed (invalid tiebreaker response)"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "invalid-json" || true
     exit 2
 fi
 
@@ -498,8 +503,10 @@ if [[ "$TIEBREAKER_VERDICT" == "accept" ]]; then
     exit 0
 elif [[ "$TIEBREAKER_VERDICT" == "reject" ]]; then
     echo "RESULT: REJECTED (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
     exit 1
 else
     echo "RESULT: Human fallback needed (tiebreaker returned '${TIEBREAKER_VERDICT}')"
+    "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "disagreement" || true
     exit 2
 fi
