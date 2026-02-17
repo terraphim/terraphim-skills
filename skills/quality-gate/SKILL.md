@@ -110,6 +110,7 @@ Contested or Underdetermined items trigger escalation rather than forced pass/fa
 - [ ] Data Flows & Event Model released
 - [ ] UAT test strategy finalized (if available: `/acceptance-testing`)
 - [ ] Responsible AI Risk Register populated (if available: `/responsible-ai`)
+- [ ] CM Specification produced (if formal config governance required; if available: `/ai-config-management`)
 - [ ] Quality standards defined
 - [ ] Architect and stakeholder sign-off obtained
 
