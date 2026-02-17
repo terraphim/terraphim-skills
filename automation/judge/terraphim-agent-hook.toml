@@ -1,0 +1,34 @@
+# terraphim-agent hook configuration for judge integration
+# This file configures how terraphim-agent triggers the judge on task completion.
+#
+# Status: Template -- terraphim-agent binary does not yet exist.
+# When terraphim-agent is available, copy this to the agent's config directory.
+#
+# The judge runs automatically when a task completes, evaluating output files
+# against the three-dimension KLS rubric (Semantic/Pragmatic/Syntactic).
+
+[hooks]
+# Trigger judge evaluation when a task completes
+post_task_complete = "automation/judge/run-judge.sh --task-id {task_id} --description '{task_title}' --acceptance '{acceptance_criteria}' {output_files}"
+
+# Trigger disagreement handler when judge returns exit code 2
+post_judge_fallback = "automation/judge/handle-disagreement.sh --task-id {task_id} --task-title '{task_title}' --files '{output_files}' --reason {fallback_reason}"
+
+[hooks.judge]
+# Judge configuration overrides (optional)
+quick_model = "opencode/gpt-5-nano"
+deep_model = "opencode/kimi-k2.5-free"
+tiebreaker_model = "opencode/gpt-5.1-codex-mini"
+verdict_file = "automation/judge/verdicts.jsonl"
+max_rounds = 3
+
+[hooks.judge.timeouts]
+quick = 45
+deep = 60
+tiebreaker = 45
+total = 180
+
+[hooks.judge.auto_apply]
+# When true, agent attempts to apply improvement suggestions and re-submit
+enabled = false
+max_retries = 1
