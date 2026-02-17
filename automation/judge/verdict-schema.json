@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://terraphim.ai/schemas/verdict-v1.json",
+  "title": "Judge Verdict",
+  "description": "Schema for judge verdict records produced by the multi-model judge skill",
+  "type": "object",
+  "required": [
+    "task_id",
+    "model",
+    "mode",
+    "verdict",
+    "scores",
+    "average",
+    "reasoning",
+    "improvements",
+    "timestamp"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "GitHub issue number or task identifier"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model identifier used for this evaluation",
+      "enum": [
+        "zen/gpt-5-nano",
+        "zen/kimi-k2.5-free",
+        "copilot/claude-sonnet-4"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "description": "Judge mode used for this evaluation",
+      "enum": ["quick", "deep", "tiebreaker"]
+    },
+    "verdict": {
+      "type": "string",
+      "description": "Final verdict for the task output",
+      "enum": ["accept", "improve", "reject", "escalate"]
+    },
+    "scores": {
+      "type": "object",
+      "description": "Scores for each KLS dimension (1-5)",
+      "required": ["semantic", "pragmatic", "syntactic"],
+      "properties": {
+        "semantic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Domain accuracy, factual correctness, terminology"
+        },
+        "pragmatic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Actionability, usefulness, task goal alignment"
+        },
+        "syntactic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Internal consistency, structure, format compliance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "average": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Arithmetic mean of the three dimension scores"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Justification for the scores and verdict"
+    },
+    "improvements": {
+      "type": "array",
+      "description": "Specific improvement suggestions (empty for accept verdicts)",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "location", "issue", "suggestion"],
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "enum": ["semantic", "pragmatic", "syntactic"],
+            "description": "Which rubric dimension this improvement addresses"
+          },
+          "location": {
+            "type": "string",
+            "description": "Where in the output the issue was found"
+          },
+          "issue": {
+            "type": "string",
+            "description": "What is wrong"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "How to fix it"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the evaluation"
+    }
+  },
+  "additionalProperties": false
+}
