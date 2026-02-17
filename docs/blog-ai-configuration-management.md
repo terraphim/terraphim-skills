@@ -243,7 +243,7 @@ The specification recommends a phased implementation:
 The full specification is available as a Terraphim skill: `ai-config-management`. It contains:
 
 - **SKILL.md** -- Workflow, principles, threat table, ZDP integration
-- **functional-requirements.md** -- 38 numbered requirements across 9 categories
+- **functional-requirements.md** -- 39 numbered requirements across 9 categories
 - **ai-agents.md** -- 5 AI agent definitions with inputs, outputs, decision authority, and human override rules
 - **control-surfaces.md** -- 10 control surfaces with baseline rules, freeze conditions, and version trace model
 - **drift-detection.md** -- 4 drift categories with detection mechanisms, scoring, and thresholds

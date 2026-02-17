@@ -10,6 +10,7 @@ description: >
   prompt and model evolution, (7) architecting AI agent roles for configuration
   governance, or (8) any configuration control task involving probabilistic AI behaviour,
   evolving prompts, shifting domain definitions, or artefact proliferation.
+license: Apache-2.0
 ---
 
 # AI-Enabled Configuration Management Specification
