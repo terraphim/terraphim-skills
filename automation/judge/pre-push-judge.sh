@@ -15,6 +15,9 @@
 
 set -euo pipefail
 
+# Ensure tool binaries are in PATH
+export PATH="$HOME/.bun/bin:$HOME/.cargo/bin:$PATH"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUNNER="${SCRIPT_DIR}/run-judge.sh"
 

@@ -20,6 +20,9 @@
 
 set -euo pipefail
 
+# --- Ensure tool binaries are in PATH ---
+export PATH="$HOME/.bun/bin:$HOME/.cargo/bin:$PATH"
+
 # --- Configuration ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
