@@ -114,7 +114,7 @@ write_prompt_file() {
     local ts
     ts=$(get_timestamp)
     local tmpfile
-    tmpfile=$(mktemp /tmp/judge-prompt-XXXXXX.md)
+    tmpfile=$(mktemp /tmp/judge-prompt-XXXXXX)
     TMPFILES+=("$tmpfile")
 
     if [[ "$mode" == "quick" ]]; then
