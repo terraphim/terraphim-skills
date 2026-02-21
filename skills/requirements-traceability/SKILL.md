@@ -80,10 +80,25 @@ Evidence must be specific (paths, commands, logs). “Looks good” is not evide
 ## Traceability Matrix Template
 
 ```markdown
-| Req ID | Requirement | Design Ref | Impl Ref | Tests | Evidence | Status |
-|-------:|-------------|------------|----------|-------|----------|--------|
-| REQ-001 | … | ADR-001 | `src/...` | `tests/...` | `docs/quality/...` / command output | ✅/⚠️/❌ |
+| Req ID | Requirement | Maturity | Design Ref | Impl Ref | Tests | Evidence | Status |
+|-------:|-------------|----------|------------|----------|-------|----------|--------|
+| REQ-001 | … | Draft | ADR-001 | `src/...` | `tests/...` | `docs/quality/...` | ✅/⚠️/❌ |
 ```
+
+### Maturity States
+
+Track artifact maturity through the development lifecycle:
+
+| State | Description | Entry Criteria |
+|-------|-------------|----------------|
+| **Draft** | Initial capture, unvalidated | Requirement identified |
+| **Review** | Under stakeholder review | Documented in PR/spec |
+| **Approved** | Accepted for implementation | Stakeholder sign-off |
+| **Implemented** | Code complete | Merged to main |
+| **Verified** | Tested (Phase 4) | Tests pass |
+| **Validated** | Accepted by stakeholders (Phase 5) | UAT sign-off |
+
+The maturity column helps identify which requirements are ready for each phase of development.
 
 ## Gap Severity Rules
 

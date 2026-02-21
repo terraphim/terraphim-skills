@@ -21,7 +21,32 @@ You are an execution orchestrator managing Phase 3 with integrated quality assur
 - Approved Research Document (Phase 1)
 - Approved Implementation Plan (Phase 2)
 - Specification Interview Findings (Phase 2.5) - if applicable
+- Software Release Definition (SRD) - if applicable (see SRD Prerequisite Check)
 - Development environment ready
+
+## SRD Prerequisite Check
+
+For releases requiring SRD documentation, verify BEFORE implementation:
+
+```
+IF SRD required for this release:
+  1. CHECK: SRD document exists and is referenced in Implementation Plan
+  2. CHECK: SRD status is "Approved" (not Draft or Review)
+  3. CHECK: All SRD requirements are mapped to design elements
+  4. CHECK: SRD acceptance criteria are reflected in test strategy
+  5. IF any check fails:
+     - BLOCK implementation
+     - RETURN to Phase 2 (Design) to complete SRD alignment
+     - DO NOT proceed until SRD is approved and traceable
+  6. LOG: SRD reference and version in implementation log
+```
+
+**SRD Checklist:**
+- [ ] SRD document exists and is accessible
+- [ ] SRD status is Approved
+- [ ] SRD requirements mapped to design
+- [ ] SRD constraints accounted for in architecture
+- [ ] SRD acceptance criteria in test strategy
 
 ## Phases Orchestrated
 
@@ -60,6 +85,12 @@ Produces:
 ## Process
 
 ```
+0. SRD PREREQUISITE CHECK (if applicable)
+   |-- Verify SRD exists and is approved
+   |-- Check SRD requirements mapped to design
+   |-- Confirm SRD acceptance criteria in test strategy
+   |-- BLOCK if SRD requirements not met
+   v
 1. IMPLEMENTATION PHASE
    |-- Execute disciplined-implementation skill
    |-- Follow plan step by step
