@@ -296,6 +296,28 @@ CREATE TABLE features (
 |-------|------|-----|--------|
 | [crate] | X.Y | X.Z | [Why] |
 
+## Software Release Definition (SRD)
+
+For releases requiring formal SRD documentation, complete this section:
+
+### SRD Reference
+| Field | Value |
+|-------|-------|
+| SRD ID | [SRD-XXX or link] |
+| SRD Status | Draft / Review / Approved |
+| Target Release | [Version/Date] |
+
+### SRD Traceability
+| SRD Requirement | Design Section | Implementation Step | Test Coverage |
+|-----------------|----------------|---------------------|---------------|
+| [REQ-001] | [Section X] | [Step Y] | [Test Z] |
+
+### SRD Validation Checkpoints
+- [ ] All SRD requirements mapped to design elements
+- [ ] SRD acceptance criteria reflected in test strategy
+- [ ] SRD constraints incorporated into architecture
+- [ ] SRD dependencies documented and accounted for
+
 ## Performance Considerations
 
 ### Expected Performance
@@ -362,6 +384,7 @@ Before proceeding to Phase 3 (Implementation):
 - [ ] Test strategy complete
 - [ ] Steps sequenced with dependencies
 - [ ] Performance targets set
+- [ ] SRD traceability complete (if applicable)
 - [ ] Human approval received
 
 ### Essentialism Gates

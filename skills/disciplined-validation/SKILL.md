@@ -306,6 +306,7 @@ Has this been achieved?"
 **Research Doc**: [Link to Phase 1]
 **Design Doc**: [Link to Phase 2]
 **Verification Report**: [Link to Phase 4]
+**SRD Reference**: [SRD ID, if applicable]
 
 ## Executive Summary
 
@@ -345,6 +346,26 @@ Has this been achieved?"
 ### Quality Gate (`quality-gate` skill)
 - **Decision**: Pass / Pass with Follow-ups / Fail
 - **Report**: [link to Quality Gate Report]
+
+## SRD IOC Validation (if applicable)
+
+For releases with Software Release Definition (SRD) requirements:
+
+### IOC Criteria Verification
+| IOC Criterion | SRD Reference | Verification Method | Evidence | Status |
+|---------------|---------------|---------------------|----------|--------|
+| Feature complete | SRD-SEC-001 | Requirements traceability | Matrix shows all requirements Implemented | [ ] |
+| Tests passing | SRD-SEC-002 | Verification report | All tests PASS | [ ] |
+| Performance met | SRD-NFR-001 | Benchmark results | Within budget | [ ] |
+| Security passed | SRD-NFR-002 | Security audit | No critical findings | [ ] |
+| Documentation complete | SRD-SEC-003 | Doc review | All sections complete | [ ] |
+
+### SRD Compliance Checklist
+- [ ] All SRD requirements traced to acceptance evidence
+- [ ] SRD acceptance criteria verified
+- [ ] SRD constraints validated
+- [ ] SRD dependencies confirmed operational
+- [ ] IOC sign-off obtained from release authority
 
 ## System Test Results
 
@@ -471,6 +492,7 @@ Before production deployment:
 - [ ] All critical and high defects resolved through loop-back
 - [ ] Formal sign-off received from all required stakeholders
 - [ ] Deployment conditions documented and achievable
+- [ ] SRD IOC criteria validated (if applicable)
 - [ ] Ready for production deployment
 
 ## Constraints
