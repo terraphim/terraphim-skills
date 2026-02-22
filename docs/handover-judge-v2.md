@@ -47,6 +47,42 @@
 2. **Remote branch cleanup**: `feat/judge-v2-terraphim-native` branch exists on remote but has no diff from main (can be deleted).
 3. **MCP Agent Mail**: `handle-disagreement.sh` sends notifications to `http://100.106.66.7:8765/api/` but gets JSONRPC validation errors. The curl payload format doesn't match the server's expected JSONRPC schema. Non-blocking (best-effort notification).
 
+---
+
+## Phase 3: Operational Testing Complete (2026-02-22)
+
+### Activities Completed
+
+| Step | Task | Result |
+|------|------|--------|
+| 1 | Pre-push hook installation | ✅ Symlink created to .git/hooks/pre-push |
+| 2 | Exercise judge on 5+ tasks | ✅ 5 tasks evaluated (4 accept, 1 improve) |
+| 3 | Verify verdict logging | ✅ 7 total verdicts in verdicts.jsonl, all valid JSON |
+| 4 | Test JUDGE-PARSE-ERROR handling | ✅ Issue #53 created on deep judge failure |
+| 5 | Close issues #40-41 | ✅ Verified working and closed |
+| 6 | Documentation update | ✅ This handover updated |
+
+### Verdict Statistics
+
+| Verdict | Count | Source |
+|---------|-------|--------|
+| accept | 4 | judge-test-1,2,3,4 |
+| improve | 2 | learn-test-2 (prior), judge-test-5 |
+| reject | 0 | (none this session) |
+| human fallback | 1 | judge-test-5 (deep judge failed) |
+
+### Models Confirmed (All Free)
+
+- `opencode/gpt-5-nano` - Quick judge (45s timeout)
+- `opencode/kimi-k2.5-free` - Deep judge (60s timeout) - *failed in test-5*
+- `opencode/gpt-5.1-codex-mini` - Tiebreaker (45s timeout) - *not triggered*
+
+### GitHub Issues
+
+- #40: CLOSED - Judge parse error verified working
+- #41: CLOSED - Judge + learning capture verified working
+- #53: CREATED - [JUDGE-PARSE-ERROR] Review needed: Evaluate handover doc (human fallback from deep judge failure)
+
 ## Technical Context
 
 ### Key Files
