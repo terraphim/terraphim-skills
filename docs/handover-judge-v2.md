@@ -46,6 +46,7 @@
 1. **PR workflow**: The v2 commit was pushed directly to main (bypassed branch protection). Future work should use feature branches + PRs.
 2. **Remote branch cleanup**: `feat/judge-v2-terraphim-native` branch exists on remote but has no diff from main (can be deleted).
 3. **MCP Agent Mail**: `handle-disagreement.sh` sends notifications to `http://100.106.66.7:8765/api/` but gets JSONRPC validation errors. The curl payload format doesn't match the server's expected JSONRPC schema. Non-blocking (best-effort notification).
+4. **Command Correction**: `terraphim-agent learn correct` is not yet implemented. Tracked in [terraphim-ai#550](https://github.com/terraphim/terraphim-ai/issues/550).
 
 ---
 
