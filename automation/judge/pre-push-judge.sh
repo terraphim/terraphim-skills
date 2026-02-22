@@ -19,7 +19,8 @@ set -euo pipefail
 export PATH="$HOME/.bun/bin:$HOME/.cargo/bin:$PATH"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RUNNER="${SCRIPT_DIR}/run-judge.sh"
+# run-judge.sh is in automation/judge/, not .git/hooks/
+RUNNER="${SCRIPT_DIR}/../../automation/judge/run-judge.sh"
 
 # Get files changed between local and remote
 CHANGED_FILES=$(git diff --name-only HEAD @{u} 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
