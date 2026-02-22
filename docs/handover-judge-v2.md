@@ -157,3 +157,35 @@ bash automation/judge/setup-judge-kg.sh
 3. **Crate naming**: `terraphim-cli` (hyphen) vs `terraphim_agent` (underscore) in Cargo.toml package names.
 4. **Test issues**: `handle-disagreement.sh` creates real GitHub issues during testing. Always close them after.
 5. **Shell hooks**: The pre-tool-use hook blocks `chmod` and `git branch -d`. Use `bash script.sh` instead of making scripts executable.
+6. **Model naming**: Free models have `-free` suffix (e.g., `glm-5-free`, `minimax-m2.5-free`). Models without suffix may incur costs.
+7. **Hook error handling**: `set -e` causes scripts to exit on command failure. Use `|| true` to capture output from commands that may fail.
+8. **PreToolUse hook must return JSON**: Claude Code expects valid JSON output from PreToolUse hooks. Raw text causes "just error" messages.
+
+---
+
+## 2026-02-22: Hook and Model Fixes
+
+### Fixes Applied
+
+| Issue | Fix | File |
+|-------|-----|------|
+| PreToolUse hook error | Added `\|\| true` to prevent `set -e` exit when agent hook fails | `~/.claude/hooks/pre_tool_use.sh` line 99 |
+| Expensive model | Changed `kimi-k2.5-free` to `glm-5-free` (actually free) | `automation/judge/run-judge.sh` line 30 |
+
+### Current Configuration
+
+**PreToolUse Hook** (`~/.claude/hooks/pre_tool_use.sh`):
+- Returns valid JSON for all commands
+- Blocks dangerous commands via `terraphim-agent guard`
+- Allows safe commands with proper JSON output
+- Note: dcg (dangerous command guard) blocks at system level before hook runs for destructive commands
+
+**Judge Models** (all free):
+- Quick: `opencode/gpt-5-nano`
+- Deep: `opencode/glm-5-free`
+- Tiebreaker: `opencode/gpt-5.1-codex-mini`
+
+**Learning Capture** (`~/.claude/hooks/post_tool_use.sh`):
+- Captures failed bash commands via `terraphim-agent learn hook`
+- Fail-open: continues even if capture fails
+- Only processes Bash tools with non-zero exit codes
