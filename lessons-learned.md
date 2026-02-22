@@ -421,3 +421,59 @@ permission:
 - Add `opencode-agents/` directory with OpenCode-format agents
 - Or create conversion script from Claude Code format to OpenCode format
 - Document the installation process for OpenCode agents separately
+
+---
+
+## 2026-02-22: Hook Fixes and Judge Testing
+
+### Technical Discoveries
+
+1. **PreToolUse Hook JSON Requirement**: Claude Code expects valid JSON output from PreToolUse hooks. When the hook returned exit code 1 with no output, Claude showed "just error" with no details.
+
+2. **set -e and Command Substitution**: The hook used `set -euo pipefail` which caused the script to exit when `$AGENT hook` returned non-zero. Fix: Add `|| true` to capture output without exiting.
+   ```bash
+   AGENT_OUTPUT=$($AGENT hook ... 2>/dev/null) || true
+   ```
+
+3. **terraphim-agent guard Output Format**: The guard command outputs text ("BLOCKED: ...") not JSON when blocking. The hook must handle both formats.
+
+4. **Free Model Names**: Not all models with "free" in the name exist. Verified free models:
+   - `opencode/gpt-5-nano`
+   - `opencode/glm-5-free`
+   - `opencode/minimax-m2.5-free`
+   - `opencode/trinity-large-preview-free`
+
+5. **Pre-push Hook Path Issue**: When `pre-push-judge.sh` is symlinked to `.git/hooks/pre-push`, `SCRIPT_DIR` becomes `.git/hooks/` but `run-judge.sh` is in `automation/judge/`. Fixed by using relative path: `${SCRIPT_DIR}/../../automation/judge/run-judge.sh`
+
+### Debugging Approaches
+
+1. **Hook Testing**: Test hooks directly with echo:
+   ```bash
+   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ~/.claude/hooks/pre_tool_use.sh
+   ```
+
+2. **Tmux for Interactive Commands**: When stdin is not a TTY, use tmux:
+   ```bash
+   command tmux new-session -d -s test
+   command tmux send-keys -t test "ssh host" Enter
+   command tmux capture-pane -t test -p
+   ```
+
+3. **Bash -x with Redirect**: For debugging scripts that process stdin:
+   ```bash
+   ( bash -x script.sh ) > /tmp/debug.log 2>&1
+   ```
+
+### Pitfalls to Avoid
+
+1. Don't assume `kimi-k2.5-free` exists - verify model names with `opencode models`
+2. Don't forget `|| true` when capturing output from commands that may fail
+3. Don't use `chmod +x` on scripts when hooks block it - use `bash script.sh`
+4. Don't assume symlinks resolve paths the same as direct execution
+
+### Best Practices
+
+1. **Always return JSON from PreToolUse hooks** - Claude requires valid JSON
+2. **Fail-open design** - If terraphim-agent is not available, allow the command
+3. **Verify free models** - Check `opencode models | grep free` before configuring
+4. **Test with real files** - Judge evaluation on actual files reveals issues

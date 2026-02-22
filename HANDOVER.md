@@ -1,121 +1,143 @@
-# Handover Document - terraphim-skills
+# Handover: Judge System Fixes and Hook Validation
 
-**Date:** 2026-01-30
-**Branch:** main
-**Last Commit:** 6bcf7ff
+**Date**: 2026-02-22
+**Branch**: main
+**Session**: Judge system fixes and operational testing
+
+---
 
 ## Progress Summary
 
-### Tasks Completed This Session
+### Completed This Session
 
-1. **Fixed OpenCode Discipline Implementation Model Error:**
-   - Root cause: `~/.config/opencode/agent/disciplined-implementation.md` had invalid `model: xai/grok-code-fast`
-   - Also had `mode: subagent` which hid it from agent list
-   - Fixed by removing invalid model reference and changing to `mode: primary`
-   - Source file fixed: `~/private_agents_settings/opencode/agent/disciplined-implementation.md`
+| Task | Commit | Status |
+|------|--------|--------|
+| Fix PreToolUse hook JSON output | Local | Done |
+| Fix judge model (use free glm-5-free) | dd09d96 | Done |
+| Test judge with real files | 0d36430 | Done |
+| Fix pre-push hook path | 0f8edb2 | Done |
+| Create terraphim-ai#550 for command correction | N/A | Done |
+| Push all changes to origin | b5496a1 | Done |
 
-2. **Reinstalled Skills via skills.sh:**
-   - Ran `npx skills add . -g -y` to install 31 skills globally
-   - Skills installed to `~/.agents/skills/` with symlinks to 15 agent platforms
+### What Works
 
-3. **Investigated skills.sh vs OpenCode Path Discrepancy:**
-   - Initial assumption: skills.sh uses `skills/` (plural), OpenCode expects `skill/` (singular)
-   - After investigation: OpenCode docs were updated to use `skills/` (plural)
-   - skills.sh is CORRECT - no fix needed
-   - Removed unnecessary fix script from repo
+1. **PreToolUse Hook** (`~/.claude/hooks/pre_tool_use.sh`):
+   - Returns valid JSON for safe commands
+   - Blocks dangerous commands (via dcg system guard)
+   - Fixed `set -e` issue by adding `|| true` to agent hook call
 
-4. **Updated Documentation:**
-   - Commit 4fc3ce1: Initial fix attempt (incorrect assumption)
-   - Commit 6bcf7ff: Corrected documentation, removed fix script
-   - Updated `docs/best-practices-skills-hooks-claude-code-codex-opencode.md` to use `skills/` (plural)
+2. **Judge System**:
+   - Quick judge: `opencode/gpt-5-nano` (free)
+   - Deep judge: `opencode/glm-5-free` (free - fixed from non-existent kimi-k2.5-free)
+   - Tiebreaker: `opencode/gpt-5.1-codex-mini` (free)
+   - 10 verdicts logged in `automation/judge/verdicts.jsonl`
 
-### Current State
+3. **Learning Capture**:
+   - Captures failed commands to `~/.local/share/terraphim/learnings/`
+   - 42 learnings stored
+   - Query works: `terraphim-agent learn query <pattern>`
 
-**What's Working:**
-- skills.sh installs 31 skills to `~/.config/opencode/skills/` (correct path)
-- OpenCode starts without errors
-- All discipline agents available: Disciplined-Research, Disciplined-Design, Disciplined-Implementation
-- Essentialism + Karpathy guidelines present in skill content
+4. **Pre-push Hook**:
+   - Fixed path to `run-judge.sh` when symlinked to `.git/hooks/pre-push`
+   - Now correctly uses `${SCRIPT_DIR}/../../automation/judge/run-judge.sh`
 
-**Verified Tests:**
-```bash
-# Reinstall from repo
-npx skills add . -g -y
-# Result: 31 skills installed to 15 agents
+### What's Blocked
 
-# OpenCode startup
-opencode
-# Result: No errors, agents visible via Tab cycling
+1. **SSH to bigbox**: Permission denied (publickey)
+   - Key `~/.ssh/id_ed25519` exists but not authorized on bigbox
+   - Need to add public key to bigbox's `~/.ssh/authorized_keys`
 
-# Skills path verification
-ls ~/.config/opencode/skills/
-# Result: 31 symlinks to ~/.agents/skills/
-```
+2. **Command Correction**: Not yet implemented
+   - `terraphim-agent learn correct` returns "(Not yet implemented)"
+   - Tracked in [terraphim-ai#550](https://github.com/terraphim/terraphim-ai/issues/550)
 
-**What's NOT in Repo (Local Config Only):**
-- OpenCode agents in `~/.config/opencode/agent/` - these use OpenCode-specific YAML format
-- The fix to `disciplined-implementation.md` (removed invalid model) is in local config only
-- Source of agents: `~/private_agents_settings/opencode/agent/`
+---
 
 ## Technical Context
 
+```bash
+# Current branch
+git branch --show-current
+main
+
+# Recent commits
+0f8edb2 fix(judge): correct run-judge.sh path in pre-push hook
+b5496a1 docs(handover): add reference to command correction issue
+0d36430 test(judge): add test verdicts for hook and quality validation
+dd09d96 fix(judge): use free model for deep judge
+e2c7941 docs: update judge v2 handover with Phase 3 operational testing results
+
+# Modified files (uncommitted)
+?? .cachebro/
+?? .docs/
+?? ENDOFFILE
+?? PYEOF
+?? crates/crates_backup/
 ```
-Branch: main
-Recent commits:
-  6bcf7ff fix: correct OpenCode skill path documentation
-  4fc3ce1 fix: add OpenCode skill path fix script
-  714a25a feat: add terraphim_settings crate and cross-platform skills documentation
-  6b88b7e Merge remote: keep skills.sh README from canonical repo
-  25055c4 docs: archive repository - migrate to terraphim-skills
 
-Working tree: clean
-```
-
-## Architecture Clarification
-
-| Component | Location | Format | Managed By |
-|-----------|----------|--------|------------|
-| Skills | `~/.agents/skills/` | Claude Code YAML | skills.sh |
-| OpenCode Skills | `~/.config/opencode/skills/` | Symlinks | skills.sh |
-| OpenCode Agents | `~/.config/opencode/agent/` | OpenCode YAML | Manual |
-| Repo Agents | `agents/` | Claude Code YAML | Git |
-
-**Key Difference:**
-- **Skills** = reusable prompts (cross-platform, managed by skills.sh)
-- **Agents** = platform-specific orchestration configs (OpenCode has different YAML schema)
+---
 
 ## Next Steps
 
-### Priority 1: OpenCode Agent Management
-- [ ] Decide: Should OpenCode agents be added to repo?
-- [ ] If yes: Create `opencode-agents/` directory with OpenCode-format agents
-- [ ] Consider: Auto-conversion script from Claude Code format to OpenCode format
+### Priority 1: Fix SSH to bigbox
+```bash
+# Copy public key to bigbox
+ssh-copy-id -i ~/.ssh/id_ed25519.pub alex@bigbox
 
-### Priority 2: Missing Discipline Phases in OpenCode
-- [ ] OpenCode agents only have: research, design, implementation, orchestrator, quality-gatekeeper
-- [ ] Missing: specification, verification, validation, left-side-of-v, right-side-of-v, execution-orchestrator
-- [ ] Consider: Port remaining agents to OpenCode format
+# Or manually add to bigbox's ~/.ssh/authorized_keys
+cat ~/.ssh/id_ed25519.pub
+# Then append to bigbox:~/.ssh/authorized_keys
+```
 
-### Priority 3: Documentation
-- [ ] Document the Skills vs Agents distinction clearly
-- [ ] Add OpenCode-specific setup instructions if agents are added to repo
+### Priority 2: Verify bigbox setup
+Once SSH works:
+1. Check if `terraphim-agent` is installed on bigbox
+2. Check if hooks exist in `~/.claude/hooks/`
+3. Copy hooks from terraphim-skills if needed:
+   ```bash
+   scp ~/.claude/hooks/pre_tool_use.sh alex@bigbox:~/.claude/hooks/
+   scp ~/.claude/hooks/post_tool_use.sh alex@bigbox:~/.claude/hooks/
+   scp ~/.claude/hooks/learning-capture.sh alex@bigbox:~/.claude/hooks/
+   ```
 
-## Blockers
+### Priority 3: Deploy to bigbox
+1. Clone/build terraphim-ai on bigbox
+2. Install terraphim-agent binary
+3. Configure knowledge graph
+4. Test hooks with a simple command
 
-None currently. All functionality working.
+---
 
-## Files Changed This Session
+## Configuration Reference
 
-| File | Change |
-|------|--------|
-| `README.md` | Removed incorrect OpenCode fix section |
-| `docs/best-practices-skills-hooks-claude-code-codex-opencode.md` | Updated paths to `skills/` (plural) |
-| `scripts/fix-opencode-paths.sh` | Deleted (not needed) |
-| `.claude/settings.local.json` | Added session permissions |
+### Judge Models (Free)
+```bash
+# automation/judge/run-judge.sh
+QUICK_MODEL="opencode/gpt-5-nano"
+DEEP_MODEL="opencode/glm-5-free"
+TIEBREAKER_MODEL="opencode/gpt-5.1-codex-mini"
+```
 
-## Local Config Changes (Not in Repo)
+### Hook Files
+| File | Purpose |
+|------|---------|
+| `~/.claude/hooks/pre_tool_use.sh` | PreToolUse: git safety + KG replacement |
+| `~/.claude/hooks/post_tool_use.sh` | PostToolUse: learning capture wrapper |
+| `~/.claude/hooks/learning-capture.sh` | Captures failed commands |
 
-| File | Change |
-|------|--------|
-| `~/.config/opencode/agent/disciplined-implementation.md` | Removed `model: xai/grok-code-fast`, changed `mode: subagent` to `mode: primary` |
-| `~/private_agents_settings/opencode/agent/disciplined-implementation.md` | Same fix applied to source |
+### Claude Settings
+Location: `~/.claude/settings.local.json`
+- PreToolUse hook configured for Bash commands
+- PostToolUse hook configured for Bash commands
+- Skills permissions for terraphim-engineering-skills
+
+---
+
+## GitHub Issues
+
+- [terraphim-ai#550](https://github.com/terraphim/terraphim-ai/issues/550): Implement command correction
+- [terraphim-skills#56](https://github.com/terraphim/terraphim-skills/issues/56): Judge rejected pre-push (created during testing)
+
+---
+
+*Generated by Claude Code*
