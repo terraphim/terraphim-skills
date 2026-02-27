@@ -277,6 +277,252 @@ use compact_str::CompactString;
 let small: CompactString = "hello".into(); // No heap allocation
 ```
 
+## Concurrency Patterns
+
+### Lock-Free Data Structures with Crossbeam
+
+```rust
+use crossbeam::epoch::{self, Atomic, Owned};
+use std::sync::atomic::Ordering;
+
+// Epoch-based reclamation: safe memory management without GC
+struct ConcurrentStack<T> {
+    head: Atomic<Node<T>>,
+}
+
+struct Node<T> {
+    data: T,
+    next: Atomic<Node<T>>,
+}
+
+impl<T> ConcurrentStack<T> {
+    fn push(&self, data: T) {
+        let mut node = Owned::new(Node {
+            data,
+            next: Atomic::null(),
+        });
+        let guard = epoch::pin();
+        loop {
+            let head = self.head.load(Ordering::Relaxed, &guard);
+            node.next.store(head, Ordering::Relaxed);
+            match self.head.compare_exchange(
+                head, node, Ordering::Release, Ordering::Relaxed, &guard,
+            ) {
+                Ok(_) => break,
+                Err(e) => node = e.new,
+            }
+        }
+    }
+}
+
+// Concurrent queue for producer-consumer pipelines
+use crossbeam::queue::ArrayQueue;
+
+let queue = ArrayQueue::new(1024);
+// Producer: queue.push(item) -- returns Err if full
+// Consumer: queue.pop() -- returns None if empty
+```
+
+### Data Parallelism with Rayon
+
+```rust
+use rayon::prelude::*;
+
+// Simple parallel iteration
+fn process_all(items: &mut [Item]) {
+    items.par_iter_mut().for_each(|item| {
+        item.transform();
+    });
+}
+
+// Parallel chunking for better cache locality
+fn sum_parallel(data: &[f64]) -> f64 {
+    data.par_chunks(1024)
+        .map(|chunk| chunk.iter().sum::<f64>())
+        .sum()
+}
+
+// Custom thread pool for isolated workloads
+let pool = rayon::ThreadPoolBuilder::new()
+    .num_threads(4)
+    .thread_name(|i| format!("search-worker-{}", i))
+    .stack_size(8 * 1024 * 1024)
+    .build()
+    .unwrap();
+
+pool.install(|| {
+    // All rayon operations here use this pool
+    data.par_iter().for_each(|item| process(item));
+});
+```
+
+### Atomic Operations and Memory Ordering
+
+```rust
+use std::sync::atomic::{AtomicU64, AtomicBool, Ordering};
+
+// Ordering guide:
+// Relaxed   -- No ordering guarantees. Counters, statistics.
+// Acquire   -- Reads see all writes before the paired Release.
+// Release   -- Writes become visible to paired Acquire reads.
+// AcqRel    -- Both Acquire and Release. Read-modify-write ops.
+// SeqCst    -- Total global ordering. Rarely needed, highest cost.
+
+struct Metrics {
+    request_count: AtomicU64,  // Relaxed: just a counter
+    is_ready: AtomicBool,      // Acquire/Release: guards initialization
+}
+
+impl Metrics {
+    fn increment(&self) {
+        self.request_count.fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn mark_ready(&self) {
+        // Release: all prior writes visible to Acquire readers
+        self.is_ready.store(true, Ordering::Release);
+    }
+
+    fn wait_ready(&self) {
+        // Acquire: sees all writes before the Release store
+        while !self.is_ready.load(Ordering::Acquire) {
+            std::hint::spin_loop();
+        }
+    }
+}
+```
+
+### Avoiding False Sharing
+
+```rust
+// BAD: Adjacent atomics on the same cache line cause contention
+struct BadCounters {
+    counter_a: AtomicU64,  // Same 64-byte cache line as counter_b
+    counter_b: AtomicU64,
+}
+
+// GOOD: Pad to separate cache lines
+#[repr(align(64))]
+struct PaddedCounter {
+    value: AtomicU64,
+}
+
+struct GoodCounters {
+    counter_a: PaddedCounter,  // Own cache line
+    counter_b: PaddedCounter,  // Own cache line
+}
+```
+
+### Disciplined Workflow Integration (Concurrency)
+
+- **Research phase**: Profile for Amdahl's law -- identify serial bottlenecks before parallelizing
+- **Design phase**: Specify memory ordering rationale for every atomic operation; choose rayon vs crossbeam vs atomics
+- **Verification phase**: `loom` and ThreadSanitizer are mandatory for lock-free code; stress tests with concurrent access
+
+## Build Optimization and Distribution
+
+### Size-Optimized Profiles
+
+```toml
+# Cargo.toml -- additional profiles beyond release/release-lto
+
+[profile.release-small]
+inherits = "release"
+opt-level = "z"          # Optimize for binary size
+strip = "symbols"        # Remove symbol table
+panic = "abort"          # No unwinding machinery
+codegen-units = 1        # Better optimization, slower compile
+
+[profile.release-wasm]
+inherits = "release"
+opt-level = "s"          # Balance size and speed for WASM
+lto = true
+```
+
+### Symbol Stripping
+
+```toml
+[profile.release]
+strip = "none"           # Keep everything (debugging)
+# strip = "debuginfo"    # Remove debug info, keep symbols (profiling)
+# strip = "symbols"      # Remove all symbols (distribution)
+```
+
+**When to use each**:
+- `"none"` -- Development, debugging, profiling
+- `"debuginfo"` -- Production with profiling capability (flamegraphs still work)
+- `"symbols"` -- Final distribution binaries (smallest size)
+
+### Feature Gates for Conditional Compilation
+
+```toml
+# Cargo.toml
+[features]
+default = ["tls"]
+tls = ["dep:rustls"]
+simd = []                # Enable SIMD code paths
+jemalloc = ["dep:tikv-jemallocator"]
+
+# Reduce binary size by making features optional
+full = ["tls", "simd", "jemalloc"]
+minimal = []             # No optional features
+```
+
+```rust
+// Use cfg to conditionally compile
+#[cfg(feature = "simd")]
+fn process_fast(data: &[u8]) -> Vec<u8> {
+    // SIMD implementation
+}
+
+#[cfg(not(feature = "simd"))]
+fn process_fast(data: &[u8]) -> Vec<u8> {
+    // Scalar fallback
+}
+```
+
+### Cross-Compilation with `cross`
+
+```bash
+# Install cross (uses Docker for cross-compilation)
+cargo install cross
+
+# Build for Linux from macOS
+cross build --release --target x86_64-unknown-linux-gnu
+
+# Build for ARM (Raspberry Pi)
+cross build --release --target aarch64-unknown-linux-gnu
+
+# Build for Windows from macOS/Linux
+cross build --release --target x86_64-pc-windows-gnu
+```
+
+### Custom Allocators
+
+```rust
+// jemalloc for better multithreaded allocation performance
+#[cfg(feature = "jemalloc")]
+#[global_allocator]
+static GLOBAL: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
+
+// Arena allocation for request-scoped data
+use bumpalo::Bump;
+
+fn handle_request(data: &[u8]) -> Response {
+    let arena = Bump::new();
+    // All allocations freed at once when arena drops
+    let parsed = arena.alloc(parse(data));
+    let transformed = arena.alloc(transform(parsed));
+    build_response(transformed)
+}
+```
+
+### Disciplined Workflow Integration (Build Optimization)
+
+- **Design phase**: Document profile selection rationale per deployment target (server vs WASM vs CLI)
+- **Verification phase**: Verify all feature combinations compile; include binary size in benchmark reports
+- **Validation phase**: Validate stripped binaries work on target platforms; confirm WASM bundle size meets budget
+
 ## Compiler Hints
 
 ```rust
