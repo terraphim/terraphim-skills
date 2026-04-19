@@ -20,6 +20,29 @@ npx skills add terraphim/terraphim-skills --list
 
 Installs to: Claude Code, Cursor, Codex, Amp, VS Code, Copilot, Gemini CLI, Goose, Letta, and OpenCode.
 
+## Skill Testing
+
+The repository now includes a fixture-driven skill evaluation scaffold under
+`evals/` with a TypeScript runner in `scripts/run-skill-evals.ts`.
+
+See [docs/skill-testing.md](docs/skill-testing.md) for:
+
+- fixture and report schemas,
+- adapter behavior for `claude-code` and Terraphim-preprocessed runs,
+- judge behavior using Claude Code plus Codex consensus,
+- fail-open reporting rules,
+- baseline/report conventions.
+
+Quick commands:
+
+```bash
+# Run the eval runner
+bun run eval:skill --help
+
+# Run the runner tests
+bun run test:skill-evals
+```
+
 ## Alternative: Claude Code Plugin Marketplace
 
 ```bash
@@ -328,6 +351,7 @@ echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' 
 | Skill | Description |
 |-------|-------------|
 | `code-review` | Thorough review for bugs, security, performance. Actionable feedback. |
+| `structural-pr-review` | Language-agnostic PR review with P0/P1/P2 severities, 1-5 confidence score, Mermaid diagram, multi-round protocol. Ready-to-post PR comment. |
 | `security-audit` | Vulnerability assessment, unsafe code review, OWASP compliance. |
 | `ubs-scanner` | Ultimate Bug Scanner integration. Detects 1000+ bug patterns across 8 languages. |
 
