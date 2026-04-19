@@ -52,7 +52,32 @@ Input Processing Steps:
 
 ## Interview Framework
 
-Generate deep, non-obvious questions across these 10 dimensions:
+Generate deep, non-obvious questions across these 10 dimensions.
+
+Before generating dimension-specific questions, scan the specification text for **NLP Meta Model violations** -- linguistic patterns where information has been deleted, distorted, or generalised. Each violation is a signal that the spec author unconsciously removed information that must be recovered through targeted questions.
+
+### Linguistic Precision Analysis (Cross-Cutting)
+
+Apply this analysis across all 10 dimensions. When a violation is detected, the corresponding challenge question becomes a high-priority interview question.
+
+**Deletion patterns** (information removed):
+- **Unspecified actors**: "The system handles..." -> "Which component specifically handles this? What is the handoff between services?"
+- **Unspecified verbs**: "Data is processed..." -> "How specifically is it processed? What transformation occurs at each step?"
+- **Lost performatives**: "The best approach is..." -> "Best according to whom? Measured against what criteria? Compared to what alternatives?"
+- **Missing comparisons**: "This is more efficient..." -> "More efficient than what baseline? Measured how? Under what load?"
+
+**Distortion patterns** (information twisted):
+- **Nominalisations** (process frozen into a noun): "The authentication" -> "Who authenticates whom, using what mechanism, verified how, and what happens on failure?"
+- **Mind reading**: "Users will expect real-time updates" -> "Based on what evidence? User research? Support tickets? Analytics data?"
+- **Assumed causation**: "This will improve performance" -> "Through what specific mechanism? Under what conditions? How will we measure the improvement?"
+- **Hidden presuppositions**: "When we migrate to the new system..." -> "What evidence supports the assumption that migration is necessary? What alternatives exist?"
+
+**Generalisation patterns** (information over-extended):
+- **Universal quantifiers**: "All requests must be authenticated" -> "Are there any exceptions? Health checks? Internal service-to-service calls? Webhook receivers?"
+- **Modal operators of necessity**: "We have to use microservices" -> "What would happen if we didn't? Who requires this? What's the consequence of a simpler architecture?"
+- **Modal operators of possibility**: "We can't deploy on Fridays" -> "What specifically prevents it? Is this policy or technical constraint? What would need to change?"
+
+**How to use**: When generating questions for any of the 10 dimensions below, first check whether the spec text for that dimension contains Meta Model violations. If it does, the challenge question for that violation becomes a high-priority interview question. This surfaces hidden requirements that the spec author deleted, distorted, or generalised unconsciously.
 
 ### 1. Concurrency & Race Conditions
 - What if two users/processes do X simultaneously?
@@ -200,6 +225,7 @@ Generate deep, non-obvious questions across these 10 dimensions:
 - Explore the boundaries of specified behavior
 - Consider adversarial or unexpected usage
 - Think about the feature's lifecycle (creation, usage, modification, deletion)
+- Challenge linguistic imprecision: nominalisations, unspecified actors, universal claims (see Linguistic Precision Analysis above)
 
 ## Convergence Detection
 
@@ -207,8 +233,9 @@ Track interview progress and detect convergence by:
 
 1. **Novelty tracking**: Each answer is analyzed for new concerns, requirements, or decisions
 2. **Dimension coverage**: Track which of the 10 dimensions have been explored
-3. **Follow-up decay**: If 2+ consecutive question batches yield no new significant concerns, offer to conclude
-4. **User signal**: User can always say "that covers it" to complete early
+3. **Linguistic precision**: Track how many Meta Model violations in the original spec have been challenged and resolved
+4. **Follow-up decay**: If 2+ consecutive question batches yield no new significant concerns, offer to conclude
+5. **User signal**: User can always say "that covers it" to complete early
 
 ```
 Interview Loop:

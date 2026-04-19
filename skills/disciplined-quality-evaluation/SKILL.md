@@ -33,7 +33,7 @@ The Krogstie-Lindland-Sindre framework evaluates document quality across six dim
 | Dimension | Question | Evaluation Focus |
 |-----------|----------|------------------|
 | **Physical** | Is it readable, well-formatted, accessible? | Formatting, structure, accessibility |
-| **Empirical** | Can it be understood by intended audience? | Clarity, terminology, examples |
+| **Empirical** | Can it be understood by intended audience? | Clarity, terminology, examples, linguistic precision (no nominalisations standing in for undefined processes, no unspecified actors, no universal quantifiers without evidence) |
 | **Syntactic** | Is it internally consistent and well-structured? | Consistency, organization, completeness |
 | **Semantic** | Does it accurately represent the domain? | Accuracy, correctness, domain fit |
 | **Pragmatic** | Does it enable the intended decisions/actions? | Actionability, usefulness, guidance |
