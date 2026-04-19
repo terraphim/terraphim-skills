@@ -20,6 +20,28 @@ npx skills add terraphim/terraphim-skills --list
 
 Installs to: Claude Code, Cursor, Codex, Amp, VS Code, Copilot, Gemini CLI, Goose, Letta, and OpenCode.
 
+### Discovery paths per agent (`--global` install)
+
+The `skills` CLI places skills at the location each agent scans natively:
+
+| Agent | Global path | How it's discovered |
+|-------|-------------|---------------------|
+| Claude Code | `~/.claude/skills/<name>/SKILL.md` | Native global skill directory |
+| Codex | `$CODEX_HOME/skills/` (default `~/.codex/skills/`) | Native |
+| Amp, Cline, Codex, Cursor, Gemini CLI, Copilot, OpenCode, Warp, ... | `~/.agents/skills/<name>/SKILL.md` | Shared "universal" dir |
+| OpenCode (additional) | Also scans `~/.config/opencode/{skill,skills}/**/SKILL.md` | Config-dir fallback |
+
+**OpenCode users** (v1.3+): no symlink or manual copy is required. OpenCode scans `~/.agents/` and `~/.claude/` directly (see `EXTERNAL_DIRS` in `packages/opencode/src/skill/index.ts`). Project-local skills at `<repo>/.agents/skills/` are picked up automatically too.
+
+**Verifying installation:**
+```bash
+# List what Claude Code sees
+ls ~/.claude/skills/ 2>/dev/null; ls ~/.agents/skills/
+
+# Confirm OpenCode picks it up
+opencode skills list | grep <skill-name>
+```
+
 ## Skill Testing
 
 The repository now includes a fixture-driven skill evaluation scaffold under
