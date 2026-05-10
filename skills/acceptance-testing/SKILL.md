@@ -23,6 +23,7 @@ produce a runnable acceptance test plan (manual and/or automated).
 - Target interface: UI, CLI, API, library
 - Environments available: local, staging, prod-like
 - Existing e2e tooling (if any): Playwright/Cypress/Webdriver, test data seeding
+- Software Release Definition (SRD): if applicable, for traceability
 
 ## Core Principles
 
@@ -39,6 +40,17 @@ produce a runnable acceptance test plan (manual and/or automated).
   - Positive criteria (what must work)
   - Negative criteria (what must fail safely)
   - Non-functional criteria (error messages, latency, accessibility) when relevant
+
+### SRD Acceptance Criteria Mapping (if applicable)
+
+If a Software Release Definition (SRD) exists, map SRD requirements to acceptance scenarios:
+
+| SRD Requirement | SRD Criterion | Acceptance Scenario | Test Data | Expected Result |
+|-----------------|---------------|---------------------|-----------|-----------------|
+| SRD-REQ-001 | [Criterion] | AT-001: ... | [Data] | [Result] |
+| SRD-REQ-002 | [Criterion] | AT-002: ... | [Data] | [Result] |
+
+**Coverage Check**: All SRD acceptance criteria must have at least one acceptance scenario.
 
 ### 2) Write Scenarios
 
@@ -81,6 +93,11 @@ Include ownership, environment details, and how to report bugs.
 - In scope:
 - Out of scope:
 
+## SRD Reference (if applicable)
+- SRD ID:
+- SRD Version:
+- SRD Requirements in scope:
+
 ## Environments
 - {local/staging/prod-like}
 - Test accounts / roles:
@@ -89,6 +106,11 @@ Include ownership, environment details, and how to report bugs.
 - Seeds/fixtures:
 - Reset/cleanup:
 
+## SRD Acceptance Criteria Coverage
+| SRD Req | Criterion | Scenario | Status |
+|---------|-----------|----------|--------|
+| SRD-001 | ... | AT-001 | [ ] |
+
 ## Scenarios
 ### AT-001: {title} (maps: REQ-…)
 **Preconditions:**
@@ -96,8 +118,15 @@ Include ownership, environment details, and how to report bugs.
 **Expected:**
 **Notes:**
 
+## Demo D15 Reference (if applicable)
+- Demo D15 ID: [Demo reference for regulated environments]
+- Demo Date: [Scheduled demo date]
+- Demo Scenarios: [List of scenarios to be demonstrated]
+
 ## Sign-off
 - [ ] All “In scope” scenarios executed
+- [ ] SRD acceptance criteria covered (if applicable)
+- [ ] Demo D15 scenarios verified (if applicable)
 - [ ] High/critical bugs resolved or waived (with rationale)
 - [ ] Release notes updated (if user-visible)
 ```
