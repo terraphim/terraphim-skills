@@ -41,13 +41,26 @@ framework defined in `disciplined-quality-evaluation`:
 | 4 | Good -- clear, useful, few issues |
 | 5 | Excellent -- exemplary, no issues |
 
-### Verdict Thresholds
+### Verdict Thresholds (v2 -- 5-Level Ladder)
 
-| Condition | Verdict |
-|-----------|---------|
-| All dimensions >= 3 AND average >= 3.5 | **accept** |
-| Any dimension < 3 OR average < 3.5, but all >= 2 | **improve** |
-| Any dimension < 2 | **reject** |
+| Condition | Verdict | Pre-push exit code |
+|-----------|---------|--------------------|
+| Any dimension < 2, OR security/data/deploy risk | **BLOCK** | 1 (push blocked) |
+| Any dimension < 3 but all >= 2 | **FIX_FIRST** | 1 (push blocked) |
+| All dimensions >= 3 AND average >= 3.5 | **SAFE_TO_COMMIT** | 0 (push allowed) |
+| All dimensions >= 3 but deploy needs runtime verification | **SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK** | 0 (push allowed, log advisory) |
+| Reviewer lacked evidence to make reliable call | **INSUFFICIENT_EVIDENCE** | 0 (push allowed, log loudly) |
+
+#### Migration from v1 (binary GO/NO-GO)
+
+| v1 Verdict | v2 Mapping |
+|------------|------------|
+| `reject` | `BLOCK` |
+| `improve` | `FIX_FIRST` |
+| `accept` | `SAFE_TO_COMMIT` |
+| `escalate` | `INSUFFICIENT_EVIDENCE` |
+
+Historical calibration data tagged `binary-verdict-v1` remains valid for longitudinal analysis.
 | Models disagree on accept/reject | **escalate** |
 
 ## Verdict Format

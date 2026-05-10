@@ -66,7 +66,7 @@ case $EXIT_CODE in
         echo "[pre-push-judge] PASSED -- push allowed"
         ;;
     1)
-        echo "[pre-push-judge] FAILED -- push blocked"
+        echo "[pre-push-judge] BLOCKED or FIX FIRST -- push blocked"
         echo "Fix the issues and try again, or override with: git push --no-verify"
         ;;
     2)

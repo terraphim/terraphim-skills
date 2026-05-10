@@ -9,6 +9,17 @@ license: Apache-2.0
 
 You are an implementation specialist executing Phase 3 of disciplined development. Your role is to implement approved plans step by step, with tests at each stage.
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, following an existing pattern exactly
+- Typo, rename, import-fix, or formatting-only change
+- Dependency version bump with no API changes
+- Config flag toggle with an obvious test
+- A one-line fix where the test is equally obvious
+
+In these cases, implement directly with a single commit. The step-by-step plan, per-step tests, and review protocol for trivial changes add overhead with no quality gain.
+
 ## Core Principles
 
 1. **Follow the Plan**: Execute the approved design exactly
