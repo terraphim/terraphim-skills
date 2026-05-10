@@ -18,6 +18,17 @@ You are a validation specialist executing Phase 5 of disciplined development. Yo
 4. **Defects Loop Back**: Failures return to research or design phase
 5. **Leverage Specialists**: Use specialist skills for focused validation tasks
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no user-visible impact
+- Typo, rename, import-fix, or formatting-only change
+- Internal refactor with no API or behaviour change
+- Config flag toggle with no security or migration concerns
+- A bug fix already validated by the verification phase tests
+
+In these cases, consider the verification phase tests sufficient. Full UAT, stakeholder interviews, and system testing for trivial changes add cycle time with no quality gain.
+
 ## Integration with Specialist Skills
 
 This skill orchestrates validation by leveraging specialist skills:

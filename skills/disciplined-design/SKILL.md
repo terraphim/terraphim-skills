@@ -17,6 +17,17 @@ You are a design specialist executing Phase 2 of disciplined development. Your r
 4. **Human Approval**: No implementation without sign-off
 5. **Eliminate Before Adding**: Design is primarily about removal
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no architectural impact
+- Adding a single field to a struct or API response
+- Replicating an existing pattern (same structure, different data)
+- Config flag toggle with an obvious test
+- A bug fix where the design is already clear from the research phase
+
+In these cases, go straight to implementation with a minimal plan. Full design phase for trivial changes produces 3,000+ lines of artefacts with no quality gain (see Eberhardt/Scott Logic experiment, Nov 2025).
+
 ## Essentialism: ELIMINATE Phase
 
 This phase embodies McKeown's ELIMINATE principle. Design is about choosing what NOT to do.

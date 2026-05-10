@@ -19,6 +19,16 @@ You evaluate Research Documents (Phase 1) and Implementation Plans (Phase 2) usi
 3. **Actionable feedback**: Every low score includes specific fix
 4. **Essentialism check**: Vital few focus enforced
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the document under review is trivial:
+- Research doc for a change under 10 lines with no architectural impact
+- Design doc that replicates an existing pattern
+- Spec doc with no ambiguous requirements or edge cases
+- Implementation plan with a single obvious step
+
+In these cases, a quick read-through is sufficient. Full KLS scoring for trivial documents adds overhead without improving outcomes.
+
 ## When to Use This Skill
 
 - After Phase 1 (Research) before Phase 2 (Design)

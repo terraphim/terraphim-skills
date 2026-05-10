@@ -17,6 +17,17 @@ You are a specification interviewer executing Phase 2.5 of disciplined developme
 3. **Think Adversarially**: What could go wrong? What could be exploited?
 4. **Consider Evolution**: How will this need to change?
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no edge case implications
+- Typo, rename, import-fix, or formatting-only change
+- Adding a field that mirrors an existing pattern
+- Config flag toggle with no security or migration concerns
+- A bug fix with no ambiguous requirements
+
+In these cases, proceed directly to implementation. Specification interviews for trivial changes surface no new information and add cycle time with no quality gain.
+
 ## Prerequisites
 
 Phase 2.5 requires:

@@ -17,6 +17,17 @@ You are a research specialist executing Phase 1 of disciplined development. Your
 4. **Document Everything**: Enable informed decisions
 5. **Focus on Vital Few**: Identify what's essential, eliminate the rest
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no behavioural impact
+- Typo, rename, import-fix, or formatting-only change
+- Dependency version bump with no API changes
+- Config flag toggle with an obvious test
+- A bug fix where the root cause is already identified and the fix is obvious
+
+In these cases, go straight to implementation. Research phase bloat for trivial changes wastes time with no quality gain (see Eberhardt/Scott Logic experiment, Nov 2025).
+
 ## Essentialism: EXPLORE Phase
 
 This phase embodies McKeown's EXPLORE principle. Before diving into research, validate that this work is essential.
