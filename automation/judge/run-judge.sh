@@ -133,17 +133,19 @@ Score on three dimensions (1-5 each):
 - pragmatic: Does it enable intended actions? Actionable, useful, addresses the task goal.
 - syntactic: Is it internally consistent and well-structured? Format compliance, completeness, no broken references.
 
-Verdict rules:
-- "accept" if all scores >= 3 AND average >= 3.5
-- "improve" if any score < 3 but all >= 2
-- "reject" if any score < 2
+Verdict rules (5-level ladder):
+- "SAFE_TO_COMMIT" if all scores >= 3 AND average >= 3.5 AND no runtime verification needed
+- "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK" if all scores >= 3 but deployment needs restart, smoke test, or migration check
+- "FIX_FIRST" if any score < 3 but all >= 2
+- "BLOCK" if any score < 2 or serious correctness/data/security/deploy risk
+- "INSUFFICIENT_EVIDENCE" if you lack task context, diff, tests, or runtime evidence to make a reliable call
 
 Respond with ONLY this JSON (no other text):
 {
   "task_id": "${TASK_ID}",
   "model": "${model}",
   "mode": "quick",
-  "verdict": "<accept|improve|reject>",
+  "verdict": "<BLOCK|FIX_FIRST|SAFE_TO_COMMIT|SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK|INSUFFICIENT_EVIDENCE>",
   "scores": {
     "semantic": "<1-5>",
     "pragmatic": "<1-5>",
@@ -177,10 +179,12 @@ Score each dimension 1-5:
 2. pragmatic: Does it enable intended actions?
 3. syntactic: Is it internally consistent and well-structured?
 
-Verdict rules:
-- "accept" if all scores >= 3 AND average >= 3.5
-- "improve" if any score < 3 but all >= 2
-- "reject" if any score < 2
+Verdict rules (5-level ladder):
+- "SAFE_TO_COMMIT" if all scores >= 3 AND average >= 3.5 AND no runtime verification needed
+- "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK" if all scores >= 3 but deployment needs restart, smoke test, or migration check
+- "FIX_FIRST" if any score < 3 but all >= 2
+- "BLOCK" if any score < 2 or serious correctness/data/security/deploy risk
+- "INSUFFICIENT_EVIDENCE" if you lack task context, diff, tests, or runtime evidence to make a reliable call
 
 For each improvement, specify: what to fix, where it is, and why it matters.
 
@@ -189,7 +193,7 @@ Respond with ONLY this JSON (no other text):
   "task_id": "${TASK_ID}",
   "model": "${model}",
   "mode": "${mode}",
-  "verdict": "<accept|improve|reject>",
+  "verdict": "<BLOCK|FIX_FIRST|SAFE_TO_COMMIT|SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK|INSUFFICIENT_EVIDENCE>",
   "scores": {
     "semantic": "<1-5>",
     "pragmatic": "<1-5>",
@@ -320,7 +324,7 @@ try:
     if 'verdict' not in v:
         print('Missing: verdict', file=sys.stderr)
         sys.exit(1)
-    if v['verdict'] not in ('accept', 'improve', 'reject', 'escalate'):
+    if v['verdict'] not in ('BLOCK', 'FIX_FIRST', 'SAFE_TO_COMMIT', 'SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK', 'INSUFFICIENT_EVIDENCE'):
         print(f'Invalid verdict: {v[\"verdict\"]}', file=sys.stderr)
         sys.exit(1)
     # Normalize scores: handle flat format
@@ -490,19 +494,28 @@ QUICK_AVG="$ROUND_RESULT_AVG"
 
 log_verdict "$QUICK_VERDICT_JSON" "$ROUND" "quick" "$PREVIOUS_ROUNDS" "null"
 
-if [[ "$QUICK_VERDICT" == "accept" ]]; then
-    echo "RESULT: ACCEPTED (quick judge, round ${ROUND})"
+if [[ "$QUICK_VERDICT" == "SAFE_TO_COMMIT" ]]; then
+    echo "RESULT: SAFE TO COMMIT (quick judge, round ${ROUND})"
     exit 0
 fi
 
-if [[ "$QUICK_VERDICT" == "reject" ]]; then
-    echo "RESULT: REJECTED (quick judge, round ${ROUND})"
+if [[ "$QUICK_VERDICT" == "BLOCK" ]]; then
+    echo "RESULT: BLOCKED (quick judge, round ${ROUND})"
     "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
     exit 1
 fi
 
+if [[ "$QUICK_VERDICT" == "INSUFFICIENT_EVIDENCE" ]]; then
+    echo "RESULT: INSUFFICIENT EVIDENCE (quick judge, round ${ROUND}) -- proceeding to deep judge"
+fi
+
+if [[ "$QUICK_VERDICT" == "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK" ]]; then
+    echo "RESULT: SAFE TO COMMIT but deploy needs runtime check (quick judge, round ${ROUND})"
+    exit 0
+fi
+
 # ============================
-# Round 2: Deep judge (quick returned "improve")
+# Round 2: Deep judge (quick returned FIX_FIRST or INSUFFICIENT_EVIDENCE)
 # ============================
 PREVIOUS_ROUNDS=$(python3 -c "
 import json
@@ -526,22 +539,29 @@ log_verdict "$DEEP_VERDICT_JSON" "$ROUND" "deep" "$PREVIOUS_ROUNDS" "null"
 
 # Check for disagreement requiring tiebreaker
 NEEDS_TIEBREAKER=false
-if [[ "$QUICK_VERDICT" == "accept" && "$DEEP_VERDICT" == "reject" ]] || \
-   [[ "$QUICK_VERDICT" == "reject" && "$DEEP_VERDICT" == "accept" ]]; then
+if [[ "$QUICK_VERDICT" == "SAFE_TO_COMMIT" && "$DEEP_VERDICT" == "BLOCK" ]] || \
+   [[ "$QUICK_VERDICT" == "BLOCK" && "$DEEP_VERDICT" == "SAFE_TO_COMMIT" ]]; then
     NEEDS_TIEBREAKER=true
 fi
 
 if [[ "$NEEDS_TIEBREAKER" == "false" ]]; then
-    if [[ "$DEEP_VERDICT" == "accept" ]]; then
-        echo "RESULT: ACCEPTED (deep judge, round ${ROUND})"
+    if [[ "$DEEP_VERDICT" == "SAFE_TO_COMMIT" ]]; then
+        echo "RESULT: SAFE TO COMMIT (deep judge, round ${ROUND})"
         exit 0
-    elif [[ "$DEEP_VERDICT" == "reject" ]]; then
-        echo "RESULT: REJECTED (deep judge, round ${ROUND})"
+    elif [[ "$DEEP_VERDICT" == "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK" ]]; then
+        echo "RESULT: SAFE TO COMMIT but deploy needs runtime check (deep judge, round ${ROUND})"
+        exit 0
+    elif [[ "$DEEP_VERDICT" == "BLOCK" ]]; then
+        echo "RESULT: BLOCKED (deep judge, round ${ROUND})"
         "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
         exit 1
+    elif [[ "$DEEP_VERDICT" == "INSUFFICIENT_EVIDENCE" ]]; then
+        echo "RESULT: INSUFFICIENT EVIDENCE -- human fallback needed"
+        "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "disagreement" || true
+        exit 2
     else
-        # Both returned "improve" -- human fallback
-        echo "RESULT: Human fallback needed (both judges returned 'improve')"
+        # FIX_FIRST -- human fallback
+        echo "RESULT: FIX FIRST -- human fallback needed (both judges returned improvement needed)"
         "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "disagreement" || true
         exit 2
     fi
@@ -582,15 +602,21 @@ fi
 
 log_verdict "$ROUND_RESULT_JSON" "$ROUND" "tiebreaker" "$PREVIOUS_ROUNDS" "$CONSENSUS"
 
-if [[ "$TIEBREAKER_VERDICT" == "accept" ]]; then
-    echo "RESULT: ACCEPTED (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
+if [[ "$TIEBREAKER_VERDICT" == "SAFE_TO_COMMIT" ]]; then
+    echo "RESULT: SAFE TO COMMIT (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
     exit 0
-elif [[ "$TIEBREAKER_VERDICT" == "reject" ]]; then
-    echo "RESULT: REJECTED (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
+elif [[ "$TIEBREAKER_VERDICT" == "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK" ]]; then
+    echo "RESULT: SAFE TO COMMIT but deploy needs runtime check (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
+    exit 0
+elif [[ "$TIEBREAKER_VERDICT" == "BLOCK" ]]; then
+    echo "RESULT: BLOCKED (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
     "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "persistent-reject" || true
     exit 1
+elif [[ "$TIEBREAKER_VERDICT" == "INSUFFICIENT_EVIDENCE" ]]; then
+    echo "RESULT: INSUFFICIENT EVIDENCE (tiebreaker, round ${ROUND}, consensus: ${CONSENSUS})"
+    exit 0
 else
-    echo "RESULT: Human fallback needed (tiebreaker returned '${TIEBREAKER_VERDICT}')"
+    echo "RESULT: FIX FIRST -- human fallback needed (tiebreaker returned '${TIEBREAKER_VERDICT}')"
     "${SCRIPT_DIR}/handle-disagreement.sh" -t "$TASK_ID" -T "$TASK_DESCRIPTION" -f "${FILES[*]}" -r "disagreement" || true
     exit 2
 fi

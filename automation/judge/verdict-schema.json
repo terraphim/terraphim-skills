@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://terraphim.ai/schemas/verdict-v1.json",
-  "title": "Judge Verdict",
-  "description": "Schema for judge verdict records produced by the multi-model judge skill",
+  "$id": "https://terraphim.ai/schemas/verdict-v2.json",
+  "title": "Judge Verdict (v2)",
+  "description": "Schema for judge verdict records with 5-level verdict ladder (BLOCK, FIX FIRST, SAFE TO COMMIT, SAFE TO DEPLOY AFTER RUNTIME CHECK, INSUFFICIENT EVIDENCE)",
   "type": "object",
   "required": [
     "task_id",
@@ -36,8 +36,8 @@
     },
     "verdict": {
       "type": "string",
-      "description": "Final verdict for the task output",
-      "enum": ["accept", "improve", "reject", "escalate"]
+      "description": "Final verdict for the task output (5-level ladder)",
+      "enum": ["BLOCK", "FIX_FIRST", "SAFE_TO_COMMIT", "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK", "INSUFFICIENT_EVIDENCE"]
     },
     "scores": {
       "type": "object",

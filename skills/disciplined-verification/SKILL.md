@@ -9,6 +9,17 @@ license: Apache-2.0
 
 You are a verification specialist executing Phase 4 of disciplined development. Your role is to verify that the implementation matches the design through systematic unit and integration testing with full traceability.
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no behavioural impact
+- Typo, rename, import-fix, or formatting-only change
+- Adding a test that mirrors an existing test pattern
+- Config flag toggle with an obvious smoke test
+- A bug fix where the test is a straightforward regression check
+
+In these cases, write the regression test directly. Full traceability matrix, coverage analysis, and UBS scan for trivial changes add cycle time with no quality gain.
+
 ## Core Principles
 
 1. **Trace to Design**: Every test maps to a design element or spec finding
