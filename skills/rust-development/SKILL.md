@@ -281,11 +281,294 @@ where
 }
 ```
 
+### Advanced Async Patterns
+
+#### Graceful Shutdown with CancellationToken
+
+```rust
+use tokio_util::sync::CancellationToken;
+
+async fn run_server(token: CancellationToken) -> Result<()> {
+    let listener = TcpListener::bind("0.0.0.0:8080").await?;
+
+    loop {
+        tokio::select! {
+            Ok((stream, _)) = listener.accept() => {
+                let child_token = token.child_token();
+                tokio::spawn(async move {
+                    handle_connection(stream, child_token).await;
+                });
+            }
+            _ = token.cancelled() => {
+                tracing::info!("shutdown signal received, draining connections");
+                break;
+            }
+        }
+    }
+    Ok(())
+}
+
+// Main: wire up OS signals to cancellation
+#[tokio::main]
+async fn main() -> Result<()> {
+    let token = CancellationToken::new();
+    let shutdown_token = token.clone();
+
+    tokio::spawn(async move {
+        tokio::signal::ctrl_c().await.ok();
+        shutdown_token.cancel();
+    });
+
+    run_server(token).await
+}
+```
+
+#### Structured Concurrency with JoinSet
+
+```rust
+use tokio::task::JoinSet;
+
+async fn process_batch(items: Vec<Item>) -> Vec<Result<Output>> {
+    let mut set = JoinSet::new();
+
+    for item in items {
+        set.spawn(async move { process_item(item).await });
+    }
+
+    let mut results = Vec::with_capacity(set.len());
+    while let Some(res) = set.join_next().await {
+        match res {
+            Ok(output) => results.push(output),
+            Err(join_err) => results.push(Err(join_err.into())),
+        }
+    }
+    results
+}
+```
+
+#### Backpressure with Bounded Channels
+
+```rust
+use tokio::sync::mpsc;
+
+async fn pipeline(input: Vec<RawData>) -> Result<()> {
+    // Bound the channel to apply backpressure when consumer is slow
+    let (tx, mut rx) = mpsc::channel::<Processed>(64);
+
+    // Producer: blocks when channel is full
+    let producer = tokio::spawn(async move {
+        for item in input {
+            let processed = transform(item).await;
+            if tx.send(processed).await.is_err() {
+                break; // Receiver dropped, stop producing
+            }
+        }
+    });
+
+    // Consumer: processes at its own pace
+    while let Some(item) = rx.recv().await {
+        persist(item).await?;
+    }
+
+    producer.await?;
+    Ok(())
+}
+```
+
+#### Tower Middleware Composition
+
+```rust
+use tower::{ServiceBuilder, ServiceExt};
+use tower_http::{trace::TraceLayer, timeout::TimeoutLayer};
+
+// Stack middleware layers declaratively
+let service = ServiceBuilder::new()
+    .layer(TraceLayer::new_for_http())
+    .layer(TimeoutLayer::new(Duration::from_secs(30)))
+    .concurrency_limit(100)
+    .rate_limit(1000, Duration::from_secs(1))
+    .service(my_handler);
+
+// Custom Tower Layer for retry with backoff
+use tower::retry::{Retry, Policy};
+
+#[derive(Clone)]
+struct RetryPolicy {
+    max_retries: usize,
+}
+
+impl<Req: Clone, Res, E> Policy<Req, Res, E> for RetryPolicy {
+    type Future = futures::future::Ready<()>;
+
+    fn retry(&mut self, _req: &mut Req, result: &mut Result<Res, E>) -> Option<Self::Future> {
+        if self.max_retries > 0 && result.is_err() {
+            self.max_retries -= 1;
+            Some(futures::future::ready(()))
+        } else {
+            None
+        }
+    }
+
+    fn clone_request(&mut self, req: &Req) -> Option<Req> {
+        Some(req.clone())
+    }
+}
+```
+
+#### Disciplined Workflow Integration (Async)
+
+- **Research phase**: Identify async boundaries, cancellation requirements, and backpressure needs
+- **Design phase**: Specify Tower middleware stack, shutdown strategy, channel bounds
+- **Verification phase**: Unit test cancellation paths, verify backpressure under load, test middleware ordering
+
+### FFI and Cross-Language Integration
+
+#### Safe C API Wrappers
+
+```rust
+// Opaque handle pattern: hide Rust internals behind a pointer
+pub struct Engine { /* internal fields */ }
+
+/// SAFETY: Engine is Send+Sync, and callers must not use
+/// the handle after calling engine_destroy.
+#[no_mangle]
+pub extern "C" fn engine_create() -> *mut Engine {
+    Box::into_raw(Box::new(Engine::new()))
+}
+
+#[no_mangle]
+pub extern "C" fn engine_process(
+    engine: *mut Engine,
+    input: *const c_char,
+    input_len: usize,
+) -> i32 {
+    // Catch panics at every FFI boundary
+    std::panic::catch_unwind(|| {
+        let engine = unsafe {
+            assert!(!engine.is_null());
+            &mut *engine
+        };
+        let slice = unsafe { std::slice::from_raw_parts(input as *const u8, input_len) };
+        match std::str::from_utf8(slice) {
+            Ok(s) => engine.process(s).map(|_| 0).unwrap_or(-1),
+            Err(_) => -2, // Invalid UTF-8
+        }
+    })
+    .unwrap_or(-99) // Panic occurred
+}
+
+#[no_mangle]
+pub extern "C" fn engine_destroy(engine: *mut Engine) {
+    if !engine.is_null() {
+        unsafe { drop(Box::from_raw(engine)); }
+    }
+}
+```
+
+#### String Management Across FFI
+
+```rust
+use std::ffi::{CStr, CString};
+
+// Receiving a C string (borrowed)
+fn from_c_str(ptr: *const c_char) -> Result<&str> {
+    let cstr = unsafe { CStr::from_ptr(ptr) };
+    cstr.to_str().map_err(|_| Error::InvalidUtf8)
+}
+
+// Returning a string to C (caller must free)
+#[no_mangle]
+pub extern "C" fn engine_get_name(engine: *const Engine) -> *mut c_char {
+    let engine = unsafe { &*engine };
+    CString::new(engine.name())
+        .map(CString::into_raw)
+        .unwrap_or(std::ptr::null_mut())
+}
+
+#[no_mangle]
+pub extern "C" fn engine_free_string(s: *mut c_char) {
+    if !s.is_null() {
+        unsafe { drop(CString::from_raw(s)); }
+    }
+}
+```
+
+#### WASM Interop Patterns
+
+```rust
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub struct WasmEngine {
+    inner: Engine,
+}
+
+#[wasm_bindgen]
+impl WasmEngine {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self { inner: Engine::new() }
+    }
+
+    pub fn process(&mut self, input: &str) -> Result<JsValue, JsError> {
+        let result = self.inner.process(input)?;
+        Ok(serde_wasm_bindgen::to_value(&result)?)
+    }
+}
+
+// Conditional compilation for WASM vs native
+#[cfg(target_arch = "wasm32")]
+pub fn get_time() -> f64 {
+    js_sys::Date::now()
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn get_time() -> f64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs_f64() * 1000.0
+}
+```
+
+#### uniffi for Automatic Bindings
+
+```rust
+// In src/lib.rs with uniffi scaffolding
+uniffi::setup_scaffolding!();
+
+#[derive(uniffi::Object)]
+pub struct SearchEngine { /* ... */ }
+
+#[uniffi::export]
+impl SearchEngine {
+    #[uniffi::constructor]
+    pub fn new(config: SearchConfig) -> Self { /* ... */ }
+
+    pub fn search(&self, query: &str) -> Vec<SearchResult> { /* ... */ }
+}
+
+#[derive(uniffi::Record)]
+pub struct SearchConfig {
+    pub max_results: u32,
+    pub case_sensitive: bool,
+}
+```
+
+#### Disciplined Workflow Integration (FFI)
+
+- **Research phase**: Audit all `extern` blocks and unsafe FFI for safety gaps
+- **Design phase**: Specify ownership transfer semantics at every FFI boundary
+- **Verification phase**: Miri + fuzzing mandatory for any new FFI surface; property tests for string conversion roundtrips
+
 ## Crate Recommendations
 
 | Category | Crate | Purpose |
 |----------|-------|---------|
 | Async Runtime | tokio | Industry standard async runtime |
+| Async Utilities | tokio-util | CancellationToken, codec helpers |
+| Middleware | tower | Service trait, layers, retry, rate limiting |
+| HTTP Middleware | tower-http | Trace, timeout, compression layers for HTTP |
 | Serialization | serde | De/serialization framework |
 | HTTP Client | reqwest | Async HTTP client |
 | HTTP Server | axum | Ergonomic web framework |
@@ -295,6 +578,9 @@ where
 | Error Context | anyhow | Application error handling |
 | Testing | proptest | Property-based testing |
 | Mocking | mockall | Mock generation |
+| WASM Bindings | wasm-bindgen | Rust-to-JS FFI for WebAssembly |
+| WASM Serde | serde-wasm-bindgen | Serialize Rust types to JsValue |
+| Multi-Language FFI | uniffi | Auto-generate Kotlin/Swift/Python bindings |
 
 ## Common Pitfalls
 

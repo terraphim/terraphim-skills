@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://terraphim.ai/schemas/verdict-v2.json",
+  "title": "Judge Verdict (v2)",
+  "description": "Schema for judge verdict records with 5-level verdict ladder (BLOCK, FIX FIRST, SAFE TO COMMIT, SAFE TO DEPLOY AFTER RUNTIME CHECK, INSUFFICIENT EVIDENCE)",
+  "type": "object",
+  "required": [
+    "task_id",
+    "model",
+    "mode",
+    "verdict",
+    "scores",
+    "average",
+    "reasoning",
+    "improvements",
+    "timestamp"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "GitHub issue number or task identifier"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model identifier used for this evaluation",
+      "enum": [
+        "opencode/gpt-5-nano",
+        "opencode/kimi-k2.5-free",
+        "opencode/gpt-5.1-codex-mini"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "description": "Judge mode used for this evaluation",
+      "enum": ["quick", "deep", "tiebreaker"]
+    },
+    "verdict": {
+      "type": "string",
+      "description": "Final verdict for the task output (5-level ladder)",
+      "enum": ["BLOCK", "FIX_FIRST", "SAFE_TO_COMMIT", "SAFE_TO_DEPLOY_AFTER_RUNTIME_CHECK", "INSUFFICIENT_EVIDENCE"]
+    },
+    "scores": {
+      "type": "object",
+      "description": "Scores for each KLS dimension (1-5)",
+      "required": ["semantic", "pragmatic", "syntactic"],
+      "properties": {
+        "semantic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Domain accuracy, factual correctness, terminology"
+        },
+        "pragmatic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Actionability, usefulness, task goal alignment"
+        },
+        "syntactic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Internal consistency, structure, format compliance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "average": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Arithmetic mean of the three dimension scores"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Justification for the scores and verdict"
+    },
+    "improvements": {
+      "type": "array",
+      "description": "Specific improvement suggestions (empty for accept verdicts)",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "location", "issue", "suggestion"],
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "enum": ["semantic", "pragmatic", "syntactic"],
+            "description": "Which rubric dimension this improvement addresses"
+          },
+          "location": {
+            "type": "string",
+            "description": "Where in the output the issue was found"
+          },
+          "issue": {
+            "type": "string",
+            "description": "What is wrong"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "How to fix it"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the evaluation"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "description": "Round number in the multi-iteration protocol (1-3 + 1 tiebreaker)"
+    },
+    "judge_tier": {
+      "type": "string",
+      "enum": ["quick", "deep", "tiebreaker"],
+      "description": "Judge tier used in this round"
+    },
+    "previous_rounds": {
+      "type": "array",
+      "description": "Audit trail of prior round verdicts in this evaluation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "round": { "type": "integer" },
+          "model": { "type": "string" },
+          "verdict": { "type": "string" },
+          "average": { "type": "number" }
+        }
+      }
+    },
+    "consensus": {
+      "type": ["string", "null"],
+      "enum": ["unanimous", "majority", "split", null],
+      "description": "Consensus status across rounds (null for single-round verdicts)"
+    },
+    "human_override": {
+      "type": ["boolean", "null"],
+      "description": "Whether a human overrode the automated verdict (null if no override)"
+    }
+  },
+  "additionalProperties": false
+}

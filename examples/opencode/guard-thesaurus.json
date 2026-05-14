@@ -1,0 +1,8 @@
+{
+  "destructive_patterns": [
+    "pkill tmux"
+  ],
+  "reasons": {
+    "pkill tmux": "Kills tmux sessions which may contain important work"
+  }
+}

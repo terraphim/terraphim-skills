@@ -18,6 +18,17 @@ You are a validation specialist executing Phase 5 of disciplined development. Yo
 4. **Defects Loop Back**: Failures return to research or design phase
 5. **Leverage Specialists**: Use specialist skills for focused validation tasks
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no user-visible impact
+- Typo, rename, import-fix, or formatting-only change
+- Internal refactor with no API or behaviour change
+- Config flag toggle with no security or migration concerns
+- A bug fix already validated by the verification phase tests
+
+In these cases, consider the verification phase tests sufficient. Full UAT, stakeholder interviews, and system testing for trivial changes add cycle time with no quality gain.
+
 ## Integration with Specialist Skills
 
 This skill orchestrates validation by leveraging specialist skills:
@@ -306,6 +317,7 @@ Has this been achieved?"
 **Research Doc**: [Link to Phase 1]
 **Design Doc**: [Link to Phase 2]
 **Verification Report**: [Link to Phase 4]
+**SRD Reference**: [SRD ID, if applicable]
 
 ## Executive Summary
 
@@ -345,6 +357,26 @@ Has this been achieved?"
 ### Quality Gate (`quality-gate` skill)
 - **Decision**: Pass / Pass with Follow-ups / Fail
 - **Report**: [link to Quality Gate Report]
+
+## SRD IOC Validation (if applicable)
+
+For releases with Software Release Definition (SRD) requirements:
+
+### IOC Criteria Verification
+| IOC Criterion | SRD Reference | Verification Method | Evidence | Status |
+|---------------|---------------|---------------------|----------|--------|
+| Feature complete | SRD-SEC-001 | Requirements traceability | Matrix shows all requirements Implemented | [ ] |
+| Tests passing | SRD-SEC-002 | Verification report | All tests PASS | [ ] |
+| Performance met | SRD-NFR-001 | Benchmark results | Within budget | [ ] |
+| Security passed | SRD-NFR-002 | Security audit | No critical findings | [ ] |
+| Documentation complete | SRD-SEC-003 | Doc review | All sections complete | [ ] |
+
+### SRD Compliance Checklist
+- [ ] All SRD requirements traced to acceptance evidence
+- [ ] SRD acceptance criteria verified
+- [ ] SRD constraints validated
+- [ ] SRD dependencies confirmed operational
+- [ ] IOC sign-off obtained from release authority
 
 ## System Test Results
 
@@ -471,6 +503,7 @@ Before production deployment:
 - [ ] All critical and high defects resolved through loop-back
 - [ ] Formal sign-off received from all required stakeholders
 - [ ] Deployment conditions documented and achievable
+- [ ] SRD IOC criteria validated (if applicable)
 - [ ] Ready for production deployment
 
 ## Constraints

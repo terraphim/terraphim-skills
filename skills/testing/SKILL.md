@@ -343,6 +343,216 @@ fuzz_target!(|data: &[u8]| {
 });
 ```
 
+## Advanced Verification Tools
+
+### Miri: Undefined Behavior Detection
+
+Miri is an interpreter for Rust's Mid-level Intermediate Representation that detects undefined behavior in unsafe code.
+
+```bash
+# Install Miri (requires nightly)
+rustup +nightly component add miri
+
+# Run all tests under Miri
+cargo +nightly miri test
+
+# Run specific test under Miri
+cargo +nightly miri test -- test_name
+
+# Run with Stacked Borrows (stricter aliasing checks)
+MIRIFLAGS="-Zmiri-strict-provenance" cargo +nightly miri test
+```
+
+**What Miri detects**:
+- Use after free, double free
+- Out-of-bounds memory access
+- Invalid use of uninitialized data
+- Violations of aliasing rules (Stacked Borrows)
+- Data races (when using `-Zmiri-preemption-rate=0.1`)
+- Memory leaks (with `-Zmiri-leak-check`)
+
+**When to run Miri**:
+- Every PR that adds or modifies `unsafe` code
+- As a CI gate for modules containing `unsafe`
+- Before releasing crates with `unsafe` internals
+
+```rust
+// Test that works well with Miri -- avoids I/O and external calls
+#[test]
+fn miri_compatible_unsafe_test() {
+    let mut data = vec![1u8, 2, 3, 4];
+    let ptr = data.as_mut_ptr();
+
+    // SAFETY: ptr is valid for data.len() bytes, properly aligned
+    unsafe {
+        std::ptr::write(ptr.add(2), 42);
+    }
+
+    assert_eq!(data[2], 42);
+}
+```
+
+**Limitations**: Miri cannot run code that calls external C functions, performs I/O, or uses inline assembly. Structure tests to isolate pure Rust logic for Miri compatibility.
+
+### Fuzzing with cargo-fuzz
+
+```bash
+# Install cargo-fuzz
+cargo install cargo-fuzz
+
+# Initialize fuzzing in your project
+cargo fuzz init
+
+# Create a fuzz target
+cargo fuzz add parse_input
+```
+
+```rust
+// fuzz/fuzz_targets/parse_input.rs
+#![no_main]
+use libfuzzer_sys::fuzz_target;
+use my_crate::parse;
+
+fuzz_target!(|data: &[u8]| {
+    // Parser should never panic on arbitrary input
+    let _ = parse(data);
+});
+
+// Structured fuzzing with Arbitrary
+use libfuzzer_sys::arbitrary::{self, Arbitrary};
+
+#[derive(Arbitrary, Debug)]
+struct FuzzInput {
+    query: String,
+    limit: u32,
+    offset: u32,
+}
+
+fuzz_target!(|input: FuzzInput| {
+    let _ = search(&input.query, input.limit, input.offset);
+});
+```
+
+```bash
+# Run fuzzer (runs until stopped or crash found)
+cargo fuzz run parse_input
+
+# Run for specific duration
+cargo fuzz run parse_input -- -max_total_time=300
+
+# Minimize a crashing corpus entry
+cargo fuzz tmin parse_input crash-file
+
+# Check coverage of fuzz corpus
+cargo fuzz coverage parse_input
+```
+
+**Corpus management**:
+- Store meaningful seeds in `fuzz/corpus/<target>/`
+- Commit regression inputs from crashes to the corpus
+- Run `cargo fuzz cmin` periodically to minimize the corpus
+
+### Sanitizers
+
+Sanitizers detect runtime errors that Miri cannot (e.g., in code with FFI or I/O).
+
+```bash
+# AddressSanitizer: buffer overflows, use-after-free, leaks
+RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --target x86_64-unknown-linux-gnu
+
+# ThreadSanitizer: data races in concurrent code
+RUSTFLAGS="-Zsanitizer=thread" cargo +nightly test --target x86_64-unknown-linux-gnu
+
+# MemorySanitizer: reads of uninitialized memory
+RUSTFLAGS="-Zsanitizer=memory" cargo +nightly test --target x86_64-unknown-linux-gnu
+```
+
+**When to use each**:
+
+| Sanitizer | Detects | Use When |
+|-----------|---------|----------|
+| ASan | Buffer overflow, use-after-free, memory leaks | Any unsafe code, FFI boundaries |
+| TSan | Data races, deadlocks | Concurrent code with shared state, lock-free structures |
+| MSan | Reads of uninitialized memory | FFI code receiving data from C, MaybeUninit usage |
+
+**CI integration**: Run sanitizers on a nightly CI job (not blocking, since they require nightly).
+
+### Advanced Property Testing with proptest
+
+```rust
+use proptest::prelude::*;
+use proptest::collection::vec;
+
+// Custom strategy for domain-specific types
+fn valid_email() -> impl Strategy<Value = String> {
+    (
+        "[a-z]{1,20}",        // local part
+        "[a-z]{1,10}",        // domain
+        prop_oneof!["com", "org", "net"],
+    )
+        .prop_map(|(local, domain, tld)| format!("{}@{}.{}", local, domain, tld))
+}
+
+proptest! {
+    // Test with custom generators
+    #[test]
+    fn valid_emails_are_accepted(email in valid_email()) {
+        prop_assert!(validate_email(&email).is_ok());
+    }
+
+    // Test invariants across transformations
+    #[test]
+    fn encode_decode_roundtrip(data in vec(any::<u8>(), 0..1024)) {
+        let encoded = encode(&data);
+        let decoded = decode(&encoded).unwrap();
+        prop_assert_eq!(data, decoded);
+    }
+
+    // Regression file: proptest stores failing cases in
+    // proptest-regressions/ so they're retested on every run
+}
+```
+
+### Loom: Concurrency Testing
+
+```rust
+// Use loom for exhaustive concurrency testing of lock-free code
+#[cfg(loom)]
+use loom::sync::atomic::{AtomicUsize, Ordering};
+#[cfg(not(loom))]
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+#[cfg(loom)]
+#[test]
+fn concurrent_counter_is_correct() {
+    loom::model(|| {
+        let counter = loom::sync::Arc::new(AtomicUsize::new(0));
+        let c1 = counter.clone();
+        let c2 = counter.clone();
+
+        let t1 = loom::thread::spawn(move || {
+            c1.fetch_add(1, Ordering::SeqCst);
+        });
+        let t2 = loom::thread::spawn(move || {
+            c2.fetch_add(1, Ordering::SeqCst);
+        });
+
+        t1.join().unwrap();
+        t2.join().unwrap();
+        assert_eq!(counter.load(Ordering::SeqCst), 2);
+    });
+}
+```
+
+### Disciplined Workflow Integration (Advanced Testing)
+
+- **Research phase** (Phase 1): Identify unsafe code paths needing Miri; catalogue parser inputs for fuzz corpus seeding
+- **Design phase** (Phase 2): Specify which verification tools apply to each module; design fuzz harness API
+- **Verification phase** (Phase 4): Miri runs on all unsafe code; TSan on all concurrent code; fuzz campaigns on parsers; property tests on invariants
+- **Validation phase** (Phase 5): Confirm fuzz campaigns have adequate coverage; validate no UB in production-like environment
+
+**Cross-references**: See `rust-development` skill for unsafe code policy; see `rust-performance` skill for concurrency patterns requiring loom/TSan verification.
+
 ## Constraints
 
 - Never use real external services in unit tests

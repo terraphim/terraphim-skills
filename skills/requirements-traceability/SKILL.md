@@ -80,10 +80,25 @@ Evidence must be specific (paths, commands, logs). “Looks good” is not evide
 ## Traceability Matrix Template
 
 ```markdown
-| Req ID | Requirement | Design Ref | Impl Ref | Tests | Evidence | Status |
-|-------:|-------------|------------|----------|-------|----------|--------|
-| REQ-001 | … | ADR-001 | `src/...` | `tests/...` | `docs/quality/...` / command output | ✅/⚠️/❌ |
+| Req ID | Requirement | Maturity | Design Ref | Impl Ref | Tests | Evidence | Status |
+|-------:|-------------|----------|------------|----------|-------|----------|--------|
+| REQ-001 | … | Draft | ADR-001 | `src/...` | `tests/...` | `docs/quality/...` | ✅/⚠️/❌ |
 ```
+
+### Maturity States
+
+Track artifact maturity through the development lifecycle:
+
+| State | Description | Entry Criteria |
+|-------|-------------|----------------|
+| **Draft** | Initial capture, unvalidated | Requirement identified |
+| **Review** | Under stakeholder review | Documented in PR/spec |
+| **Approved** | Accepted for implementation | Stakeholder sign-off |
+| **Implemented** | Code complete | Merged to main |
+| **Verified** | Tested (Phase 4) | Tests pass |
+| **Validated** | Accepted by stakeholders (Phase 5) | UAT sign-off |
+
+The maturity column helps identify which requirements are ready for each phase of development.
 
 ## Gap Severity Rules
 
@@ -107,8 +122,36 @@ Evidence must be specific (paths, commands, logs). “Looks good” is not evide
 - ⚠️ {Req} has {partial evidence}
 ```
 
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Traceability Chain
+
+ZDP defines a full artefact chain. When tracing requirements in a ZDP context, extend the matrix to cover:
+
+```
+PVVH -> Business Scenarios -> Domain Model -> Design Brief -> Architecture Doc
+  -> Prompt/Agent Specs -> Implementation -> Test Cases -> UAT -> Monitoring
+```
+
+### Extended Matrix Template
+
+Add ZDP artefact IDs alongside standard REQ IDs:
+
+| Req ID | ZDP Artefact | Requirement | Design Ref | Impl Ref | Tests | Evidence | Status |
+|-------:|-------------|-------------|------------|----------|-------|----------|--------|
+| REQ-001 | BS-003 | ... | ADR-001 | `src/...` | `tests/...` | ... | ... |
+
+### Cross-References
+
+If available, coordinate with:
+- `/business-scenario-design` -- business scenario IDs for traceability
+- `/product-vision` -- PVVH as the root of the traceability chain
+- `/responsible-ai` -- Responsible-AI requirements traceability
+
 ## Constraints
 
-- Don’t claim coverage you can’t point to (paths/tests/commands/logs).
+- Don't claim coverage you can't point to (paths/tests/commands/logs).
 - Prefer adding/expanding tests over adding manual steps for regressions.
 - Keep the matrix small and in-scope; link out to details.

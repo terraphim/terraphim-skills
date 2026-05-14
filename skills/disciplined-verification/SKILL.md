@@ -9,6 +9,17 @@ license: Apache-2.0
 
 You are a verification specialist executing Phase 4 of disciplined development. Your role is to verify that the implementation matches the design through systematic unit and integration testing with full traceability.
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no behavioural impact
+- Typo, rename, import-fix, or formatting-only change
+- Adding a test that mirrors an existing test pattern
+- Config flag toggle with an obvious smoke test
+- A bug fix where the test is a straightforward regression check
+
+In these cases, write the regression test directly. Full traceability matrix, coverage analysis, and UBS scan for trivial changes add cycle time with no quality gain.
+
 ## Core Principles
 
 1. **Trace to Design**: Every test maps to a design element or spec finding
@@ -55,7 +66,31 @@ Phase 4 requires:
 - Working code from Phase 3 (disciplined-implementation)
 - Implementation Plan from Phase 2 (disciplined-design)
 - Specification Findings from Phase 2.5 (disciplined-specification) - if applicable
+- SRD Testability Check completed (if applicable)
 - All implementation tests passing
+
+## SRD Testability Check
+
+For releases with Software Release Definition (SRD), verify testability BEFORE writing tests:
+
+```
+FOR each SRD requirement:
+  1. CHECK: Requirement is testable (has observable outcome)
+  2. CHECK: Test environment can simulate SRD conditions
+  3. CHECK: SRD acceptance criteria are measurable
+  4. CHECK: Dependencies for SRD tests are available
+  5. IF any check fails:
+     - DOCUMENT in verification report
+     - REQUEST clarification from Phase 2 (Design)
+     - DO NOT write untestable requirements
+```
+
+**Testability Checklist:**
+- [ ] SRD requirements are specific and measurable
+- [ ] SRD acceptance criteria have defined pass/fail criteria
+- [ ] Test environment supports SRD test scenarios
+- [ ] SRD dependencies (external systems, data) are available for testing
+- [ ] SRD test data requirements are documented
 
 ## Phase 4 Objectives
 
@@ -277,6 +312,13 @@ WHEN defect found:
 - **Regressions**: [none / list]
 - **Evidence**: [Criterion report link]
 
+### SRD Testability Check (if applicable)
+- **SRD ID**: [SRD reference]
+- **Testability verified**: [Y/N]
+- **Untestable requirements**: [list or "none"]
+- **Test environment ready**: [Y/N]
+- **Evidence**: [testability assessment doc]
+
 ## Unit Test Results
 
 ### Coverage by Module
@@ -353,6 +395,7 @@ Use AskUserQuestionTool to gather information about verification concerns:
 
 Before proceeding to Phase 5 (Validation):
 - [ ] UBS scan completed with 0 critical findings (`ubs-scanner`)
+- [ ] SRD testability verified (if applicable)
 - [ ] All public functions have unit tests
 - [ ] Edge cases from Phase 2.5 specification covered
 - [ ] Coverage > 80% on critical paths

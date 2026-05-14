@@ -19,6 +19,16 @@ You evaluate Research Documents (Phase 1) and Implementation Plans (Phase 2) usi
 3. **Actionable feedback**: Every low score includes specific fix
 4. **Essentialism check**: Vital few focus enforced
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the document under review is trivial:
+- Research doc for a change under 10 lines with no architectural impact
+- Design doc that replicates an existing pattern
+- Spec doc with no ambiguous requirements or edge cases
+- Implementation plan with a single obvious step
+
+In these cases, a quick read-through is sufficient. Full KLS scoring for trivial documents adds overhead without improving outcomes.
+
 ## When to Use This Skill
 
 - After Phase 1 (Research) before Phase 2 (Design)
@@ -33,7 +43,7 @@ The Krogstie-Lindland-Sindre framework evaluates document quality across six dim
 | Dimension | Question | Evaluation Focus |
 |-----------|----------|------------------|
 | **Physical** | Is it readable, well-formatted, accessible? | Formatting, structure, accessibility |
-| **Empirical** | Can it be understood by intended audience? | Clarity, terminology, examples |
+| **Empirical** | Can it be understood by intended audience? | Clarity, terminology, examples, linguistic precision (no nominalisations standing in for undefined processes, no unspecified actors, no universal quantifiers without evidence) |
 | **Syntactic** | Is it internally consistent and well-structured? | Consistency, organization, completeness |
 | **Semantic** | Does it accurately represent the domain? | Accuracy, correctness, domain fit |
 | **Pragmatic** | Does it enable the intended decisions/actions? | Actionability, usefulness, guidance |
@@ -188,6 +198,29 @@ disciplined-design -> disciplined-quality-evaluation -> disciplined-implementati
 
 ### With Quality Gate
 The `quality-gate` skill delegates document quality evaluation to this skill when reviewing Research or Design documents.
+
+## ZDP Governance Dimension (Optional)
+
+When evaluating documents for ZDP (Zestic AI Development Process) gate transitions, add this optional 7th dimension to the KLS framework. **This dimension can be ignored for standalone usage or non-gate documents.**
+
+### Governance Quality
+
+| Aspect | Question | Evaluation Focus |
+|--------|----------|------------------|
+| Uncertainty Classification | Does the document explicitly classify what is known vs. unknown vs. contested? | Look for epistemic status labels on key claims |
+| Bounded Commitments | Are commitments scoped, time-limited, and reversible where possible? | Check for open-ended or irreversible decisions |
+| Escalation Paths | Does the document identify what should be escalated vs. decided locally? | Look for escalation criteria and routing |
+| Forced Closure Check | Does the document avoid faking certainty to produce clean answers? | Check for hedged language where evidence is thin |
+
+**Scoring**: Same 1-5 scale as other KLS dimensions.
+
+**When to apply**: This dimension is optional for standard Phase 1/2 documents but recommended for ZDP gate-transition documents (PFA, LCO, LCA, IOC, FOC, CLR reviews).
+
+**Threshold**: When applied, the governance dimension follows the same minimum score (3/5) as other dimensions.
+
+### Cross-References
+
+If available, use `perspective-investigation` skill for governance-grade assessment of contested findings.
 
 ## Constraints
 

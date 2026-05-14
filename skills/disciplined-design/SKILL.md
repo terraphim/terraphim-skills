@@ -17,6 +17,17 @@ You are a design specialist executing Phase 2 of disciplined development. Your r
 4. **Human Approval**: No implementation without sign-off
 5. **Eliminate Before Adding**: Design is primarily about removal
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no architectural impact
+- Adding a single field to a struct or API response
+- Replicating an existing pattern (same structure, different data)
+- Config flag toggle with an obvious test
+- A bug fix where the design is already clear from the research phase
+
+In these cases, go straight to implementation with a minimal plan. Full design phase for trivial changes produces 3,000+ lines of artefacts with no quality gain (see Eberhardt/Scott Logic experiment, Nov 2025).
+
 ## Essentialism: ELIMINATE Phase
 
 This phase embodies McKeown's ELIMINATE principle. Design is about choosing what NOT to do.
@@ -296,6 +307,28 @@ CREATE TABLE features (
 |-------|------|-----|--------|
 | [crate] | X.Y | X.Z | [Why] |
 
+## Software Release Definition (SRD)
+
+For releases requiring formal SRD documentation, complete this section:
+
+### SRD Reference
+| Field | Value |
+|-------|-------|
+| SRD ID | [SRD-XXX or link] |
+| SRD Status | Draft / Review / Approved |
+| Target Release | [Version/Date] |
+
+### SRD Traceability
+| SRD Requirement | Design Section | Implementation Step | Test Coverage |
+|-----------------|----------------|---------------------|---------------|
+| [REQ-001] | [Section X] | [Step Y] | [Test Z] |
+
+### SRD Validation Checkpoints
+- [ ] All SRD requirements mapped to design elements
+- [ ] SRD acceptance criteria reflected in test strategy
+- [ ] SRD constraints incorporated into architecture
+- [ ] SRD dependencies documented and accounted for
+
 ## Performance Considerations
 
 ### Expected Performance
@@ -362,6 +395,7 @@ Before proceeding to Phase 3 (Implementation):
 - [ ] Test strategy complete
 - [ ] Steps sequenced with dependencies
 - [ ] Performance targets set
+- [ ] SRD traceability complete (if applicable)
 - [ ] Human approval received
 
 ### Essentialism Gates
@@ -373,6 +407,33 @@ Before proceeding to Phase 3 (Implementation):
 
 ### Quality Evaluation
 After completing design, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 3.
+
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Context
+
+Disciplined design maps to the ZDP **Design** stage (Workflows 2-4: Planning Phase). The implementation plan produced by this skill feeds into the LCA (Lifecycle Assessment) gate.
+
+### Additional Guidance
+
+When working within a ZDP lifecycle:
+- Ground design briefs in the validated domain model and context-engineered inputs
+- Decompose the system into cleanly separated components with clear boundaries
+- Include data-exchange flows and event models in the architecture section
+- Align UAT strategy with ZDP acceptance criteria and business scenarios
+- Address Responsible-AI and accessibility constraints before any code generation
+- Ensure model experiments are isolated from UI and application logic
+
+### Cross-References
+
+If available, coordinate outputs with:
+- `/architecture` -- system and ML architecture documents
+- `/acceptance-testing` -- UAT strategy aligned with business scenarios
+- `/responsible-ai` -- risk register populated during design
+- `/prompt-agent-spec` -- agent specifications for AI components
+- `/business-scenario-design` -- scenarios inform design decomposition
 
 ## Constraints
 

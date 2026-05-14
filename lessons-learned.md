@@ -421,3 +421,44 @@ permission:
 - Add `opencode-agents/` directory with OpenCode-format agents
 - Or create conversion script from Claude Code format to OpenCode format
 - Document the installation process for OpenCode agents separately
+
+---
+
+## 2026-02-21: Judge Functionality Investigation
+
+### Discovery: Comprehensive Search Found No "Judge" Code
+**Context:** Issues #40-41 referenced [JUDGE-PARSE-ERROR] requiring investigation
+**Investigation:**
+- Searched all skill files (31 files in `skills/`)
+- Searched all agent definitions (9 files in `agents/`)
+- Searched session logs and documentation
+- Used grep for "judge", "JUDGE", "Judge" - zero matches
+
+**Conclusion:** No judge functionality exists in terraphim-skills repository
+
+### Discovery: External Issue Tags Don't Indicate Internal Code
+**Observation:** [JUDGE-PARSE-ERROR] tag in issue title appeared to reference external system
+**Lesson:** Issue tags may reference:
+- External systems (other repos, services)
+- Planned features not yet implemented
+- Historical artifacts from migrated issues
+
+### Best Practice: Verify Before Assuming Code Exists
+1. Search comprehensively before concluding functionality is missing
+2. Check related repositories (terraphim-ai main repo)
+3. Ask for clarification when issue references non-existent components
+4. Document findings when functionality cannot be located
+
+### Potential Locations for Judge Functionality
+Based on naming convention and purpose:
+- **terraphim-ai main repository:** Core evaluation/decision engine
+- **External evaluation service:** Separate microservice for agent evaluation
+- **Skill to be created:** New `judge` or `evaluator` skill
+- **Quality evaluation extension:** Extension of `disciplined-quality-evaluation` skill
+
+### Recommendation: Create Judge Skill Specification
+If judge functionality is needed:
+1. Define purpose: agent output evaluation, decision scoring, or quality assessment
+2. Determine integration point: hooks, skills, or external service
+3. Create `skills/judge/SKILL.md` with clear API and usage patterns
+4. Reference from `quality-gate` and `disciplined-quality-evaluation` skills

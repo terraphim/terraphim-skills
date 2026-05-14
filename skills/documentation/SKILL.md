@@ -244,6 +244,25 @@ cargo doc --no-deps
 cargo doc --no-deps 2>&1 | grep "warning"
 ```
 
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Artefact Documentation
+
+This skill can help produce or maintain the following ZDP-specific documentation artefacts:
+- **Release notes** -- user-facing summary of changes per FOC gate
+- **Accessibility reports** -- WCAG compliance documentation
+- **Incident runbooks** -- operational response procedures
+- **Living documentation** -- continuously updated technical documentation generated from Workflow 3
+
+### Cross-References
+
+If available, coordinate with:
+- `/acceptance-testing` -- UAT results feed into release notes
+- `/responsible-ai` -- Responsible-AI documentation requirements
+- `/mlops-monitoring` -- monitoring documentation for incident runbooks
+
 ## Constraints
 
 - No documentation without code verification

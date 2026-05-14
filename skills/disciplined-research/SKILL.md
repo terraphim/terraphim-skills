@@ -17,6 +17,17 @@ You are a research specialist executing Phase 1 of disciplined development. Your
 4. **Document Everything**: Enable informed decisions
 5. **Focus on Vital Few**: Identify what's essential, eliminate the rest
 
+## Skip This Skill When...
+
+Do NOT invoke this skill when the change is trivial or well-understood:
+- Fewer than 10 lines changed, with no behavioural impact
+- Typo, rename, import-fix, or formatting-only change
+- Dependency version bump with no API changes
+- Config flag toggle with an obvious test
+- A bug fix where the root cause is already identified and the fix is obvious
+
+In these cases, go straight to implementation. Research phase bloat for trivial changes wastes time with no quality gain (see Eberhardt/Scott Logic experiment, Nov 2025).
+
 ## Essentialism: EXPLORE Phase
 
 This phase embodies McKeown's EXPLORE principle. Before diving into research, validate that this work is essential.
@@ -320,6 +331,31 @@ Before proceeding to Phase 2 (Design):
 
 ### Quality Evaluation
 After completing research, request evaluation using `disciplined-quality-evaluation` skill before proceeding to Phase 2.
+
+## ZDP Integration (Optional)
+
+When this skill is used within a ZDP (Zestic AI Development Process) lifecycle, the following additional guidance applies. **This section can be ignored for standalone usage.**
+
+### ZDP Context
+
+Disciplined research maps to the ZDP **Discovery** and early **Define** stages (Workflow 1: Research Phase). The research document produced by this skill feeds directly into the PFA (Problem Framing Agreement) gate.
+
+### Additional Guidance
+
+When working within a ZDP lifecycle:
+- Extract domain terms, synonyms, and structural concepts for domain model updates
+- Map findings to personas, end-to-end business scenarios, and event models
+- Enforce separation of concerns: problem understanding is independent from design choices
+- Include stakeholder map and decision authority map in research outputs
+- Log constraints across all ZDP dimensions: business, data, legal, ethical, technical
+
+### Cross-References
+
+If available, coordinate outputs with:
+- `/product-vision` -- research findings inform the PVVH document
+- `/business-scenario-design` -- domain understanding feeds scenario design
+- `/via-negativa-analysis` -- risk scan at Discovery stage
+- `/wardley-mapping` -- strategic landscape context
 
 ## Constraints
 
