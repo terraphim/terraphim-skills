@@ -79,18 +79,24 @@ line. The status tool is the source of truth.
 
 ## Backend selection
 
-The crate ships three execution backends. Pick based on what the user has
-available -- the `rlm_status` response includes the active backend.
+The crate ships three execution backends, all first-class. Pick based on
+what the user has available -- the `rlm_status` response includes the
+active backend.
 
-| Backend | Snapshots | Notes |
-|---|---|---|
-| Firecracker | Full | Linux only. Strongest isolation. Default on bigbox. |
-| Docker | Limited | Container restart only, not arbitrary state versioning. Works on Mac and Linux. |
-| Local | NotSupported | Honest error returned. No state versioning -- branch by re-running, not by snapshotting. |
+| Backend | rlm_code / rlm_bash / rlm_query | Snapshots | Notes |
+|---|---|---|---|
+| Local | Fully supported | Not supported | Default on Mac. Process-level isolation. Honours `timeout_ms` and `kill_on_drop` (Refs terraphim-ai #870). |
+| Docker | Fully supported | Limited (container restart) | Portable across Mac and Linux. Stronger isolation than Local. |
+| Firecracker | Fully supported | Full VM state versioning | Linux only. Strongest isolation. Default on bigbox. |
 
-If the backend is Local and you call `rlm_snapshot`, the executor returns
-`RlmError::NotSupported`. Do not retry; restructure the task to be linear
-or escalate to the user that Firecracker/Docker would unlock branching.
+Local is fine for the vast majority of in-session work -- decomposition,
+fan-out, KG-grounded sub-queries, sandboxed scripts. Only escalate to
+Docker/Firecracker when the task genuinely needs branching (snapshots),
+stronger isolation (untrusted code), or a Linux-only dependency.
+
+If `rlm_snapshot` is called on Local it returns `RlmError::NotSupported`
+honestly -- do not retry; restructure the task to be linear, or ask the
+user whether to switch backend.
 
 Details: see `references/backend-selection.md`.
 

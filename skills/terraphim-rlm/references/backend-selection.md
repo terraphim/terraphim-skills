@@ -20,13 +20,18 @@ chosen at crate build time via Cargo features (`firecracker-backend`,
 
 ## When to pick which
 
-- **Local**: development, fast iteration, no isolation needs. Cheapest.
-  Branching tasks will fail at `rlm_snapshot` -- restructure linearly.
-- **Docker**: portable, moderate isolation. Works on Mac. Good default for
-  client-facing demos.
+- **Local** (default on Mac, fully supported for non-snapshot work):
+  development, fast iteration, in-session sandboxed scripts, decomposition,
+  KG-grounded sub-queries, fan-out + reconcile. Process-level isolation
+  with timeout enforcement and kill_on_drop reaping. Cheapest. The only
+  capability missing is `rlm_snapshot` -- if a task does not need
+  branching, Local is the right pick.
+- **Docker**: portable across Mac and Linux. Stronger isolation than
+  Local. Good for client-facing demos or moderately untrusted input.
+  Snapshots are container-restart only, not arbitrary state versioning.
 - **Firecracker**: bigbox, overnight ADF agents, anything touching
-  untrusted code. Required if the task involves arbitrary user-supplied
-  code.
+  arbitrary user-supplied code. Full VM state versioning. Required for
+  branch-and-merge patterns (`rlm_snapshot` + restore).
 
 ## Backend discovery
 

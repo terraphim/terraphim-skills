@@ -51,7 +51,7 @@ def solve(task, depth=0):
 Bound depth to avoid runaway recursion. Track depth in `rlm_context` if
 recursion spans multiple `rlm_code` calls.
 
-## Pattern 4: Branch-and-merge (Firecracker/Docker only)
+## Pattern 4: Branch-and-merge (snapshot-capable backends)
 
 Try multiple approaches in isolated state, pick the best.
 
@@ -63,8 +63,10 @@ try approach B: result_b = ...
 pick winner
 ```
 
-Fails on Local backend with `RlmError::NotSupported` -- do not attempt
-without checking `rlm_status` for backend.
+Works on Firecracker (full VM state) and Docker (container restart).
+Returns `RlmError::NotSupported` on Local -- if `rlm_status` shows the
+Local backend, restructure as Patterns 1-3 (linear, fan-out, or
+recursive) instead.
 
 ## Parallelism limits
 
