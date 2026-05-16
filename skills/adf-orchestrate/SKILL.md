@@ -74,13 +74,33 @@ workarounds.
 
 | Command | Purpose |
 |---|---|
-| `adf-ctl agents` | List configured agent names from orchestrator TOML |
+| `adf-ctl agents [--format json]` | List configured agent names from orchestrator TOML |
 | `adf-ctl trigger <name> [--context "..."] [--wait] [--timeout 1200]` | Fire an agent; optionally block until it exits |
-| `adf-ctl status [--since 1h]` | Show running agents and recent exits |
+| `adf-ctl status [--since 1h] [--format json]` | Show running agents and recent exits |
 | `adf-ctl cancel <name>` | Best-effort kill via SSH+pgrep |
 
 Defaults: `--host bigbox`, `--endpoint http://172.18.0.1:9091/webhooks/gitea`.
 Override only if the user has a non-default setup.
+
+Whenever the result will be parsed (programmatic checks, scripted status
+polling), pass `--format json` on `agents` and `status` so the output is a
+stable envelope rather than free-form human text. Default remains `human`
+for back-compatibility. JSON schemas (terraphim-ai #1495):
+
+```jsonc
+// adf-ctl agents --format json
+{ "host": "bigbox", "agents": ["meta-learning", "build-runner", ...] }
+
+// adf-ctl status --format json
+{
+  "host": "bigbox",
+  "since": "1h",
+  "recent_activity": [ { "line": "May 16 12:00 ..." }, ... ],
+  "running_processes": [ { "pid": "12345", "etimes": "3600", "cputime": "...", "comm": "claude" }, ... ],
+  "best_effort": true,
+  "note": "best-effort via SSH process scan; not authoritative without admin socket"
+}
+```
 
 ## Procedure
 
