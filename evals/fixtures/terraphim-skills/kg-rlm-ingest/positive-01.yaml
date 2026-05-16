@@ -1,0 +1,37 @@
+id: kg-rlm-ingest-positive-01
+repo: terraphim-skills
+target: kg-rlm-ingest
+skill_type: encoded_preference
+category: positive-trigger
+user_prompt: >
+  This research output on Firecracker snapshot performance has lasting value.
+  Ingest it into the KG under the Rust Engineer role so I can find it from
+  future sessions.
+expected_trigger:
+  - kg-rlm-ingest
+must_not_trigger:
+  - local-knowledge
+  - session-search
+expected_artifacts:
+  - concept-list
+  - dedupe-check
+  - haystack-write
+  - verify-indexing
+judge_profile: kg-ingest
+baseline: v1
+trigger_signals:
+  all_of:
+    - "terraphim-agent search"
+  any_of:
+    - "concepts_matched"
+    - "haystack"
+    - "Rust Engineer"
+    - "thesaurus"
+    - "--robot --format json"
+notes: Explicit ingest request with role named. Should distil via rlm_query
+  (FastThinking+Documentation), dedupe via terraphim-agent search, write
+  markdown to haystack, then verify with a second search call.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

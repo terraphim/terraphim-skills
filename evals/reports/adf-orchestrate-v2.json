@@ -1,0 +1,105 @@
+{
+  "run_id": "2026-05-16T10:39:40.815Z",
+  "target_repo": "terraphim-skills",
+  "target": "adf-orchestrate",
+  "baseline": "v2",
+  "candidate": "working-tree",
+  "adapters": [
+    "claude-code",
+    "terraphim-agent"
+  ],
+  "fixtures_total": 6,
+  "trigger_precision": null,
+  "trigger_recall": 0,
+  "false_trigger_rate": 0,
+  "quality_pass_rate": null,
+  "median_latency_ms": 13837,
+  "token_usage_total": 2934,
+  "regression_status": "unknown",
+  "fixture_results": [
+    {
+      "fixture_id": "adf-orchestrate-boundary-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 11384,
+      "token_usage": 161,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "adf-orchestrate-boundary-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "security-sentinel"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 16290,
+      "token_usage": 270,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "adf-orchestrate-negative-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 9003,
+      "token_usage": 43,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "adf-orchestrate-negative-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 9426,
+      "token_usage": 35,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "adf-orchestrate-positive-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "Refs #"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 25920,
+      "token_usage": 1094,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "adf-orchestrate-positive-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "Refs #"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 28445,
+      "token_usage": 1331,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    }
+  ]
+}

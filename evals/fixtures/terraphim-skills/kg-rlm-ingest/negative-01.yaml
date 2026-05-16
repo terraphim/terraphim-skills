@@ -1,0 +1,26 @@
+id: kg-rlm-ingest-negative-01
+repo: terraphim-skills
+target: kg-rlm-ingest
+skill_type: encoded_preference
+category: negative-trigger
+user_prompt: >
+  Search my Rust notes for prior work on async cancellation tokens.
+expected_trigger:
+  - local-knowledge
+must_not_trigger:
+  - kg-rlm-ingest
+expected_artifacts:
+  - search-results
+judge_profile: kg-ingest
+baseline: v1
+trigger_signals:
+  none_of:
+    - "ingest"
+    - "haystack"
+    - "Write"
+notes: Read-only lookup. Belongs to local-knowledge, not ingest. ingest must
+  not trigger on "Rust notes" alone -- the cue must be a write intent.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

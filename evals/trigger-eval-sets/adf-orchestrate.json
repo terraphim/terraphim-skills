@@ -1,0 +1,22 @@
+[
+  {"query": "Kick off the meta-learning agent on bigbox tonight, context should mention Refs #1234. I'll check status tomorrow morning.", "should_trigger": true},
+  {"query": "fire the security-sentinel agent overnight on the bigbox host, want the logs in the morning", "should_trigger": true},
+  {"query": "Is the build-runner agent still running? Started it about an hour ago via adf.", "should_trigger": true},
+  {"query": "Cancel the runaway nightly-reindex agent -- it's been going for 4 hours, way past expected.", "should_trigger": true},
+  {"query": "What ADF agents are configured right now? Show me the list before I trigger one.", "should_trigger": true},
+  {"query": "Trigger the weekly retro agent on bigbox, pass it 'refs issue 770, focus on adf flaky agents'.", "should_trigger": true},
+  {"query": "Dispatch a background agent to crawl the new docs site and produce a sitemap. Should run on the orchestrator, not in this session.", "should_trigger": true},
+  {"query": "I need to start the kg-reindex agent tonight and have it cancel if it runs over 2 hours. Use adf-ctl with the right timeout.", "should_trigger": true},
+  {"query": "Run this small python script and show me the output: print(2+2).", "should_trigger": false},
+  {"query": "Decompose this 200-file analysis with RLM and produce a per-crate summary.", "should_trigger": false},
+  {"query": "What's the difference between systemd and launchd?", "should_trigger": false},
+  {"query": "Ingest my session findings into the Rust Engineer knowledge graph.", "should_trigger": false},
+  {"query": "Review this 12-file PR for security issues with an adversarial multi-perspective swarm.", "should_trigger": false},
+  {"query": "Search my Rust notes for prior work on cancellation tokens.", "should_trigger": false},
+  {"query": "Edit src/main.rs line 100 to add a logging statement.", "should_trigger": false},
+  {"query": "Write a CI workflow YAML that runs cargo test on push.", "should_trigger": false},
+  {"query": "Sandbox this scraper -- it touches untrusted HTML and I don't want it on my Mac filesystem.", "should_trigger": false},
+  {"query": "Explain how HMAC signing works for webhooks.", "should_trigger": false},
+  {"query": "Create a new Gitea issue tracking this bug.", "should_trigger": false},
+  {"query": "How do I ssh into bigbox? What's the alias?", "should_trigger": false}
+]

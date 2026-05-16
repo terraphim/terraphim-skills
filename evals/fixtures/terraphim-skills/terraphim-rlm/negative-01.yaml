@@ -1,0 +1,24 @@
+id: terraphim-rlm-negative-01
+repo: terraphim-skills
+target: terraphim-rlm
+skill_type: encoded_preference
+category: negative-trigger
+user_prompt: >
+  Rename the variable foo to bar in src/lib.rs line 42.
+expected_trigger: []
+must_not_trigger:
+  - terraphim-rlm
+expected_artifacts:
+  - edit
+judge_profile: rlm-orchestration
+baseline: v1
+trigger_signals:
+  none_of:
+    - "rlm_status"
+    - "decompose"
+    - "sandbox"
+notes: One-shot edit. Should call Edit directly, not invoke RLM.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

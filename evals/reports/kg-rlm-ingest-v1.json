@@ -1,0 +1,62 @@
+{
+  "run_id": "2026-05-16T10:19:47.526Z",
+  "target_repo": "terraphim-skills",
+  "target": "kg-rlm-ingest",
+  "baseline": "v1",
+  "candidate": "working-tree",
+  "adapters": [
+    "claude-code"
+  ],
+  "fixtures_total": 3,
+  "trigger_precision": 1,
+  "trigger_recall": 0.5,
+  "false_trigger_rate": 0,
+  "quality_pass_rate": null,
+  "median_latency_ms": 20096,
+  "token_usage_total": 1871,
+  "regression_status": "unknown",
+  "fixture_results": [
+    {
+      "fixture_id": "kg-rlm-ingest-boundary-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 20248,
+      "token_usage": 410,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-negative-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 19441,
+      "token_usage": 614,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-positive-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [
+        "terraphim-agent search",
+        "ingest"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 20096,
+      "token_usage": 847,
+      "baseline_delta": null,
+      "notes": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+id: kg-rlm-ingest-boundary-01
+repo: terraphim-skills
+target: kg-rlm-ingest
+skill_type: encoded_preference
+category: boundary-trigger
+user_prompt: >
+  We just finished an hour of debugging the supervisor restart loop. Save what
+  we learned so we do not repeat it next time.
+expected_trigger:
+  - kg-rlm-ingest
+must_not_trigger:
+  - session-search
+expected_artifacts:
+  - role-confirmation
+  - concept-list
+  - haystack-write
+judge_profile: kg-ingest
+baseline: v1
+trigger_signals:
+  all_of:
+    - "haystack"
+  any_of:
+    - "Terraphim Engineer"
+    - "Rust Engineer"
+    - "terraphim-agent search"
+    - "concepts_matched"
+notes: Implicit ingest -- "save what we learned". Must name a Terraphim
+  role and reference the haystack write path. Must not overwrite existing
+  concepts. Single word "role" alone is too weak -- requires "haystack"
+  plus a named role from the standard set.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"
