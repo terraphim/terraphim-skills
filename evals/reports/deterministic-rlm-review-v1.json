@@ -1,0 +1,59 @@
+{
+  "run_id": "2026-05-16T10:21:01.724Z",
+  "target_repo": "terraphim-skills",
+  "target": "deterministic-rlm-review",
+  "baseline": "v1",
+  "candidate": "working-tree",
+  "adapters": [
+    "claude-code"
+  ],
+  "fixtures_total": 3,
+  "trigger_precision": null,
+  "trigger_recall": 0,
+  "false_trigger_rate": 0,
+  "quality_pass_rate": null,
+  "median_latency_ms": 20766,
+  "token_usage_total": 2300,
+  "regression_status": "unknown",
+  "fixture_results": [
+    {
+      "fixture_id": "deterministic-rlm-review-boundary-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 20766,
+      "token_usage": 454,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "deterministic-rlm-review-negative-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 14562,
+      "token_usage": 208,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "deterministic-rlm-review-positive-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 38751,
+      "token_usage": 1638,
+      "baseline_delta": null,
+      "notes": null
+    }
+  ]
+}
