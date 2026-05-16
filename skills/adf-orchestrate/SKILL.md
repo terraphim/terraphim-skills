@@ -35,6 +35,22 @@ Do NOT use when:
 - The user wants synchronous chat-bound results -- ADF runs asynchronously
 - The user wants to ingest into the KG -- use `kg-rlm-ingest`
 
+## Exact invocation -- do not invent subcommands
+
+The CLI is `adf-ctl` with exactly four subcommands. Do not guess flag
+names. The canonical invocations are:
+
+```
+adf-ctl agents
+adf-ctl trigger <name> [--context "..."] [--wait] [--timeout 1200]
+adf-ctl status [--since 1h]
+adf-ctl cancel <name>
+```
+
+`trigger` is for starting an agent. There is no `adf-ctl agent start`,
+no `--overnight` flag, no `--background` flag. The agent runs detached by
+default unless `--wait` is passed.
+
 ## Why
 
 ADF agents run on bigbox under a systemd-managed orchestrator and survive
