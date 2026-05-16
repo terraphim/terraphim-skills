@@ -63,18 +63,31 @@ bridge between transient reasoning and durable knowledge.
    document list. If a near-match exists, prefer extending the existing
    note over creating a new one.
 
-4. **Write**: append to (or create under) the role's haystack directory.
-   For most roles this is
-   `~/.config/terraphim/docs/src/<role-or-topic>/<concept>.md`.
-   Use the `Write` tool. Follow the haystack's existing markdown
-   convention (headings, links, frontmatter -- inspect a few neighbours).
+4. **Write**: append to (or create under) the role's KG path or haystack
+   directory. The KG path is the role's
+   `kg.knowledge_graph_local.path` from `terraphim-agent config show`
+   (e.g. `~/.config/terraphim/kg/publishing/<role-topic>/`). Haystack
+   paths come from the role's `haystacks` array. Concept files belong
+   in the **KG path** (thesaurus source); free-text content can live in
+   haystacks. Use the `Write` tool. Follow the existing markdown
+   convention (heading, short paragraph, `synonyms::` line). Inspect a
+   few neighbours before writing.
 
 5. **Verify indexing**:
-   `terraphim-agent search --role <role> --robot --format json "<new concept>"`
-   should return the new note. The thesaurus cache flushes automatically
-   after KG markdown edits (Refs terraphim-ai #945, commit `bf1b7f11c`),
-   so no manual reindex is required. If the result is empty, the markdown
-   is malformed or the haystack path is wrong -- surface the actual
+   `terraphim-agent --format json search --role <role> "<new concept>"`
+   should return the new note (note: response shape is
+   `.data.results`/`.data.total_matches`, not top-level). The thesaurus
+   cache flushes automatically after KG markdown edits when
+   **terraphim_server is running** (Refs terraphim-ai #945, commit
+   `bf1b7f11c`). The **offline `terraphim-agent` CLI uses a separately
+   cached automata** that does not auto-flush; verification via the
+   offline CLI may return empty even when the write succeeded. Two
+   reliable verification paths:
+   - Start `terraphim_server` and re-run the search via the server API
+   - Restart any running terraphim-agent processes that have a stale
+     thesaurus loaded
+   If both paths return empty for a concept that was written, the
+   markdown is malformed or the path is wrong -- surface the actual
    diagnostic, do not claim success.
 
 6. **Issue link**: if this ingest advances or closes a Gitea issue,
