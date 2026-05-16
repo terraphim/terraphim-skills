@@ -336,7 +336,7 @@ echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' 
 # Expected: BLOCKED message
 ```
 
-## Skills Overview (31 Skills)
+## Skills Overview (35 Skills)
 
 ### Core Development
 
@@ -354,6 +354,10 @@ echo '{"tool_name":"Bash","tool_input":{"command":"git checkout -- file.txt"}}' 
 | `terraphim-hooks` | Knowledge graph-based text replacement with Claude Code and Git hooks. |
 | `session-search` | Search AI coding session history with concept enrichment. |
 | `local-knowledge` | Search personal notes via role-based haystacks (Rust, Frontend, Architecture). |
+| `terraphim-rlm` | Delegate long-horizon or sandboxed work to the terraphim_rlm MCP tools (rlm_code, rlm_bash, rlm_query) with capability-based model routing. |
+| `adf-orchestrate` | Dispatch, monitor, and cancel long-running AI Dark Factory agents on bigbox via the adf-ctl CLI. |
+| `kg-rlm-ingest` | Distil RLM session output into role-scoped concepts and persist them into the KG via the haystack indexer. |
+| `deterministic-rlm-review` | Multi-perspective adversarial code review (security/correctness/performance/API) via capability-routed rlm_query swarm with reconciliation. |
 
 ### Rust Expertise
 

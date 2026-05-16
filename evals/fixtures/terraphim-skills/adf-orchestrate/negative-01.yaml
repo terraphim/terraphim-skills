@@ -1,0 +1,22 @@
+id: adf-orchestrate-negative-01
+repo: terraphim-skills
+target: adf-orchestrate
+skill_type: encoded_preference
+category: negative-trigger
+user_prompt: >
+  Run this quick Python script in a sandbox and tell me the output.
+expected_trigger:
+  - terraphim-rlm
+must_not_trigger:
+  - adf-orchestrate
+expected_artifacts:
+  - sandboxed-execution
+judge_profile: adf-dispatch
+baseline: v1
+trigger_signals:
+  none_of:
+    - "adf-ctl"
+    - "bigbox"
+    - "overnight"
+notes: In-session, synchronous, short. RLM territory, not ADF. ADF should not
+  trigger on "sandbox" alone -- the cue must be background/overnight/bigbox.

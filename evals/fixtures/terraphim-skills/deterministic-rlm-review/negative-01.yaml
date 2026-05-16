@@ -1,0 +1,24 @@
+id: deterministic-rlm-review-negative-01
+repo: terraphim-skills
+target: deterministic-rlm-review
+skill_type: encoded_preference
+category: negative-trigger
+user_prompt: >
+  Review this single-line change in src/utils.rs: I renamed a helper from
+  to_string to as_str.
+expected_trigger:
+  - code-review
+must_not_trigger:
+  - deterministic-rlm-review
+expected_artifacts:
+  - review-findings
+judge_profile: swarm-review
+baseline: v1
+trigger_signals:
+  none_of:
+    - "rlm_query"
+    - "reconcile"
+    - "P0"
+    - "swarm"
+notes: Single-line, single-concern change. Plain code-review. Swarm review
+  is overkill and should not trigger.

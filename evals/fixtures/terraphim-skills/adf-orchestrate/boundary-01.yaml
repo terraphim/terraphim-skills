@@ -1,0 +1,22 @@
+id: adf-orchestrate-boundary-01
+repo: terraphim-skills
+target: adf-orchestrate
+skill_type: encoded_preference
+category: boundary-trigger
+user_prompt: >
+  Is the security-sentinel agent still running? It started last night.
+expected_trigger:
+  - adf-orchestrate
+must_not_trigger:
+  - terraphim-rlm
+expected_artifacts:
+  - adf-status-output
+judge_profile: adf-dispatch
+baseline: v1
+trigger_signals:
+  any_of:
+    - "adf-ctl status"
+    - "agent"
+    - "running"
+notes: Status query for a previously-dispatched agent. One-shot status call;
+  must not loop. Should surface raw adf-ctl status output to user.

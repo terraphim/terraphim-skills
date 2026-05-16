@@ -1,0 +1,32 @@
+id: deterministic-rlm-review-positive-01
+repo: terraphim-skills
+target: deterministic-rlm-review
+skill_type: encoded_preference
+category: positive-trigger
+user_prompt: >
+  This PR touches 12 files in the auth subsystem including JWT handling and
+  session storage. I want an adversarial multi-perspective review: security,
+  correctness, performance, and API design, with conflicts surfaced and a
+  confidence score.
+expected_trigger:
+  - deterministic-rlm-review
+must_not_trigger:
+  - code-review
+  - structural-pr-review
+expected_artifacts:
+  - per-role-verdicts
+  - reconciled-report
+  - p0-p1-p2-ranking
+  - confidence-score
+judge_profile: swarm-review
+baseline: v1
+trigger_signals:
+  any_of:
+    - "rlm_query"
+    - "SecurityAudit"
+    - "reconcile"
+    - "confidence"
+    - "P0"
+notes: Large security-critical multi-file change, explicit ask for
+  adversarial swarm review. Should spawn security/correctness/performance/
+  api-design roles via capability-routed rlm_query, reconcile, rank.

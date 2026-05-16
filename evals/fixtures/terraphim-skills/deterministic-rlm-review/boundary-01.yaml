@@ -1,0 +1,26 @@
+id: deterministic-rlm-review-boundary-01
+repo: terraphim-skills
+target: deterministic-rlm-review
+skill_type: encoded_preference
+category: boundary-trigger
+user_prompt: >
+  Look at this 8-file change in the SQL migration runner. Make sure it is
+  safe to deploy.
+expected_trigger:
+  - deterministic-rlm-review
+must_not_trigger:
+  - structural-pr-review
+expected_artifacts:
+  - per-role-verdicts
+  - reconciled-report
+judge_profile: swarm-review
+baseline: v1
+trigger_signals:
+  any_of:
+    - "rlm_query"
+    - "SecurityAudit"
+    - "Performance"
+    - "reconcile"
+notes: 8 files, deployment-critical, implicit ask for multi-concern review
+  (safety = security + correctness + migration). Should add a migration
+  safety role on top of the standard four.

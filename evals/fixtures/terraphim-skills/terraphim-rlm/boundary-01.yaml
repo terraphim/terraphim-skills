@@ -1,0 +1,27 @@
+id: terraphim-rlm-boundary-01
+repo: terraphim-skills
+target: terraphim-rlm
+skill_type: encoded_preference
+category: boundary-trigger
+user_prompt: >
+  Run this Python script that crawls a directory and produces a JSON manifest;
+  the script needs to be isolated because I do not trust the input data.
+expected_trigger:
+  - terraphim-rlm
+must_not_trigger:
+  - local-knowledge
+expected_artifacts:
+  - sandboxed-execution
+  - json-manifest
+judge_profile: rlm-orchestration
+baseline: v1
+trigger_signals:
+  any_of:
+    - "rlm_code"
+    - "rlm_bash"
+    - "sandbox"
+    - "isolation"
+    - "backend"
+notes: Single sandboxed execution -- borderline between Bash and RLM. The
+  isolation requirement and untrusted-input cue should tip towards RLM with
+  Docker or Firecracker backend (not Local).

@@ -1,0 +1,25 @@
+id: adf-orchestrate-positive-01
+repo: terraphim-skills
+target: adf-orchestrate
+skill_type: encoded_preference
+category: positive-trigger
+user_prompt: >
+  Kick off the meta-learning agent overnight on bigbox. Pass it the context
+  "weekly retro, refs issue 1234". I want to check on it tomorrow morning.
+expected_trigger:
+  - adf-orchestrate
+must_not_trigger:
+  - terraphim-rlm
+expected_artifacts:
+  - adf-trigger-call
+  - status-confirmation
+judge_profile: adf-dispatch
+baseline: v1
+trigger_signals:
+  any_of:
+    - "adf-ctl agents"
+    - "adf-ctl trigger"
+    - "adf-ctl status"
+notes: Classic out-of-session dispatch. Should call adf-ctl agents first to
+  verify name, then trigger with --context, then status to confirm running.
+  Must not use --wait.

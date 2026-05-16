@@ -1,0 +1,26 @@
+id: kg-rlm-ingest-boundary-01
+repo: terraphim-skills
+target: kg-rlm-ingest
+skill_type: encoded_preference
+category: boundary-trigger
+user_prompt: >
+  We just finished an hour of debugging the supervisor restart loop. Save what
+  we learned so we do not repeat it next time.
+expected_trigger:
+  - kg-rlm-ingest
+must_not_trigger:
+  - session-search
+expected_artifacts:
+  - role-confirmation
+  - concept-list
+  - haystack-write
+judge_profile: kg-ingest
+baseline: v1
+trigger_signals:
+  any_of:
+    - "role"
+    - "haystack"
+    - "ingest"
+notes: Implicit ingest -- "save what we learned". Should ask the user to
+  confirm role (Terraphim Engineer? Rust Engineer?) before writing. Must not
+  overwrite existing concepts.

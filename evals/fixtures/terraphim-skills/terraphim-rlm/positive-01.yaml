@@ -1,0 +1,30 @@
+id: terraphim-rlm-positive-01
+repo: terraphim-skills
+target: terraphim-rlm
+skill_type: encoded_preference
+category: positive-trigger
+user_prompt: >
+  I need to analyse this 200-file Rust monorepo and produce a dependency graph
+  plus a per-crate summary. It will obviously blow the context window if I try
+  to load it all. Decompose this with RLM, run sandboxed Python over each crate
+  in parallel, and reconcile the results into one report.
+expected_trigger:
+  - terraphim-rlm
+must_not_trigger:
+  - code-review
+  - local-knowledge
+expected_artifacts:
+  - decomposition-plan
+  - per-crate-summary
+  - reconciled-report
+judge_profile: rlm-orchestration
+baseline: v1
+trigger_signals:
+  any_of:
+    - "rlm_status"
+    - "rlm_code"
+    - "rlm_query"
+    - "decompose"
+    - "capability"
+notes: Classic long-horizon multi-file task that justifies RLM. Should call
+  rlm_status first, decompose, fan out via rlm_code, reconcile.
