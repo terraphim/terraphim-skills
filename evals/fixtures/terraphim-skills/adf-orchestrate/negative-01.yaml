@@ -20,3 +20,7 @@ trigger_signals:
     - "overnight"
 notes: In-session, synchronous, short. RLM territory, not ADF. ADF should not
   trigger on "sandbox" alone -- the cue must be background/overnight/bigbox.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

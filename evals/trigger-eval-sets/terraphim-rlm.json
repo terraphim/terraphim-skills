@@ -1,0 +1,22 @@
+[
+  {"query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.", "should_trigger": true},
+  {"query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together", "should_trigger": true},
+  {"query": "Use terraphim_rlm to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.", "should_trigger": true},
+  {"query": "Spawn a python sandbox via terraphim_rlm to process this 4GB JSONL log file and produce a histogram of error codes per service. Track the budget.", "should_trigger": true},
+  {"query": "/rlm decompose this refactor: extract the auth middleware into its own crate, update 17 call sites, run cargo test, then add an ADR.", "should_trigger": true},
+  {"query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.", "should_trigger": true},
+  {"query": "Long task: build a knowledge graph from 200 Markdown research notes by extracting entities per file in parallel, then merging. Sandbox the python so it can't write outside a scratch dir.", "should_trigger": true},
+  {"query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.", "should_trigger": true},
+  {"query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.", "should_trigger": false},
+  {"query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.", "should_trigger": false},
+  {"query": "Open the README.md and find the install instructions. Quote them back to me.", "should_trigger": false},
+  {"query": "Review this PR diff for security issues -- it's about 200 lines touching JWT validation.", "should_trigger": false},
+  {"query": "Search my Rust personal notes for any prior work on tokio cancellation tokens.", "should_trigger": false},
+  {"query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.", "should_trigger": false},
+  {"query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.", "should_trigger": false},
+  {"query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.", "should_trigger": false},
+  {"query": "Format this Rust file with rustfmt and tell me what changed.", "should_trigger": false},
+  {"query": "Run this Python script and tell me the exit code: `python -c 'print(2+2)'`", "should_trigger": false},
+  {"query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.", "should_trigger": false},
+  {"query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.", "should_trigger": false}
+]

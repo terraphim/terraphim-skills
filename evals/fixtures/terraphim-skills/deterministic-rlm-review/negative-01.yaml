@@ -22,3 +22,7 @@ trigger_signals:
     - "swarm"
 notes: Single-line, single-concern change. Plain code-review. Swarm review
   is overkill and should not trigger.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

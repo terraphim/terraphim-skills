@@ -21,12 +21,20 @@ expected_artifacts:
 judge_profile: swarm-review
 baseline: v1
 trigger_signals:
-  any_of:
+  all_of:
     - "rlm_query"
+  any_of:
     - "SecurityAudit"
-    - "reconcile"
-    - "confidence"
+    - "CodeReview"
+    - "Performance"
+    - "Architecture"
+    - "reconciliation"
     - "P0"
+    - "capability-based"
 notes: Large security-critical multi-file change, explicit ask for
   adversarial swarm review. Should spawn security/correctness/performance/
   api-design roles via capability-routed rlm_query, reconcile, rank.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

@@ -20,11 +20,18 @@ expected_artifacts:
 judge_profile: kg-ingest
 baseline: v1
 trigger_signals:
-  any_of:
+  all_of:
     - "terraphim-agent search"
-    - "haystack"
+  any_of:
     - "concepts_matched"
-    - "ingest"
+    - "haystack"
+    - "Rust Engineer"
+    - "thesaurus"
+    - "--robot --format json"
 notes: Explicit ingest request with role named. Should distil via rlm_query
   (FastThinking+Documentation), dedupe via terraphim-agent search, write
   markdown to haystack, then verify with a second search call.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

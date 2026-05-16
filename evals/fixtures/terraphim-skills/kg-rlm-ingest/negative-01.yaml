@@ -20,3 +20,7 @@ trigger_signals:
     - "Write"
 notes: Read-only lookup. Belongs to local-knowledge, not ingest. ingest must
   not trigger on "Rust notes" alone -- the cue must be a write intent.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

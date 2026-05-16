@@ -1,0 +1,22 @@
+[
+  {"query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.", "should_trigger": true},
+  {"query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.", "should_trigger": true},
+  {"query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?", "should_trigger": true},
+  {"query": "Run a deep RLM swarm review on this 6-file change to the SSO integration. Make sure security and performance reviewers actually disagree if they should.", "should_trigger": true},
+  {"query": "Adversarial review please -- 8 files, payment processing, I want every reviewer perspective and explicit reconciliation, not a single-pass summary.", "should_trigger": true},
+  {"query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.", "should_trigger": true},
+  {"query": "Run the swarm review with a migration-safety reviewer added -- this is a SQL migration runner change spanning 9 files and going to prod next week.", "should_trigger": true},
+  {"query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.", "should_trigger": true},
+  {"query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.", "should_trigger": false},
+  {"query": "Review this single-file change against our project style guide.", "should_trigger": false},
+  {"query": "Decompose this 200-file analysis with RLM and produce per-crate summaries.", "should_trigger": false},
+  {"query": "Trigger the meta-learning agent on bigbox overnight.", "should_trigger": false},
+  {"query": "Ingest this session's findings into the Rust Engineer haystack.", "should_trigger": false},
+  {"query": "Search my Rust notes for tokio cancellation patterns.", "should_trigger": false},
+  {"query": "Audit this single function for security -- it's 30 lines, just one file.", "should_trigger": false},
+  {"query": "Sandbox this python script -- I don't trust the input.", "should_trigger": false},
+  {"query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.", "should_trigger": false},
+  {"query": "Run the full pre-merge quality gate on this change -- verification + validation evidence.", "should_trigger": false},
+  {"query": "What's the difference between code-review and structural-pr-review skills?", "should_trigger": false},
+  {"query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.", "should_trigger": false}
+]

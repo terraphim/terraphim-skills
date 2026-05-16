@@ -1,0 +1,101 @@
+{
+  "run_id": "2026-05-16T10:37:58.004Z",
+  "target_repo": "terraphim-skills",
+  "target": "terraphim-rlm",
+  "baseline": "v2",
+  "candidate": "working-tree",
+  "adapters": [
+    "claude-code",
+    "terraphim-agent"
+  ],
+  "fixtures_total": 6,
+  "trigger_precision": null,
+  "trigger_recall": 0,
+  "false_trigger_rate": 0,
+  "quality_pass_rate": null,
+  "median_latency_ms": 25862,
+  "token_usage_total": 5764,
+  "regression_status": "unknown",
+  "fixture_results": [
+    {
+      "fixture_id": "terraphim-rlm-boundary-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 25045,
+      "token_usage": 990,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "terraphim-rlm-boundary-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 27357,
+      "token_usage": 1098,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "terraphim-rlm-negative-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 15945,
+      "token_usage": 211,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "terraphim-rlm-negative-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 14996,
+      "token_usage": 282,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "terraphim-rlm-positive-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "fan-out"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 43391,
+      "token_usage": 2145,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "terraphim-rlm-positive-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 26678,
+      "token_usage": 1038,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    }
+  ]
+}

@@ -17,10 +17,18 @@ expected_artifacts:
 judge_profile: kg-ingest
 baseline: v1
 trigger_signals:
-  any_of:
-    - "role"
+  all_of:
     - "haystack"
-    - "ingest"
-notes: Implicit ingest -- "save what we learned". Should ask the user to
-  confirm role (Terraphim Engineer? Rust Engineer?) before writing. Must not
-  overwrite existing concepts.
+  any_of:
+    - "Terraphim Engineer"
+    - "Rust Engineer"
+    - "terraphim-agent search"
+    - "concepts_matched"
+notes: Implicit ingest -- "save what we learned". Must name a Terraphim
+  role and reference the haystack write path. Must not overwrite existing
+  concepts. Single word "role" alone is too weak -- requires "haystack"
+  plus a named role from the standard set.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

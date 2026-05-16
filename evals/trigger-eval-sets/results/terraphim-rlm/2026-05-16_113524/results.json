@@ -1,0 +1,864 @@
+{
+  "exit_reason": "max_iterations (3)",
+  "original_description": "Delegate long-horizon, sandboxed, or context-heavy tasks to Terraphim's Recursive Language Model (RLM) via the local MCP server. Use whenever the user asks to \"use RLM\", \"spawn a sandbox\", \"recurse over a large codebase/dataset\", needs deterministic VM-isolated code or shell execution, has a task that would obviously blow the context window, or invokes /rlm. Prefer this over inline shell loops when isolation, budget tracking, or recursive LLM calls would help. Wraps the rlm_code, rlm_bash, rlm_query, rlm_context, rlm_snapshot, and rlm_status MCP tools shipped by the terraphim_rlm crate in terraphim-ai. Do not use for one-shot edits (call Edit/Read/Bash directly), PR review (prefer code-review or structural-pr-review), or personal notes lookup (prefer local-knowledge).",
+  "best_description": "Delegate long-horizon, sandboxed, or context-heavy tasks to Terraphim's Recursive Language Model (RLM) via the local MCP server. Use whenever the user asks to \"use RLM\", \"spawn a sandbox\", \"recurse over a large codebase/dataset\", needs deterministic VM-isolated code or shell execution, has a task that would obviously blow the context window, or invokes /rlm. Prefer this over inline shell loops when isolation, budget tracking, or recursive LLM calls would help. Wraps the rlm_code, rlm_bash, rlm_query, rlm_context, rlm_snapshot, and rlm_status MCP tools shipped by the terraphim_rlm crate in terraphim-ai. Do not use for one-shot edits (call Edit/Read/Bash directly), PR review (prefer code-review or structural-pr-review), or personal notes lookup (prefer local-knowledge).",
+  "best_score": "4/7",
+  "best_train_score": "8/13",
+  "best_test_score": "4/7",
+  "final_description": "Use this skill when a task is too big, too risky, or too recursive for one Claude context. Trigger whenever the user wants to: fan out analysis across a large monorepo/codebase/dataset and stitch results back together, decompose work into planner\u2192sub-model\u2192reconciler passes, run untrusted or sandboxed code in a VM/container (\"dark factory\", isolation, scraper, untrusted input), track an explicit token/cost budget with stop-on-overrun, or survive an overnight/long-horizon job without context blowup. Trigger on phrases like \"RLM\", \"recursive language model\", \"/rlm\", \"spawn a sandbox\", \"fan out per crate/file\", \"split into sub-queries\", \"recurse over\", \"budget-tracked\", \"context would blow up\", \"60 crates\", \"300 files\", \"isolate this script\", \"VM/Firecracker/Docker executor\". Skip for one-shot edits or questions (Edit/Read/Bash), PR review (code-review, structural-pr-review), personal-notes lookup (local-knowledge), and plain background jobs without recursion or isolation (adf-orchestrate).",
+  "iterations_run": 3,
+  "holdout": 0.4,
+  "train_size": 13,
+  "test_size": 7,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Delegate long-horizon, sandboxed, or context-heavy tasks to Terraphim's Recursive Language Model (RLM) via the local MCP server. Use whenever the user asks to \"use RLM\", \"spawn a sandbox\", \"recurse over a large codebase/dataset\", needs deterministic VM-isolated code or shell execution, has a task that would obviously blow the context window, or invokes /rlm. Prefer this over inline shell loops when isolation, budget tracking, or recursive LLM calls would help. Wraps the rlm_code, rlm_bash, rlm_query, rlm_context, rlm_snapshot, and rlm_status MCP tools shipped by the terraphim_rlm crate in terraphim-ai. Do not use for one-shot edits (call Edit/Read/Bash directly), PR review (prefer code-review or structural-pr-review), or personal notes lookup (prefer local-knowledge).",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "/rlm decompose this refactor: extract the auth middleware into its own crate, update 17 call sites, run cargo test, then add an ADR.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a python sandbox via terraphim_rlm to process this 4GB JSONL log file and produce a histogram of error codes per service. Track the budget.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Open the README.md and find the install instructions. Quote them back to me.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this PR diff for security issues -- it's about 200 lines touching JWT validation.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Search my Rust personal notes for any prior work on tokio cancellation tokens.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Long task: build a knowledge graph from 200 Markdown research notes by extracting entities per file in parallel, then merging. Sandbox the python so it can't write outside a scratch dir.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Run this Python script and tell me the exit code: `python -c 'print(2+2)'`",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill for tasks exceeding a single context window, needing sandboxed/VM-isolated execution, recursive LLM decomposition (planner calls sub-models then reconciles), or explicit token-budget tracking with stop-on-overrun. Trigger on: analysing large monorepos/codebases/datasets by fanning out per-subunit and stitching results, running untrusted or risky code in isolation, multi-stage plan\u2192execute\u2192reconcile pipelines, budget-bounded long-horizon analyses, \"dark factory\"/sandbox/VM execution requests, fan-out/fan-in or map-reduce LLM workflows, and any mention of RLM, recursive language model, /rlm, or Terraphim's recursive sandbox. Also trigger when the user worries about context rot/blowup or wants deterministic replayable orchestration of many LLM calls. Skip for: one-shot edits or reads (Edit/Read/Bash), PR review (code-review or structural-pr-review), personal notes (local-knowledge), and simple background jobs without recursion or isolation (adf-orchestrate).",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "/rlm decompose this refactor: extract the auth middleware into its own crate, update 17 call sites, run cargo test, then add an ADR.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a python sandbox via terraphim_rlm to process this 4GB JSONL log file and produce a histogram of error codes per service. Track the budget.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Open the README.md and find the install instructions. Quote them back to me.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this PR diff for security issues -- it's about 200 lines touching JWT validation.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Long task: build a knowledge graph from 200 Markdown research notes by extracting entities per file in parallel, then merging. Sandbox the python so it can't write outside a scratch dir.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust personal notes for any prior work on tokio cancellation tokens.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run this Python script and tell me the exit code: `python -c 'print(2+2)'`",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Use this skill when a task is too big, too risky, or too recursive for one Claude context. Trigger whenever the user wants to: fan out analysis across a large monorepo/codebase/dataset and stitch results back together, decompose work into planner\u2192sub-model\u2192reconciler passes, run untrusted or sandboxed code in a VM/container (\"dark factory\", isolation, scraper, untrusted input), track an explicit token/cost budget with stop-on-overrun, or survive an overnight/long-horizon job without context blowup. Trigger on phrases like \"RLM\", \"recursive language model\", \"/rlm\", \"spawn a sandbox\", \"fan out per crate/file\", \"split into sub-queries\", \"recurse over\", \"budget-tracked\", \"context would blow up\", \"60 crates\", \"300 files\", \"isolate this script\", \"VM/Firecracker/Docker executor\". Skip for one-shot edits or questions (Edit/Read/Bash), PR review (code-review, structural-pr-review), personal-notes lookup (local-knowledge), and plain background jobs without recursion or isolation (adf-orchestrate).",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "/rlm decompose this refactor: extract the auth middleware into its own crate, update 17 call sites, run cargo test, then add an ADR.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a python sandbox via terraphim_rlm to process this 4GB JSONL log file and produce a histogram of error codes per service. Track the budget.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Review this PR diff for security issues -- it's about 200 lines touching JWT validation.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Open the README.md and find the install instructions. Quote them back to me.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Long task: build a knowledge graph from 200 Markdown research notes by extracting entities per file in parallel, then merging. Sandbox the python so it can't write outside a scratch dir.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust personal notes for any prior work on tokio cancellation tokens.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run this Python script and tell me the exit code: `python -c 'print(2+2)'`",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "I need recursive LLM calls -- the outer model should plan, then call cheaper sub-models for each step, then a final reconciliation pass. Use whatever Terraphim has for this.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Use the dark factory to run this untrusted scraper script in isolation -- I don't trust the input HTML and don't want it touching my machine outside a VM.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "ok so this rust workspace has like 60 crates and every time i try to analyse it claude eats the context, can you split the work into sandboxed sub-queries and stitch the answers back together",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Generate a 5-line bash one-liner that finds all *.lock files modified in the last 24 hours and prints them sorted by size.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest the conclusions from this debugging session into my Rust Engineer knowledge graph so I can find them later.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Add a TODO comment on line 42 of src/lib.rs that says 'fixme: bounds check'.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Kick off the meta-learning agent on bigbox to run overnight, I'll check the status in the morning.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I want to compare three reviewer perspectives -- security, performance, correctness -- on this big migration PR. Adversarial swarm please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Format this Rust file with rustfmt and tell me what changed.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "I've got a 300-file Rust monorepo and need to produce per-crate ownership summaries plus a dependency cycle report. Decompose this with RLM, fan out per crate, reconcile back. Budget is tight.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Wrap this overnight analysis in a budget-tracked recursive session -- if it goes over 50k tokens I want it to stop and ask, not silently truncate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "What's the difference between `Arc<Mutex<T>>` and `Arc<RwLock<T>>` in tokio? Two paragraphs is fine.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "How do I write an integration test in tokio that mocks an HTTP server? Show me the boilerplate.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

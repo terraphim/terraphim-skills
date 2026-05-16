@@ -1,0 +1,103 @@
+{
+  "run_id": "2026-05-16T10:41:53.209Z",
+  "target_repo": "terraphim-skills",
+  "target": "kg-rlm-ingest",
+  "baseline": "v2",
+  "candidate": "working-tree",
+  "adapters": [
+    "claude-code",
+    "terraphim-agent"
+  ],
+  "fixtures_total": 6,
+  "trigger_precision": null,
+  "trigger_recall": 0,
+  "false_trigger_rate": 0,
+  "quality_pass_rate": null,
+  "median_latency_ms": 20806,
+  "token_usage_total": 3919,
+  "regression_status": "unknown",
+  "fixture_results": [
+    {
+      "fixture_id": "kg-rlm-ingest-boundary-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 22500,
+      "token_usage": 836,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-boundary-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 32057,
+      "token_usage": 1042,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-negative-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 16565,
+      "token_usage": 421,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-negative-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": true,
+      "trigger_evidence": [],
+      "quality_verdict": "not-run",
+      "latency_ms": 15498,
+      "token_usage": 350,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-positive-01",
+      "adapter": "claude-code",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "Rust Engineer"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 24039,
+      "token_usage": 643,
+      "baseline_delta": null,
+      "notes": null
+    },
+    {
+      "fixture_id": "kg-rlm-ingest-positive-01",
+      "adapter": "terraphim-agent",
+      "execution_mode": "live",
+      "capture_status": "captured",
+      "trigger_pass": false,
+      "trigger_evidence": [
+        "Rust Engineer"
+      ],
+      "quality_verdict": "not-run",
+      "latency_ms": 19112,
+      "token_usage": 627,
+      "baseline_delta": null,
+      "notes": "Executed with Claude Code; Terraphim preprocessing produced no extra context."
+    }
+  ]
+}

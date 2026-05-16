@@ -16,11 +16,18 @@ expected_artifacts:
 judge_profile: swarm-review
 baseline: v1
 trigger_signals:
-  any_of:
+  all_of:
     - "rlm_query"
+  any_of:
     - "SecurityAudit"
-    - "Performance"
-    - "reconcile"
+    - "CodeReview"
+    - "migration safety"
+    - "reconciliation"
 notes: 8 files, deployment-critical, implicit ask for multi-concern review
   (safety = security + correctness + migration). Should add a migration
-  safety role on top of the standard four.
+  safety reviewer role on top of the standard four. Generic word
+  "reconcile" alone insufficient -- needs the structured protocol name.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

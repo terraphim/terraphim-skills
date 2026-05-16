@@ -1,0 +1,22 @@
+[
+  {"query": "We've just finished a 90-minute deep dive into Firecracker snapshot semantics. Ingest the conclusions into my Rust Engineer KG so future sessions can find them.", "should_trigger": true},
+  {"query": "save what we learned about adf reconciliation loops into the terraphim engineer knowledge graph -- ill want to search for it later", "should_trigger": true},
+  {"query": "Persist this research output on capability-based routing into the System Operator haystack -- it's worth keeping.", "should_trigger": true},
+  {"query": "I want the conclusions from this RLM session committed to the KG, role Terraphim Engineer, with concept-extraction.", "should_trigger": true},
+  {"query": "Take the final report from the swarm review and ingest the lasting insights as concepts in the Rust Engineer role.", "should_trigger": true},
+  {"query": "Ingest this debugging session's root cause + fix into the KG under whatever role makes sense -- ask me to pick.", "should_trigger": true},
+  {"query": "We discovered three new patterns for tokio cancellation in this session. Add them to the Rust Engineer haystack.", "should_trigger": true},
+  {"query": "Commit the architectural decision from this conversation as an ADR-style note in the Terraphim Engineer KG.", "should_trigger": true},
+  {"query": "Search my Rust notes for prior work on tokio cancellation tokens.", "should_trigger": false},
+  {"query": "What does the Terraphim Engineer role usually cover?", "should_trigger": false},
+  {"query": "Show me concepts already in the System Operator haystack about MBSE.", "should_trigger": false},
+  {"query": "Find sessions where I discussed adf-orchestrator restart loops last month.", "should_trigger": false},
+  {"query": "Decompose this 200-file analysis with RLM in parallel.", "should_trigger": false},
+  {"query": "Trigger the meta-learning agent on bigbox overnight.", "should_trigger": false},
+  {"query": "Review this 12-file auth PR with an adversarial swarm.", "should_trigger": false},
+  {"query": "Sandbox this python script -- I don't trust the input.", "should_trigger": false},
+  {"query": "Edit line 42 to call .clone() instead of .as_ref().", "should_trigger": false},
+  {"query": "Open the README and explain the install section.", "should_trigger": false},
+  {"query": "How do haystacks work in terraphim?", "should_trigger": false},
+  {"query": "Lookup the concept 'capability-based routing' in the KG, just read-only.", "should_trigger": false}
+]

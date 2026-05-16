@@ -1,17 +1,25 @@
 ---
 name: terraphim-rlm
 description: |
-  Delegate long-horizon, sandboxed, or context-heavy tasks to Terraphim's
-  Recursive Language Model (RLM) via the local MCP server. Use whenever the
-  user asks to "use RLM", "spawn a sandbox", "recurse over a large
-  codebase/dataset", needs deterministic VM-isolated code or shell
-  execution, has a task that would obviously blow the context window, or
-  invokes /rlm. Prefer this over inline shell loops when isolation, budget
-  tracking, or recursive LLM calls would help. Wraps the rlm_code, rlm_bash,
-  rlm_query, rlm_context, rlm_snapshot, and rlm_status MCP tools shipped by
-  the terraphim_rlm crate in terraphim-ai. Do not use for one-shot edits
-  (call Edit/Read/Bash directly), PR review (prefer code-review or
-  structural-pr-review), or personal notes lookup (prefer local-knowledge).
+  Use this skill to delegate any in-session task that needs RLM (Recursive
+  Language Model) orchestration: decomposing a multi-file or whole-codebase
+  task that would otherwise blow the context window, running budget-bounded
+  recursive LLM calls (outer model plans, sub-calls execute), sandboxed
+  Python or bash execution with deterministic isolation, fan-out plus
+  reconcile patterns across many subtasks, branching exploration via
+  snapshots. ALWAYS trigger this skill when the user says any of: "/rlm",
+  "use RLM", "decompose with RLM", "RLM swarm", "spawn a sandbox",
+  "terraphim_rlm", "rlm_code", "rlm_query", "rlm_bash", "recursive language
+  model", "recursive LLM", "budget-tracked decomposition", "fan-out
+  reviewers", "process this codebase in chunks", "I keep blowing the
+  context window", or whenever they describe a task with more than about
+  five interdependent steps over many files. Wraps the rlm_code, rlm_bash,
+  rlm_query, rlm_context, rlm_snapshot, and rlm_status MCP tools from the
+  terraphim_rlm crate, with capability-based routing via terraphim_router.
+  Do NOT use for one-shot edits (call Edit/Read/Bash directly), PR review
+  (prefer code-review or structural-pr-review), personal notes lookup
+  (prefer local-knowledge), or out-of-session overnight agent dispatch
+  (prefer adf-orchestrate).
 license: Apache-2.0
 ---
 

@@ -20,11 +20,18 @@ expected_artifacts:
 judge_profile: rlm-orchestration
 baseline: v1
 trigger_signals:
-  any_of:
+  all_of:
     - "rlm_status"
+  any_of:
     - "rlm_code"
     - "rlm_query"
-    - "decompose"
-    - "capability"
+    - "rlm_context"
+    - "decomposition pattern"
+    - "fan-out"
+    - "capability-based routing"
 notes: Classic long-horizon multi-file task that justifies RLM. Should call
   rlm_status first, decompose, fan out via rlm_code, reconcile.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

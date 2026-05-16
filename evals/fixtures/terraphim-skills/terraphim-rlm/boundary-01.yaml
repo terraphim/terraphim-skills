@@ -19,9 +19,15 @@ trigger_signals:
   any_of:
     - "rlm_code"
     - "rlm_bash"
-    - "sandbox"
-    - "isolation"
-    - "backend"
-notes: Single sandboxed execution -- borderline between Bash and RLM. The
-  isolation requirement and untrusted-input cue should tip towards RLM with
-  Docker or Firecracker backend (not Local).
+    - "rlm_status"
+    - "Docker backend"
+    - "Firecracker backend"
+    - "terraphim_rlm"
+notes: Single sandboxed execution -- borderline between Bash and RLM. Must
+  invoke an rlm_* MCP tool or reference a specific terraphim_rlm backend by
+  name. Generic words like "sandbox"/"isolation" do not count -- those are
+  English, not skill evidence.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

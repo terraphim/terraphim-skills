@@ -16,10 +16,17 @@ expected_artifacts:
 judge_profile: adf-dispatch
 baseline: v1
 trigger_signals:
+  all_of:
+    - "adf-ctl trigger"
   any_of:
     - "adf-ctl agents"
-    - "adf-ctl trigger"
     - "adf-ctl status"
+    - "Refs #"
+    - "HMAC"
 notes: Classic out-of-session dispatch. Should call adf-ctl agents first to
   verify name, then trigger with --context, then status to confirm running.
   Must not use --wait.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"

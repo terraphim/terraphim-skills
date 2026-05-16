@@ -18,3 +18,7 @@ trigger_signals:
     - "decompose"
     - "sandbox"
 notes: One-shot edit. Should call Edit directly, not invoke RLM.
+
+adapter_overrides:
+  terraphim-agent:
+    role: "AI Dark Factory Author"
