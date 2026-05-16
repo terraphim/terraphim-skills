@@ -1,0 +1,864 @@
+{
+  "exit_reason": "max_iterations (3)",
+  "original_description": "Multi-perspective code review using an RLM swarm -- spawns specialised reviewer sub-queries (security, performance, correctness, API design) via capability-routed rlm_query calls, then reconciles findings into a single ranked report with P0/P1/P2 severity and a confidence score. Use when the change spans many files (rough threshold: more than five files or five hundred lines), touches security-critical code, or the user explicitly asks for an \"adversarial\", \"swarm\", or \"multi-perspective\" review. Prefer `code-review` for routine single-file review; prefer `structural-pr-review` for PR-shaped review with diagrams; prefer `quality-gate` for full pre-merge V-model evidence.",
+  "best_description": "Multi-perspective code review using an RLM swarm -- spawns specialised reviewer sub-queries (security, performance, correctness, API design) via capability-routed rlm_query calls, then reconciles findings into a single ranked report with P0/P1/P2 severity and a confidence score. Use when the change spans many files (rough threshold: more than five files or five hundred lines), touches security-critical code, or the user explicitly asks for an \"adversarial\", \"swarm\", or \"multi-perspective\" review. Prefer `code-review` for routine single-file review; prefer `structural-pr-review` for PR-shaped review with diagrams; prefer `quality-gate` for full pre-merge V-model evidence.",
+  "best_score": "4/7",
+  "best_train_score": "8/13",
+  "best_test_score": "4/7",
+  "final_description": "Use this skill when the user wants a heavy, multi-reviewer code review on a substantial change -- phrases like \"adversarial review\", \"swarm review\", \"multi-perspective\", \"multi-role\", \"multi-reviewer\", \"reconciled review\", \"deterministic multi-reviewer\", or asking for several reviewer roles (security + correctness + performance + API design, optionally plus concurrency or schema) with conflicts surfaced, P0/P1/P2 severity ranking, and a confidence score. Also trigger for large PRs (roughly more than 5 files or 500 lines, e.g. 12-25 file migrations, refactors, or auth/database/schema changes) or security-critical subsystems (auth, JWT, sessions, crypto, schema migrations) where one review pass would miss conflicts between concerns. Trigger on mentions of \"capability-routed\", \"rlm_query reviewers\", or RLM swarm reviewers. Prefer `code-review` for single-file reviews, `structural-pr-review` for PR comments with diagrams, and `quality-gate` for full pre-merge V-model evidence.",
+  "iterations_run": 3,
+  "holdout": 0.4,
+  "train_size": 13,
+  "test_size": 7,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Multi-perspective code review using an RLM swarm -- spawns specialised reviewer sub-queries (security, performance, correctness, API design) via capability-routed rlm_query calls, then reconciles findings into a single ranked report with P0/P1/P2 severity and a confidence score. Use when the change spans many files (rough threshold: more than five files or five hundred lines), touches security-critical code, or the user explicitly asks for an \"adversarial\", \"swarm\", or \"multi-perspective\" review. Prefer `code-review` for routine single-file review; prefer `structural-pr-review` for PR-shaped review with diagrams; prefer `quality-gate` for full pre-merge V-model evidence.",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "Adversarial review please -- 8 files, payment processing, I want every reviewer perspective and explicit reconciliation, not a single-pass summary.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Run the swarm review with a migration-safety reviewer added -- this is a SQL migration runner change spanning 9 files and going to prod next week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Trigger the meta-learning agent on bigbox overnight.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Decompose this 200-file analysis with RLM and produce per-crate summaries.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest this session's findings into the Rust Engineer haystack.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run the full pre-merge quality gate on this change -- verification + validation evidence.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run a deep RLM swarm review on this 6-file change to the SSO integration. Make sure security and performance reviewers actually disagree if they should.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill for multi-perspective (\"swarm\", \"adversarial\", \"multi-role\", \"multi-reviewer\") code reviews that spawn specialised reviewers (security, correctness, performance, API design, plus optional roles like concurrency or schema) and reconcile findings into one ranked report with P0/P1/P2 severity and a confidence score. Trigger when: the user asks for adversarial, swarm, multi-perspective, multi-role, or reconciled review; the change is large (roughly >5 files or >500 lines, e.g. 12-file migration, 18-file auth PR, 25-file refactor); or touches security-critical subsystems (auth, crypto, sessions, schema migrations) where one pass would miss conflicts between concerns. Also trigger on \"capability-routed\", \"rlm_query reviewers\", or \"P0/P1/P2 ranking with confidence\". Prefer `code-review` for single-file review, `structural-pr-review` for PR comments with diagrams, `quality-gate` for full pre-merge V-model evidence.",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "Trigger the meta-learning agent on bigbox overnight.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run a deep RLM swarm review on this 6-file change to the SSO integration. Make sure security and performance reviewers actually disagree if they should.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Adversarial review please -- 8 files, payment processing, I want every reviewer perspective and explicit reconciliation, not a single-pass summary.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Run the full pre-merge quality gate on this change -- verification + validation evidence.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Decompose this 200-file analysis with RLM and produce per-crate summaries.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest this session's findings into the Rust Engineer haystack.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run the swarm review with a migration-safety reviewer added -- this is a SQL migration runner change spanning 9 files and going to prod next week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Use this skill when the user wants a heavy, multi-reviewer code review on a substantial change -- phrases like \"adversarial review\", \"swarm review\", \"multi-perspective\", \"multi-role\", \"multi-reviewer\", \"reconciled review\", \"deterministic multi-reviewer\", or asking for several reviewer roles (security + correctness + performance + API design, optionally plus concurrency or schema) with conflicts surfaced, P0/P1/P2 severity ranking, and a confidence score. Also trigger for large PRs (roughly more than 5 files or 500 lines, e.g. 12-25 file migrations, refactors, or auth/database/schema changes) or security-critical subsystems (auth, JWT, sessions, crypto, schema migrations) where one review pass would miss conflicts between concerns. Trigger on mentions of \"capability-routed\", \"rlm_query reviewers\", or RLM swarm reviewers. Prefer `code-review` for single-file reviews, `structural-pr-review` for PR comments with diagrams, and `quality-gate` for full pre-merge V-model evidence.",
+      "train_passed": 8,
+      "train_failed": 5,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 3,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "Trigger the meta-learning agent on bigbox overnight.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Ingest this session's findings into the Rust Engineer haystack.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Decompose this 200-file analysis with RLM and produce per-crate summaries.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run the swarm review with a migration-safety reviewer added -- this is a SQL migration runner change spanning 9 files and going to prod next week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Run the full pre-merge quality gate on this change -- verification + validation evidence.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Run a deep RLM swarm review on this 6-file change to the SSO integration. Make sure security and performance reviewers actually disagree if they should.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Adversarial review please -- 8 files, payment processing, I want every reviewer perspective and explicit reconciliation, not a single-pass summary.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        }
+      ],
+      "passed": 8,
+      "failed": 5,
+      "total": 13,
+      "results": [
+        {
+          "query": "This 18-file PR touches the auth subsystem, JWT signing, and session storage. I want an adversarial multi-perspective review -- security, correctness, performance, API design -- with conflicts surfaced and a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "I need a multi-role code review (security, correctness, performance, API design) on this 14-file refactor. Capability-routed via rlm_query.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Search my Rust notes for tokio cancellation patterns.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Spawn a swarm of reviewers over this 12-file migration PR. I need adversarial perspectives and a P0/P1/P2 ranking.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "this pr is touching 15 files in the database layer, including a schema migration, can you do the deterministic multi-reviewer thing with reconciliation?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Heavy review for this 25-file change: 4 standard reviewer roles + concurrency role. Reconciled output with a confidence score.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "Tiny PR: I renamed a helper from `to_string` to `as_str` in one file. Quick review please.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Sandbox this python script -- I don't trust the input.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Audit this single function for security -- it's 30 lines, just one file.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Review this single-file change against our project style guide.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "What's the difference between code-review and structural-pr-review skills?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Edit src/main.rs line 100 to use anyhow::Result instead of Box<dyn Error>.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "Generate a structural PR comment with a Mermaid diagram for this 4-file change.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
