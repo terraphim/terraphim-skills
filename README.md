@@ -524,6 +524,12 @@ If configured, invoke skills directly:
 /skill rust-performance
 ```
 
+### Per-Skill Usage Guides
+
+Some skills ship with dedicated end-user guides in `docs/`:
+
+- [`docs/judge-usage-guide.md`](docs/judge-usage-guide.md) -- how to run the judge from the command line, the pre-push hook, env overrides, verdict-log analysis, and CI integration.
+
 ## Usage Examples by Category
 
 ### Architecture & Design
