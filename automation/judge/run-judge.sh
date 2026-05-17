@@ -3,7 +3,7 @@
 # Part of the judge skill (Issue #20, #23)
 #
 # v2 changes: file-based prompt delivery to opencode (eliminates shell escaping),
-# optional terraphim-cli integration for term normalization (fail-open).
+# optional terraphim-agent integration for term normalization (fail-open).
 #
 # Usage: run-judge.sh [options] <file1> [file2 ...]
 #   -t, --task-id     Task identifier (default: "unknown")
@@ -26,9 +26,11 @@ export PATH="$HOME/.bun/bin:$HOME/.cargo/bin:$PATH"
 # --- Configuration ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-QUICK_MODEL="opencode/gpt-5-nano"
-DEEP_MODEL="opencode/glm-5-free"
-TIEBREAKER_MODEL="opencode/gpt-5.1-codex-mini"
+# Models -- overridable via env so the script keeps working when an opencode
+# provider rotates a model name. Defaults verified live 2026-05-17.
+QUICK_MODEL="${JUDGE_QUICK_MODEL:-opencode/gpt-5-nano}"
+DEEP_MODEL="${JUDGE_DEEP_MODEL:-opencode/deepseek-v4-flash-free}"
+TIEBREAKER_MODEL="${JUDGE_TIEBREAKER_MODEL:-opencode/gpt-5.1-codex-mini}"
 QUICK_TIMEOUT=45
 DEEP_TIMEOUT=60
 TIEBREAKER_TIMEOUT=45
@@ -384,17 +386,20 @@ print(json.dumps(v))
 " <<< "$verdict_json" >> "$VERDICT_FILE" 2>/dev/null
 }
 
-# --- Helper: terraphim-cli term check (optional enrichment) ---
-# Uses "LLM Enforcer" role which loads KG files from ~/.config/terraphim/kg/
+# --- Helper: terraphim-agent term check (optional enrichment) ---
+# Uses the role configured during `setup-judge-kg.sh` (defaults to "LLM Enforcer"
+# loaded from ~/.config/terraphim/kg/). terraphim-agent search emits a
+# line-formatted result list where each hit is prefixed with "[N]"; we count
+# those prefixes. Fail-open: any error skips enrichment without blocking judge.
 terraphim_check() {
     local text="$1"
-    if ! command -v terraphim-cli &>/dev/null; then
+    if ! command -v terraphim-agent &>/dev/null; then
         return 0  # fail-open: skip if not installed
     fi
     local matches
-    matches=$(terraphim-cli find "$text" --format json 2>/dev/null) || return 0
+    matches=$(terraphim-agent search "$text" --limit 50 2>/dev/null) || return 0
     local count
-    count=$(echo "$matches" | python3 -c "import sys,json; print(json.loads(sys.stdin.read()).get('count',0))" 2>/dev/null) || count=0
+    count=$(printf '%s\n' "$matches" | grep -cE '^\[[0-9]+\]' 2>/dev/null) || count=0
     if [[ "$count" -gt 0 ]]; then
         echo "  [terraphim] Matched ${count} rubric terms in reasoning"
     fi
