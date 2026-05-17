@@ -9,11 +9,13 @@ REPO="https://raw.githubusercontent.com/terraphim/terraphim-skills/main/skills"
 SINGLE_SKILL=""
 SKILLS=(
   acceptance-testing
+  adf-orchestrate
   ai-config-management
   architecture
   code-review
   community-engagement
   debugging
+  deterministic-rlm-review
   devops
   disciplined-design
   disciplined-implementation
@@ -28,6 +30,7 @@ SKILLS=(
   gpui-components
   implementation
   judge
+  kg-rlm-ingest
   learning-capture
   local-knowledge
   md-book
@@ -43,6 +46,7 @@ SKILLS=(
   session-search
   structural-pr-review
   terraphim-hooks
+  terraphim-rlm
   testing
   ubs-scanner
   visual-testing
@@ -93,7 +97,7 @@ install_skill() {
   return 0
 }
 
-echo "Terraphim Engineering Skills v1.3.0"
+echo "Terraphim Engineering Skills v1.4.1"
 echo "Installing to: ${DEST}"
 echo ""
 
