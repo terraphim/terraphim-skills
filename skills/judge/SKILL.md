@@ -97,14 +97,16 @@ Output MUST be valid JSON only -- no markdown fencing, no preamble, no trailing 
 - **Timeout**: 30 seconds
 - **Prompt template**: [references/prompt-quick.md](references/prompt-quick.md)
 - **Output**: Verdict JSON with scores and one-line reasoning
+- **Override**: export `JUDGE_QUICK_MODEL=opencode/<name>`
 
 ### Deep Judge
 
-- **Model**: opencode/kimi-k2.5-free (thorough, reasoning-capable)
+- **Model**: opencode/deepseek-v4-flash-free (thorough, reasoning-capable, no quota)
 - **Purpose**: Detailed evaluation with improvement suggestions
 - **Timeout**: 60 seconds
 - **Prompt template**: [references/prompt-deep.md](references/prompt-deep.md)
 - **Output**: Verdict JSON with scores, reasoning chain, and improvement list
+- **Override**: export `JUDGE_DEEP_MODEL=opencode/<name>` to swap models without editing the script (useful when a provider rotates a name)
 
 ### Tiebreaker
 
@@ -113,6 +115,7 @@ Output MUST be valid JSON only -- no markdown fencing, no preamble, no trailing 
 - **Timeout**: 45 seconds
 - **Prompt template**: Uses deep prompt with prior verdicts appended
 - **Trigger**: Quick and deep verdicts disagree on accept vs reject/improve
+- **Override**: export `JUDGE_TIEBREAKER_MODEL=opencode/<name>`
 
 ## Multi-Iteration Protocol
 
@@ -157,7 +160,7 @@ The judge is invoked by `automation/judge/run-judge.sh` (v2), which:
 - Calls opencode with `--file <tempfile>` for reliable prompt delivery
 - Parses verdict JSON from opencode's JSON event stream
 - Implements the multi-iteration protocol (quick -> deep -> tiebreaker)
-- Optionally enriches verdict logging with terraphim-cli term matching
+- Optionally enriches verdict logging with terraphim-agent term matching
 
 ### Verdict Logging
 
@@ -172,9 +175,19 @@ This enables:
 The judge can be invoked as a pre-push hook via `automation/judge/pre-push-judge.sh`,
 blocking pushes that receive a "reject" verdict.
 
+### Human-Fallback Issue Creation (Opt-In)
+
+When the judge falls back to human review (deep judge fails, persistent reject,
+tiebreaker disagreement), `automation/judge/handle-disagreement.sh` can either:
+
+- **Default**: print the review block to stdout. Safe inside any repo.
+- **Opt-in**: open a GitHub issue in the current repo via `gh`. Set
+  `JUDGE_CREATE_ISSUES=1` to enable. Use only when the current working
+  directory is a repo you want to track judge fallbacks in.
+
 ## Terraphim Integration (Optional)
 
-When terraphim-cli is available, the judge runner uses knowledge graph-based
+When terraphim-agent is available, the judge runner uses knowledge graph-based
 term normalization to identify rubric dimensions in model reasoning.
 
 ### Knowledge Graph Setup
@@ -184,8 +197,8 @@ term normalization to identify rubric dimensions in model reasoning.
 bash automation/judge/setup-judge-kg.sh
 
 # Verify installation
-terraphim-cli thesaurus --limit 50
-terraphim-cli find "factual correctness and actionability"
+terraphim-agent roles select "LLM Enforcer"
+terraphim-agent search "factual correctness and actionability" --limit 5
 ```
 
 ### KG Files
@@ -202,7 +215,7 @@ Located in `automation/judge/kg/`:
 
 ### Fail-Open Design
 
-If terraphim-cli is not installed, the judge falls back to direct JSON
+If terraphim-agent is not installed, the judge falls back to direct JSON
 extraction without term normalization. All core functionality works
 without terraphim -- the KG integration is an enrichment layer.
 

@@ -5,7 +5,8 @@
 # Usage: setup-judge-kg.sh
 #
 # Copies judge KG files to ~/.config/terraphim/kg/ so terraphim-agent
-# and terraphim-cli can use them for term normalization and validation.
+# can use them for term normalization and validation. (terraphim-cli was
+# renamed to terraphim-agent in v1.17.0.)
 #
 # Exit codes:
 #   0 - Success
@@ -45,16 +46,20 @@ fi
 echo "${COUNT} judge KG files installed."
 
 # Set up LLM Enforcer role (loads KG files from ~/.config/terraphim/kg/)
+# and verify with terraphim-agent search. Fail-open: missing binary or
+# search returning no hits never blocks setup -- it just skips enrichment.
 if command -v terraphim-agent &>/dev/null; then
     echo ""
     echo "Configuring LLM Enforcer role..."
     terraphim-agent setup --template llm-enforcer --path "$KG_DEST" --add-role 2>/dev/null || echo "  (LLM Enforcer role already exists or setup failed)"
-    terraphim-cli roles select "LLM Enforcer" 2>/dev/null || true
-fi
+    terraphim-agent roles select "LLM Enforcer" 2>/dev/null || true
 
-# Verify with terraphim-cli if available
-if command -v terraphim-cli &>/dev/null; then
     echo ""
-    echo "Verification (terraphim-cli find):"
-    terraphim-cli find "factual correctness and actionability" --format json 2>/dev/null || echo "  (terraphim-cli find returned no matches -- run: terraphim-agent setup --template llm-enforcer --path ~/.config/terraphim/kg --add-role)"
+    echo "Verification (terraphim-agent search):"
+    if ! terraphim-agent search "factual correctness and actionability" --limit 5 2>/dev/null | grep -E '^\[[0-9]+\]'; then
+        echo "  (no matches -- run: terraphim-agent setup --template llm-enforcer --path ~/.config/terraphim/kg --add-role)"
+    fi
+else
+    echo ""
+    echo "Note: terraphim-agent not installed -- judge will run without KG enrichment."
 fi

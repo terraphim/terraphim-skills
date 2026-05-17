@@ -185,16 +185,32 @@ This will append a human override record to the verdicts log.
 ISSUE_EOF
 )
 
-ISSUE_URL=$(gh issue create \
-    --title "[${LABEL_PREFIX}] Review needed: ${TASK_TITLE}" \
-    --body "$ISSUE_BODY" \
-    --label "enhancement" 2>&1) || {
-    echo "Warning: Failed to create GitHub issue" >&2
-    echo "$ISSUE_URL" >&2
-}
-
-if [[ -n "$ISSUE_URL" ]]; then
-    echo "GitHub issue created: ${ISSUE_URL}"
+# Issue creation is opt-in: set JUDGE_CREATE_ISSUES=1 to open a GitHub issue
+# in the current repo. Default behaviour is to print the issue body to stdout,
+# so running the judge inside an unrelated repo doesn't pollute its tracker
+# (this footgun was hit during v1.4.2 verification -- see PR for details).
+ISSUE_URL=""
+if [[ "${JUDGE_CREATE_ISSUES:-0}" == "1" ]] && command -v gh &>/dev/null; then
+    ISSUE_URL=$(gh issue create \
+        --title "[${LABEL_PREFIX}] Review needed: ${TASK_TITLE}" \
+        --body "$ISSUE_BODY" \
+        --label "enhancement" 2>&1) || {
+        echo "Warning: Failed to create GitHub issue" >&2
+        echo "$ISSUE_URL" >&2
+        ISSUE_URL=""
+    }
+    if [[ -n "$ISSUE_URL" ]]; then
+        echo "GitHub issue created: ${ISSUE_URL}"
+    fi
+else
+    echo ""
+    echo "--- Judge review needed (issue creation disabled) ---"
+    echo "Title: [${LABEL_PREFIX}] Review needed: ${TASK_TITLE}"
+    echo ""
+    echo "${ISSUE_BODY}"
+    echo "--- end review block ---"
+    echo ""
+    echo "To auto-create a GitHub issue for this review, re-run with JUDGE_CREATE_ISSUES=1"
 fi
 
 # --- MCP Agent Mail notification (optional) ---
