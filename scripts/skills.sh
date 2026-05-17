@@ -97,7 +97,7 @@ install_skill() {
   return 0
 }
 
-echo "Terraphim Engineering Skills v1.4.1"
+echo "Terraphim Engineering Skills v1.4.2"
 echo "Installing to: ${DEST}"
 echo ""
 

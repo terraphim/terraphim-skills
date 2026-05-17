@@ -1,6 +1,6 @@
 {
   "name": "terraphim-engineering-skills",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Best practice engineering skills for open source Rust/WebAssembly development. Includes 42 specialized skills covering architecture, implementation, testing, code review, security, performance, static analysis (UBS), requirements traceability, acceptance/visual testing, documentation, DevOps, disciplined development workflows, judge 5-level verdict ladder, and native RLM (terraphim-rlm, adf-orchestrate, kg-rlm-ingest, deterministic-rlm-review).",
   "author": {
     "name": "Terraphim AI",
