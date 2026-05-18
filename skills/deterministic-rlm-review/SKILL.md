@@ -29,6 +29,14 @@ If two could apply, prefer the more specific one. This skill exists for
 cases the others would handle poorly because a single review pass cannot
 hold enough context for all the relevant concerns.
 
+## Prerequisites
+
+This skill uses `rlm_query` for every reviewer role. The `terraphim_rlm`
+MCP server must be registered AND have a configured LLM provider. See
+`terraphim-rlm` skill § "LLM Configuration" for setup. Without a
+provider, every `rlm_query` call returns `RlmError::LlmNotConfigured`
+(Refs terraphim-ai #1744).
+
 ## Why
 
 A single review pass at large scale either truncates context or produces

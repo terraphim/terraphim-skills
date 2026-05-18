@@ -100,6 +100,26 @@ user whether to switch backend.
 
 Details: see `references/backend-selection.md`.
 
+## LLM Configuration
+
+The `rlm_query` tool requires a configured LLM provider. The orchestrator
+auto-detects the cheapest available in this order:
+
+1. **Ollama** (free, local) — runs on `localhost:11434` by default.
+   Install: `curl -fsSL https://ollama.com/install.sh | sh`
+   Pull a model: `ollama pull llama3.2:3b`
+
+2. **OpenRouter** (cheap, cloud) — set `OPENROUTER_API_KEY` env var.
+   Routes through the cheapest available model tier.
+
+3. **Proxy** — set `LLM_PROXY_URL` if using an existing deployment.
+
+The orchestrator injects the routed client via `TerraphimRlm::set_llm_client()`,
+reusing its existing provider health, budget tracking, and fallback routing
+(Refs terraphim-ai #1744). Without a configured provider, `rlm_query` returns
+`RlmError::LlmNotConfigured` with a clear error message rather than a
+silent stub.
+
 ## Capability-based routing -- do not hardcode models
 
 Terraphim ships a capability-based router (`terraphim_router`) that picks

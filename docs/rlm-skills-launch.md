@@ -88,6 +88,20 @@ Skills land in `~/.agents/skills/<name>/` with symlinks into Claude Code, OpenCo
 - **#1495** `adf-ctl: add --format json to status + agents subcommands for adf-orchestrate skill parseability` (priority: low)
 - **#1496** `Ingest canonical RLM + ADF terminology into ADFAuthor KG haystack` (priority: medium) -- dogfoods `kg-rlm-ingest` to lift terraphim-agent adapter eval recall
 
+## 2026-05-18: LLM Bridge wired
+
+The `rlm_query` stub in `terraphim_rlm::LlmBridge` has been replaced with
+real LLM delegation through the orchestrator's routing pipeline (Refs
+terraphim-ai PR #880, issue #1744).
+
+- `LlmBridge::query()` now delegates to `terraphim_service::llm::LlmClient`
+  when configured, or returns `RlmError::LlmNotConfigured` without one.
+- The orchestrator injects the client via `TerraphimRlm::set_llm_client()`,
+  reusing its existing provider health, budget tracking, and fallback
+  routing (Ollama free local → OpenRouter cheap cloud → proxy).
+- All three RLM skills (`terraphim-rlm`, `deterministic-rlm-review`,
+  `kg-rlm-ingest`) updated with LLM configuration prerequisite sections.
+
 ## References
 
 - terraphim-ai v2026.05.16

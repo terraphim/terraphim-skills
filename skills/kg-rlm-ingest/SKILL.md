@@ -31,6 +31,16 @@ Do NOT use for:
 - Ephemeral state -- keep it in `rlm_context` and let it expire
 - Sensitive material (credentials, PII) -- flag and stop
 
+## Prerequisites
+
+This skill uses `terraphim-agent extract` for deterministic KG-based
+concept extraction (no LLM required). `rlm_query` is an OPTIONAL fallback
+for novel concepts the KG does not yet match. If `rlm_query` is used,
+the `terraphim_rlm` MCP server must be registered and have a configured
+LLM provider (see `terraphim-rlm` skill § "LLM Configuration"). Without
+a provider, `rlm_query` returns `RlmError::LlmNotConfigured` (Refs
+terraphim-ai #1744).
+
 ## Why
 
 Findings that stay in chat history vanish; findings written to the KG
@@ -46,16 +56,30 @@ bridge between transient reasoning and durable knowledge.
    the role is not obvious from the user's request, ask -- writing into
    the wrong haystack causes search drift.
 
-2. **Distil**: use `rlm_query` with a prompt that triggers `FastThinking`
-   plus `Documentation` (the router will pick a cheap tactical model from
-   the implementation tier). The prompt should produce:
+2. **Extract concepts — KG first, RLM last**:
 
-   - A list of concepts (one per heading)
-   - Synonyms or aliases per concept
-   - Source citations (file paths, URLs, session IDs)
-   - A short paragraph per concept explaining the finding
+   a. **KG extraction (deterministic, no cost)**:
+      Run `terraphim-agent extract --role <role> "<content>"`. This uses
+      the role's Aho-Corasick automata to match known terms. Output is a
+      list of matched concepts with their source positions.
 
-   See `references/concept-extraction.md` for the prompt template.
+   b. **Evaluate sufficiency**: if the KG matched ≥80% of the obvious
+      concepts, proceed to dedupe. If coverage is low or the content is
+      genuinely novel, fall back to RLM.
+
+   c. **RLM fallback (only when KG insufficient)**:
+      Use `rlm_query` with a prompt that triggers `FastThinking` plus
+      `Documentation` (the router picks a cheap tactical model from the
+      implementation tier). The prompt should produce:
+      - A list of concepts (one per heading)
+      - Synonyms or aliases per concept
+      - Source citations (file paths, URLs, session IDs)
+      - A short paragraph per concept explaining the finding
+      See `references/concept-extraction.md` for the prompt template.
+
+      **Budget gate**: before calling RLM, estimate tokens and check the
+      session budget with `rlm_status`. Do not exceed 10% of remaining
+      budget on extraction alone.
 
 3. **Dedupe**: for each proposed concept, run
    `terraphim-agent search --role <role> --robot --format json "<concept>"`.
